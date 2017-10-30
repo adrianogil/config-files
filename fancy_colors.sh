@@ -32,16 +32,16 @@ fi
 parse_git_branch() {
     branch_name=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/ ')
     if [[ "$branch_name" ]]; then
-        staged_number=$(git diff --cached --numstat | wc -l)
-        not_staged_number=$(git diff --numstat | wc -l)
+        # staged_number=$(git diff --cached --numstat | wc -l)
+        # not_staged_number=$(git diff --numstat | wc -l)
         min_value=0
-        if [ "$staged_number" -gt "$min_value" ]; then
-            echo '['$branch_name'#'$staged_number's'$not_staged_number'ns]'
-        elif [ "$not_staged_number" -gt "$min_value" ]; then
-            echo '['$branch_name'#'$not_staged_number'ns]'
-        else
-            echo '['$branch_name']'
-        fi
+        # if [ "$staged_number" -gt "$min_value" ]; then
+        #     echo '['$branch_name'#'$staged_number's'$not_staged_number'ns]'
+        # elif [ "$not_staged_number" -gt "$min_value" ]; then
+        #     echo '['$branch_name'#'$not_staged_number'ns]'
+        # else
+        echo '['$branch_name']'
+        # fi
     fi
 }
 
