@@ -7,8 +7,11 @@ function f
         target_directory=$2
     fi
 
-    echo "Trying to search "$1" in directory "$target_directory 
+    echo "Trying to search "$1" in directory "$target_directory
     echo ""
 
     find $target_directory -name "$1"
 }
+
+alias md='mkdir'
+alias mp='mkdir -p'
