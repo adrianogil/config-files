@@ -1,5 +1,6 @@
 alias gunity-all='git add Assets/ ProjectSettings/ '
 alias gs='git status '
+alias gss='git status | less'
 alias gsu='git status -uno'
 alias ga='git add '
 alias gb='git branch '
