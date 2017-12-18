@@ -29,6 +29,8 @@ alias git-author-update="gc --amend --author='Adriano Gil <adrianogil.san@gmail.
 
 alias perforce-push='git push local master:perforce-master'
 
+alias load-local-properties='git cherry-pick local/props && git reset HEAD~1'
+
 function random-commit-msg()
 {
     curl -s whatthecommit.com/index.txt
