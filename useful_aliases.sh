@@ -15,3 +15,8 @@ function f
 
 alias md='mkdir'
 alias mp='mkdir -p'
+
+function cd_up() {
+  cd $(printf "%0.s../" $(seq 1 $1 ));
+}
+alias 'cd..'='cd_up'
