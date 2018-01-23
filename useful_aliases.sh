@@ -39,6 +39,14 @@ function md()
     mkdir $1
 }
 
+function mdd()
+{
+    echo 'Creating directory '$1
+    mkdir $1
+    echo 'Entrying directory '$1
+    cd $1
+}
+
 alias mp='mkdir -p'
 
 function cd_up() {
