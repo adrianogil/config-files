@@ -34,6 +34,17 @@ alias perforce-push='git push local master:perforce-master'
 
 alias load-local-properties='git cherry-pick local/props && git reset HEAD~1'
 
+# git
+function gol
+{
+    git_url=$1
+    git_repo=$(basename $git_url)
+    git_repo=${git_repo%.*}
+
+    git clone $git_url
+    cd $git_repo
+}
+
 function random-commit-msg()
 {
     curl -s whatthecommit.com/index.txt

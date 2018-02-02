@@ -54,7 +54,7 @@ function cd_up() {
 }
 alias 'cd..'='cd_up'
 
-alias p='python'
+alias p2='python'
 alias p3='python3'
 
 alias xa='xargs -I {}'
