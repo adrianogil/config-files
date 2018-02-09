@@ -59,4 +59,8 @@ alias p3='python3'
 
 alias xa='xargs -I {}'
 
+# sudo ln -s /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport /usr/local/bin/airport
+alias lwifi-list='airport -s'
+alias lwifi-saved-list='defaults read /Library/Preferences/SystemConfiguration/com.apple.airport.preferences |grep SSIDString'
+
 alias reload_mes_configs='source ~/.profile'
