@@ -63,4 +63,19 @@ alias xa='xargs -I {}'
 alias lwifi-list='airport -s'
 alias lwifi-saved-list='defaults read /Library/Preferences/SystemConfiguration/com.apple.airport.preferences |grep SSIDString'
 
+function ss
+{
+    if [ -z "$1" ]
+    then
+        screen_name=$(basename $PWD)
+    else
+        screen_name=$1
+    fi   
+
+    screen -S $screen_name
+}
+
+alias sl='screen -list'
+alias sr='screen -r'
+
 alias reload_mes_configs='source ~/.profile'
