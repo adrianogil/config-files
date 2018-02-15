@@ -34,6 +34,8 @@ alias perforce-push='git push local master:perforce-master'
 
 alias load-local-properties='git cherry-pick local/props && git reset HEAD~1'
 
+alias gls-files='for a in $(ls); do git log --pretty=format:"%h%x09$a%x09[%s]" -1 -- "$a"; done'
+
 # git
 function gol
 {
