@@ -18,7 +18,6 @@ alias gh='git hist '
 alias gha='git hist --all '
 alias greset='git reset '
 alias gsoft-reset='git reset '
-alias ghard-reset='git reset --hard '
 alias ghrme='git reset --hard HEAD'
 alias gshow='git show '
 alias gcereja='git cherry-pick '
@@ -35,6 +34,19 @@ alias perforce-push='git push local master:perforce-master'
 alias load-local-properties='git cherry-pick local/props && git reset HEAD~1'
 
 alias gls-files='for a in $(ls); do git log --pretty=format:"%h%x09$a%x09[%s]" -1 -- "$a"; done'
+
+function ghard-reset()
+{
+    if [ -z "$1" ]
+    then
+        target_commit=$(git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD))
+    else
+        target_commit=$1
+    fi
+
+    echo 'Git hard reset to ref '$target_commit
+    git reset --hard $target_commit
+}
 
 # git
 function gol
