@@ -72,6 +72,8 @@ function ss
         screen_name=$1
     fi   
 
+    screen_name=$(echo $screen_name | tr '[:upper:]' '[:lower:]')
+
     screen -S $screen_name
 }
 
