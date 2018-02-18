@@ -80,4 +80,11 @@ function ss
 alias sl='screen -list'
 alias sr='screen -r'
 
+alias youtube-dl-mp3='youtube-dl -x --audio-format "mp3" '
+
+function youtube-dl-mp3-from-playlist()
+{
+    youtube-dl -j --flat-playlist $1 | jq -r '.id' | sed 's_^_https://youtube.com/v/_' | cut -c9- | xa youtube-dl  -x --audio-format "mp3" {}
+}
+
 alias reload_mes_configs='source ~/.profile'
