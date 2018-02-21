@@ -3,11 +3,9 @@
 # source ${CONFIG_FILES_PATH}/bashrc.sh
 
 # Fancy colors
-source ${CONFIG_FILES_PATH}/fancy_colors.sh
-source ${CONFIG_FILES_PATH}/text_utils.sh
-# Git alias
-source ${CONFIG_FILES_PATH}/git_config.sh
+source ${CONFIG_FILES_DIR}/fancy_colors.sh
+source ${CONFIG_FILES_DIR}/text_utils.sh
 # General alias
-source ${CONFIG_FILES_PATH}/useful_aliases.sh
+source ${CONFIG_FILES_DIR}/useful_aliases.sh
 # Hdev
-source ${CONFIG_FILES_PATH}/hdev.sh
+source ${CONFIG_FILES_DIR}/hdev.sh
