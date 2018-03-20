@@ -1,5 +1,16 @@
 alias pwdcp='pwd | pbcopy'
 
+function serverssh()
+{
+    if [ -z "$1" ]
+    then
+        ssh_port=7375
+    else
+        ssh_port=$1
+    fi   
+    echo "Starting sshd server using port "$ssh_port
+}
+
 # Function to find files in a directory
 function f
 {
