@@ -7,7 +7,7 @@ function serverssh()
         ssh_port=7375
     else
         ssh_port=$1
-    fi   
+    fi
     echo "Starting sshd server using port "$ssh_port
 }
 
@@ -81,7 +81,7 @@ function ss
         screen_name=$(basename $PWD)
     else
         screen_name=$1
-    fi   
+    fi
 
     screen_name=$(echo $screen_name | tr '[:upper:]' '[:lower:]')
 
@@ -97,5 +97,8 @@ function youtube-dl-mp3-from-playlist()
 {
     youtube-dl -j --flat-playlist $1 | jq -r '.id' | sed 's_^_https://youtube.com/v/_' | cut -c9- | xa youtube-dl  -x --audio-format "mp3" {}
 }
+
+# https://www.omgubuntu.co.uk/2016/08/learn-new-word-terminal
+alias vc="$HOME/.vocab"
 
 alias reload_mes_configs='source ~/.bashrc'
