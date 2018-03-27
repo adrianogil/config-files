@@ -74,6 +74,24 @@ alias xa='xargs -I {}'
 alias lwifi-list='airport -s'
 alias lwifi-saved-list='defaults read /Library/Preferences/SystemConfiguration/com.apple.airport.preferences |grep SSIDString'
 
+# Count files by types
+function ltypes
+{
+    if [ -z "$1" ]
+    then
+        target_directory='.'
+    else
+        target_directory=$1
+    fi
+
+    ls -p $target_directory | grep -v / | awk -F . '{print $NF}' | sort | uniq -c | awk '{print $2,$1}'
+}
+
+function cats
+{
+    cat $1 | less
+}
+
 function ss
 {
     if [ -z "$1" ]
