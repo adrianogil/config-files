@@ -9,6 +9,7 @@ function serverssh()
         ssh_port=$1
     fi
     echo "Starting sshd server using port "$ssh_port
+    sshd -p $ssh_port
 }
 
 # Function to find files in a directory
