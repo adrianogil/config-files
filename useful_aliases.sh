@@ -1,5 +1,10 @@
 alias pwdcp='pwd | pbcopy'
 
+function weather()
+{
+    finger $(echo $1 | tr '[:upper:]' '[:lower:]')@graph.no
+}
+
 function serverssh()
 {
     if [ -z "$1" ]
