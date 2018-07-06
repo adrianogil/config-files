@@ -52,6 +52,37 @@ function f
     fi
 }
 
+function fcount
+{
+    if [ -z "$1" ]
+    then
+        echo 'usage: f <search_string> <path>'
+    else
+        if [ "$1" == "-v" ]; then
+            if [ -z "$3" ]
+            then
+                target_directory='.'
+            else
+                target_directory=$3
+            fi
+
+            echo "Trying to search "$2" in directory "$target_directory
+            echo ""
+
+            find $target_directory -name "$2" | wc -l
+        else
+            if [ -z "$2" ]
+            then
+                target_directory='.'
+            else
+                target_directory=$2
+            fi
+
+            find $target_directory -name "$1" | wc -l
+        fi
+    fi
+}
+
 # Directory creation
 function md()
 {
@@ -102,6 +133,11 @@ function searchtext()
     fi
 }
 
+function sha1()
+{
+    echo -n $1 | openssl sha1 | cut -c10-
+}
+
 # Count files by types
 function ltypes
 {
@@ -144,11 +180,41 @@ function youtube-dl-mp3-from-playlist()
     youtube-dl -j --flat-playlist $1 | jq -r '.id' | sed 's_^_https://youtube.com/v/_' | cut -c9- | xa youtube-dl  -x --audio-format "mp3" {}
 }
 
-function ffmped-m4a-to-mp3()
+function ffmpeg-m4a-to-mp3()
 {
     # Based on this post: https://gist.github.com/christofluethi/646ae60d797a46a706a5
     ffmpeg $1.mp3 -i $1.m4a -codec:a libmp3lame -qscale:a 1
 }
+
+function abspath() {
+    # generate absolute path from relative path
+    # $1     : relative filename
+    # return : absolute path
+    if [ -d "$1" ]; then
+        # dir
+        (cd "$1"; pwd)
+    elif [ -f "$1" ]; then
+        # file
+        if [[ $1 = /* ]]; then
+            echo "$1"
+        elif [[ $1 == */* ]]; then
+            echo "$(cd "${1%/*}"; pwd)/${1##*/}"
+        else
+            echo "$(pwd)/$1"
+        fi
+    fi
+}
+
+if [[ $0 == *termux* ]]; then
+    function fleditor-android()
+    {
+        real_file_path=$(abspath $1)
+        echo "Open file "$1"using DroidEdit Free"
+        am start -n "com.aor.droidedit/.DroidEditFreeActivity" -d "file://"$real_file_path
+    }
+# else
+#     echo ""
+fi
 
 # https://www.omgubuntu.co.uk/2016/08/learn-new-word-terminal
 alias vc="$HOME/.vocab"
