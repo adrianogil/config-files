@@ -1,7 +1,14 @@
 # Generate a random number from 0 to 999999
 alias rndnumber='echo $(( ( RANDOM % 1000 * 1000 + RANDOM % 1000) ))'
 
-alias pwdcp='pwd | pbcopy'
+function pwdcp()
+{
+    if [[ $0 == *termux* ]]; then
+        pwd | termux-clipboard-set
+    else
+        pwd | pbcopy
+    fi
+}
 
 function weather()
 {
