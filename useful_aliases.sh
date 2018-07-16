@@ -158,6 +158,13 @@ function ltypes
     ls -p $target_directory | grep -v / | awk -F . '{print $NF}' | sort | uniq -c | awk '{print $2,$1}'
 }
 
+# Copy using pv (http://www.ivarch.com/programs/pv.shtml)
+# For more info take a look at: http://www.catonmat.net/blog/unix-utilities-pipe-viewer/
+function cpv
+{
+    pv $1 > $2
+}
+
 function cats
 {
     cat $1 | less
