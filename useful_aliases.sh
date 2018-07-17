@@ -1,3 +1,6 @@
+
+alias s="sublime"
+
 # Generate a random number from 0 to 999999
 alias rndnumber='echo $(( ( RANDOM % 1000 * 1000 + RANDOM % 1000) ))'
 
