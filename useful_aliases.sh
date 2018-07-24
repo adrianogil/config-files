@@ -161,6 +161,12 @@ function ltypes
     ls -p $target_directory | grep -v / | awk -F . '{print $NF}' | sort | uniq -c | awk '{print $2,$1}'
 }
 
+# Using https://github.com/prasmussen/chrome-cli
+function count-chrome-tabs()
+{
+    echo $(chrome-cli list links | wc -l)" open tabs in Chrome"
+}
+
 # Copy using pv (http://www.ivarch.com/programs/pv.shtml)
 # For more info take a look at: http://www.catonmat.net/blog/unix-utilities-pipe-viewer/
 function cpv
