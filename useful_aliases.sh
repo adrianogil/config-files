@@ -164,10 +164,26 @@ function ltypes
     ls -p $target_directory | grep -v / | awk -F . '{print $NF}' | sort | uniq -c | awk '{print $2,$1}'
 }
 
+# @tool count-chrome-tabs Count current open tabs on chrome
 # Using https://github.com/prasmussen/chrome-cli
 function count-chrome-tabs()
 {
     echo $(chrome-cli list links | wc -l)" open tabs in Chrome"
+}
+
+# @tool save-chrome-session Save chrome session into a file
+# Using https://github.com/prasmussen/chrome-cli
+function save-chrome-session()
+{
+    if [ -z "$1" ]
+    then
+        session_file='chrome_session_'$(date +%Y_%m_%d_%H_%M)'.chrome-session'
+    else
+        session_file=$1
+    fi
+    chrome-cli list links | awk '{print $2}' > $session_file
+    session_size=$(cat $session_file | wc -l)
+    echo 'Saved'$session_size' open tabs from Google Chrome into file '$session_file
 }
 
 # Copy using pv (http://www.ivarch.com/programs/pv.shtml)
