@@ -263,6 +263,11 @@ function abspath() {
     fi
 }
 
+function abspathcp()
+{
+    abspath $1 | pbcopy
+}
+
 if [[ $0 == *termux* ]]; then
     function fleditor-android()
     {
