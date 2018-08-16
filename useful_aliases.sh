@@ -283,4 +283,9 @@ fi
 # https://www.omgubuntu.co.uk/2016/08/learn-new-word-terminal
 alias vc="$HOME/.vocab"
 
+function trees()
+{
+    tree $* | less
+}
+
 alias reload_mes_configs='source ~/.bashrc'
