@@ -4,7 +4,7 @@ alias s="sublime"
 alias h1='head -1'
 alias t1='tail -1'
 
-alias simple-http-server='python -m SimpleHTTPServer'
+alias simple-http-server='python2 -m SimpleHTTPServer'
 
 # Generate a random number from 0 to 999999
 alias rndnumber='echo $(( ( RANDOM % 1000 * 1000 + RANDOM % 1000) ))'
