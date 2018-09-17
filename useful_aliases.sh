@@ -4,6 +4,8 @@ alias s="sublime"
 alias h1='head -1'
 alias t1='tail -1'
 
+alias simple-http-server='python -m SimpleHTTPServer'
+
 # Generate a random number from 0 to 999999
 alias rndnumber='echo $(( ( RANDOM % 1000 * 1000 + RANDOM % 1000) ))'
 
@@ -100,13 +102,13 @@ function fcount
 function md()
 {
     echo 'Creating directory '$1
-    mkdir $1
+    mkdir -p $1
 }
 
 function mdd()
 {
     echo 'Creating directory '$1
-    mkdir $1
+    mkdir -p $1
     echo 'Entrying directory '$1
     cd $1
 }
