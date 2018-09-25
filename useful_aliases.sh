@@ -4,7 +4,9 @@ alias s="sublime"
 alias h1='head -1'
 alias t1='tail -1'
 
-alias simple-http-server='python2 -m SimpleHTTPServer'
+alias old-http-server='python2 -m SimpleHTTPServer'
+# Improved HTTP Server with upload
+alias simple-http-server='python2 $CONFIG_FILES_DIR/python/simpleserver/SimpleHTTPServerWithUpload.py'
 
 # Generate a random number from 0 to 999999
 alias rndnumber='echo $(( ( RANDOM % 1000 * 1000 + RANDOM % 1000) ))'
