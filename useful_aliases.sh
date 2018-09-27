@@ -8,6 +8,8 @@ alias old-http-server='python2 -m SimpleHTTPServer'
 # Improved HTTP Server with upload
 alias simple-http-server='python2 $CONFIG_FILES_DIR/python/simpleserver/SimpleHTTPServerWithUpload.py'
 
+alias ips='ifconfig | grep net | grep netmask'
+
 # Generate a random number from 0 to 999999
 alias rndnumber='echo $(( ( RANDOM % 1000 * 1000 + RANDOM % 1000) ))'
 
@@ -216,6 +218,11 @@ function cpv
 function cats
 {
     cat $1 | less
+}
+
+function sname()
+{
+    echo "Current screen is called: "$STY
 }
 
 function ss
