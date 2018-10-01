@@ -4,8 +4,10 @@ alias s="sublime"
 alias h1='head -1'
 alias t1='tail -1'
 
+# @tool simple-http-server
 alias old-http-server='python2 -m SimpleHTTPServer'
 # Improved HTTP Server with upload
+# Based on https://gist.github.com/UniIsland/3346170#file-simplehttpserverwithupload-py
 alias simple-http-server='python2 $CONFIG_FILES_DIR/python/simpleserver/SimpleHTTPServerWithUpload.py'
 
 alias ips='ifconfig | grep net'
