@@ -53,6 +53,18 @@ function serverssh()
     sshd -p $ssh_port
 }
 
+function fpdf
+{
+    if [ -z "$2" ]
+    then
+        target_directory='.'
+    else
+        target_directory=$2
+    fi
+
+     find $target_directory -iname '*.pdf' -exec pdfgrep $1 {} +
+}
+
 # Function to find files in a directory
 function f
 {
