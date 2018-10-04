@@ -6,11 +6,19 @@ alias t1='tail -1'
 
 # @tool simple-http-server
 alias old-http-server='python2 -m SimpleHTTPServer'
-# Improved HTTP Server with upload
+# Improved HTTP Server with upload and directory download
 # Based on https://gist.github.com/UniIsland/3346170#file-simplehttpserverwithupload-py
-alias simple-http-server='python2 $CONFIG_FILES_DIR/python/simpleserver/SimpleHTTPServerWithUpload.py'
+# Based on https://stackoverflow.com/questions/2573670/download-whole-directories-in-python-simplehttpserver
+# alias simple-http-server='python2 $CONFIG_FILES_DIR/python/simpleserver/SimpleHTTPServerWithUpload.py'
+alias simple-http-server='python2 $CONFIG_FILES_DIR/python/simpleserver/CustomHTTPServer.py'
 
 alias ips='ifconfig | grep net'
+
+if [ "$(uname)" == "Darwin" ]; then
+    # Do something under Mac OS X platform
+    # https://github.com/danyshaanan/osx-wifi-cli
+    alias wifi='osx-wifi-cli'
+fi
 
 # Generate a random number from 0 to 999999
 alias rndnumber='echo $(( ( RANDOM % 1000 * 1000 + RANDOM % 1000) ))'
