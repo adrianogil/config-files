@@ -29,11 +29,15 @@ function weather()
     finger $(echo $1 | tr '[:upper:]' '[:lower:]')@graph.no
 }
 
+SSH_DEFAULT_PORT=7375
+
+alias ssh2moi='ssh -p $SSH_DEFAULT_PORT'
+
 function serverssh()
 {
     if [ -z "$1" ]
     then
-        ssh_port=7375
+        ssh_port=$SSH_DEFAULT_PORT
     else
         ssh_port=$1
     fi
