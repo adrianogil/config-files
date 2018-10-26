@@ -12,7 +12,11 @@ alias old-http-server='python2 -m SimpleHTTPServer'
 # alias simple-http-server='python2 $CONFIG_FILES_DIR/python/simpleserver/SimpleHTTPServerWithUpload.py'
 alias simple-http-server='python2 $CONFIG_FILES_DIR/python/simpleserver/CustomHTTPServer.py'
 
-alias ips='ifconfig | grep net'
+alias ips-net='ifconfig | grep net'
+function ips()
+{
+    ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $2 }' | cut -f2 -d: | head -n1
+}
 
 if [ "$(uname)" == "Darwin" ]; then
     # Do something under Mac OS X platform
@@ -159,6 +163,86 @@ alias xa='xargs -I {}'
 alias lwifi-list='airport -s'
 alias lwifi-saved-list='defaults read /Library/Preferences/SystemConfiguration/com.apple.airport.preferences |grep SSIDString'
 
+### From https://github.com/joseluisq/awesome-bash-commands ###
+
+# @tool rnd-number <size>
+function rnd-number()
+{
+    od -vAn -N64 < /dev/urandom | tr '\n' ' ' | sed "s/ //g" | head -c $1
+}
+
+# @tool rnd-alphanumeric <size>
+function rnd-alphanumeric()
+{
+    base64 /dev/urandom | tr -d '/+' | head -c $1 | xargs
+}
+
+
+function rnd-words-pt()
+{
+    if [ -z "$RND_WHILE_VELOCITY" ]
+    then
+        rnd_velocity=0.5
+    else
+        rnd_velocity=$RND_WHILE_VELOCITY
+    fi
+
+    if [[ $0 == *termux* ]]; then
+        while true; do shuf -n1 $WORDS_PT_FILE; sleep $rnd_velocity; done
+    else
+        while true; do gshuf -n1 $WORDS_PT_FILE; sleep $rnd_velocity; done
+    fi
+}
+
+function rnd-words-en()
+{
+    if [ -z "$RND_WHILE_VELOCITY" ]
+    then
+        rnd_velocity=0.5
+    else
+        rnd_velocity=$RND_WHILE_VELOCITY
+    fi
+
+    if [[ $0 == *termux* ]]; then
+        while true; do shuf -n1 $WORDS_EN_FILE; sleep $rnd_velocity; done
+    else
+        while true; do gshuf -n1 $WORDS_EN_FILE; sleep $rnd_velocity; done
+    fi
+}
+
+function rnd-words-jp()
+{
+    if [ -z "$RND_WHILE_VELOCITY" ]
+    then
+        rnd_velocity=0.5
+    else
+        rnd_velocity=$RND_WHILE_VELOCITY
+    fi
+
+    if [[ $0 == *termux* ]]; then
+        while true; do shuf -n1 $WORDS_JP_FILE; sleep $rnd_velocity; done
+    else
+        while true; do gshuf -n1 $WORDS_JP_FILE; sleep $rnd_velocity; done
+    fi
+}
+
+function rnd-words-ko()
+{
+    if [ -z "$RND_WHILE_VELOCITY" ]
+    then
+        rnd_velocity=0.5
+    else
+        rnd_velocity=$RND_WHILE_VELOCITY
+    fi
+
+    if [[ $0 == *termux* ]]; then
+        while true; do shuf -n1 $WORDS_KO_FILE; sleep $rnd_velocity; done
+    else
+        while true; do gshuf -n1 $WORDS_KO_FILE; sleep $rnd_velocity; done
+    fi
+}
+
+
 ### From https://www.reddit.com/r/commandline/comments/9md3pp/a_very_useful_bashrc_file/ ###
 
 # random-hexdump
@@ -273,6 +357,12 @@ function cpv
 function cats
 {
     cat $1 | less
+}
+
+function rnd-line()
+{
+    file=$1
+    head -$((${RANDOM} % `wc -l < $file` + 1)) $file | tail -1
 }
 
 function sname()
