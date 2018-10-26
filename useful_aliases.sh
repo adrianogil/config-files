@@ -177,9 +177,17 @@ function rnd-alphanumeric()
     base64 /dev/urandom | tr -d '/+' | head -c $1 | xargs
 }
 
-
-function rnd-words-pt()
+function rnd-words()
 {
+    word_dict=$1
+
+    if [ -z "$2" ]
+    then
+        column_repeat=1
+    else
+        column_repeat=$2
+    fi
+
     if [ -z "$RND_WHILE_VELOCITY" ]
     then
         rnd_velocity=0.5
@@ -188,58 +196,44 @@ function rnd-words-pt()
     fi
 
     if [[ $0 == *termux* ]]; then
-        while true; do shuf -n1 $WORDS_PT_FILE; sleep $rnd_velocity; done
+        while true; do 
+            current_word=''
+            for i in `seq 1 $column_repeat`; do
+                current_word=$(shuf -n1 $word_dict)" $current_word"
+            done
+            echo $current_word
+            sleep $rnd_velocity 
+        done
     else
-        while true; do gshuf -n1 $WORDS_PT_FILE; sleep $rnd_velocity; done
+        while true; do 
+            current_word=''
+            for i in `seq 1 $column_repeat`; do
+                current_word=$(gshuf -n1 $word_dict)" $current_word"
+            done
+            echo $current_word
+            sleep $rnd_velocity
+        done
     fi
+}
+
+function rnd-words-pt()
+{
+    rnd-words $WORDS_PT_FILE $1
 }
 
 function rnd-words-en()
 {
-    if [ -z "$RND_WHILE_VELOCITY" ]
-    then
-        rnd_velocity=0.5
-    else
-        rnd_velocity=$RND_WHILE_VELOCITY
-    fi
-
-    if [[ $0 == *termux* ]]; then
-        while true; do shuf -n1 $WORDS_EN_FILE; sleep $rnd_velocity; done
-    else
-        while true; do gshuf -n1 $WORDS_EN_FILE; sleep $rnd_velocity; done
-    fi
+    rnd-words $WORDS_EN_FILE $1
 }
 
 function rnd-words-jp()
 {
-    if [ -z "$RND_WHILE_VELOCITY" ]
-    then
-        rnd_velocity=0.5
-    else
-        rnd_velocity=$RND_WHILE_VELOCITY
-    fi
-
-    if [[ $0 == *termux* ]]; then
-        while true; do shuf -n1 $WORDS_JP_FILE; sleep $rnd_velocity; done
-    else
-        while true; do gshuf -n1 $WORDS_JP_FILE; sleep $rnd_velocity; done
-    fi
+    rnd-words $WORDS_JP_FILE $1
 }
 
 function rnd-words-ko()
 {
-    if [ -z "$RND_WHILE_VELOCITY" ]
-    then
-        rnd_velocity=0.5
-    else
-        rnd_velocity=$RND_WHILE_VELOCITY
-    fi
-
-    if [[ $0 == *termux* ]]; then
-        while true; do shuf -n1 $WORDS_KO_FILE; sleep $rnd_velocity; done
-    else
-        while true; do gshuf -n1 $WORDS_KO_FILE; sleep $rnd_velocity; done
-    fi
+    rnd-words $WORDS_KO_FILE $1
 }
 
 
