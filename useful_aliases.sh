@@ -341,6 +341,17 @@ function open-chrome-session()
     cat $session_file | xargs -I {} chrome-cli open {}
 }
 
+function o()
+{
+    file=$1
+
+    if [[ $0 == *termux* ]]; then
+        droid-open $1
+    else
+        open $1
+    fi
+}
+
 # Copy using pv (http://www.ivarch.com/programs/pv.shtml)
 # For more info take a look at: http://www.catonmat.net/blog/unix-utilities-pipe-viewer/
 function cpv
