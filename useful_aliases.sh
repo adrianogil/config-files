@@ -199,18 +199,18 @@ function rnd-words()
         while true; do 
             current_word=''
             for i in `seq 1 $column_repeat`; do
-                current_word=$(shuf -n1 $word_dict)" $current_word"
+                current_word=$(shuf -n1 $word_dict)"\t $current_word"
             done
-            echo $current_word
+            echo -e $current_word
             sleep $rnd_velocity 
         done
     else
         while true; do 
             current_word=''
             for i in `seq 1 $column_repeat`; do
-                current_word=$(gshuf -n1 $word_dict)" $current_word"
+                current_word=$(gshuf -n1 $word_dict)"\t $current_word"
             done
-            echo $current_word
+            echo -e $current_word
             sleep $rnd_velocity
         done
     fi
