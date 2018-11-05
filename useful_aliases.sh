@@ -399,12 +399,6 @@ function youtube-dl-mp3-from-playlist()
     youtube-dl -j --flat-playlist $1 | jq -r '.id' | sed 's_^_https://youtube.com/v/_' | cut -c9- | xa youtube-dl  -x --audio-format "mp3" {}
 }
 
-function ffmpeg-m4a-to-mp3()
-{
-    # Based on this post: https://gist.github.com/christofluethi/646ae60d797a46a706a5
-    ffmpeg $1.mp3 -i $1.m4a -codec:a libmp3lame -qscale:a 1
-}
-
 function abspath() {
     # generate absolute path from relative path
     # $1     : relative filename

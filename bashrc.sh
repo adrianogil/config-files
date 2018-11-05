@@ -7,5 +7,6 @@ source ${CONFIG_FILES_DIR}/fancy_colors.sh
 source ${CONFIG_FILES_DIR}/text_utils.sh
 # General alias
 source ${CONFIG_FILES_DIR}/useful_aliases.sh
+source ${CONFIG_FILES_DIR}/file_conversions.sh
 # Hdev
 source ${CONFIG_FILES_DIR}/hdev.sh
