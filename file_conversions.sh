@@ -1,5 +1,5 @@
 
-function conv-webp-jpg()=
+function conv-webp-jpg()
 {
     webp_file=$1
 
