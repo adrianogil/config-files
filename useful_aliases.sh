@@ -196,16 +196,16 @@ function rnd-words()
     fi
 
     if [[ $0 == *termux* ]]; then
-        while true; do 
+        while true; do
             current_word=''
             for i in `seq 1 $column_repeat`; do
                 current_word=$(shuf -n1 $word_dict)"\t $current_word"
             done
             echo -e $current_word
-            sleep $rnd_velocity 
+            sleep $rnd_velocity
         done
     else
-        while true; do 
+        while true; do
             current_word=''
             for i in `seq 1 $column_repeat`; do
                 current_word=$(gshuf -n1 $word_dict)"\t $current_word"
@@ -240,7 +240,7 @@ function rnd-words-ko()
 ### From https://www.reddit.com/r/commandline/comments/9md3pp/a_very_useful_bashrc_file/ ###
 
 # random-hexdump
-alias rnd-hexdump="cat /dev/urandom | hexdump -C | grep 'ca fe'" 
+alias rnd-hexdump="cat /dev/urandom | hexdump -C | grep 'ca fe'"
 
 # Easy way to extract archives
 extract () {
@@ -370,27 +370,6 @@ function rnd-line()
     head -$((${RANDOM} % `wc -l < $file` + 1)) $file | tail -1
 }
 
-function sname()
-{
-    echo "Current screen is called: "$STY
-}
-
-function ss
-{
-    if [ -z "$1" ]
-    then
-        screen_name=$(basename $PWD)
-    else
-        screen_name=$1
-    fi
-
-    screen_name=$(echo $screen_name | tr '[:upper:]' '[:lower:]')
-
-    screen -S $screen_name
-}
-
-alias sl='screen -list'
-alias sr='screen -r'
 
 alias youtube-dl-mp3='youtube-dl -x --audio-format "mp3" '
 
