@@ -101,6 +101,23 @@ function f
     fi
 }
 
+function fcount-subdirs()
+{
+    target_directory=$1
+    if [ -z "$2" ]
+    then
+        file_name='*'
+    else
+        file_name=$2
+    fi
+
+    for i in `find $target_directory -d -maxdepth 1`;
+    do
+        n=$(fcount "$file_name" $i)
+        echo $i": "$n" files ("$(du -sh $i | awk '{print $1}')")"
+    done;
+}
+
 function fcount
 {
     if [ -z "$1" ]
