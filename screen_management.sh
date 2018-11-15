@@ -21,6 +21,7 @@ function tenter()
 }
 alias te="tenter"
 
+alias tw="tmux list-windows -a"
 
 function t()
 {
