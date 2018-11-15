@@ -21,6 +21,24 @@ function tenter()
 }
 alias te="tenter"
 
+
+function t()
+{
+    _current_screen_list=$(tlist | sed 's/:/ /g' | awk '{print $1}')
+
+    if [ -z "$1" ]
+    then
+        tlist
+    elif [[ $_current_screen_list == *"$1"* ]];
+    then
+        echo "Let's open existing screen"
+        tenter $1
+    else
+        echo "Let's create a new screen"
+        tnew $1
+    fi
+}
+
 _tenter()
 {
     local cur prev opts
@@ -33,6 +51,7 @@ _tenter()
 }
 complete -F _tenter tenter
 complete -F _tenter te
+complete -F _tenter t
 
 ################################################################################
 # Using Screen
