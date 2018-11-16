@@ -11,6 +11,5 @@ source ${CONFIG_FILES_DIR}/find_tools.sh
 source ${CONFIG_FILES_DIR}/useful_aliases.sh
 source ${CONFIG_FILES_DIR}/file_conversions.sh
 source ${CONFIG_FILES_DIR}/screen_management.sh
-source ${CONFIG_FILES_DIR}/3d_files.sh
 # Hdev
 source ${CONFIG_FILES_DIR}/hdev.sh
