@@ -228,6 +228,27 @@ function ltypes
     ls -p $target_directory | grep -v / | awk -F . '{print $NF}' | sort | uniq -c | awk '{print $2,$1}'
 }
 
+function lsort()
+{
+    if [ -z "$1" ]
+    then
+        target_name='*'
+    else
+        target_name=$1
+    fi
+
+    if [ -z "$2" ]
+    then
+        target_directory='.'
+    else
+        target_directory=$2
+    fi
+    
+    gfind "$target_directory" -name "$target_name" -type f -printf "%-.22T+ %M %n %-8u %-8g %8s %Tx %.8TX %p\n" | sort -r | awk '{print $1"\t"$9}'
+}
+
+
+
 # @tool count-chrome-tabs Count current open tabs on chrome
 # Using https://github.com/prasmussen/chrome-cli
 function count-chrome-tabs()
