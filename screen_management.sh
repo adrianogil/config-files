@@ -54,6 +54,11 @@ complete -F _tenter tenter
 complete -F _tenter te
 complete -F _tenter t
 
+alias treload-conf="tmux source-file ~/.tmux.conf"
+
+# TODO
+# Study code from https://gist.githubusercontent.com/ttscoff/a37427a8c331f072904d/raw/968192d7d0aabcde280155d0872dfa8cd8270619/tmux.bash
+
 ################################################################################
 # Using Screen
 
