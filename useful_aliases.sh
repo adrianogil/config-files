@@ -79,6 +79,13 @@ function cd_up() {
 }
 alias 'cd..'='cd_up'
 
+# Enter a directory from sk
+# sk  = https://github.com/lotabout/skim
+function cdk()
+{
+    cd $(sk)
+}
+
 alias p2='python2'
 alias p3='python3'
 
