@@ -1,6 +1,4 @@
 
-alias s="sublime"
-
 alias h1='head -1'
 alias t1='tail -1'
 
@@ -83,8 +81,9 @@ alias 'cd..'='cd_up'
 # sk  = https://github.com/lotabout/skim
 function cdk()
 {
-    cd $(sk)
+    cd $(find . -type d | sk)
 }
+
 
 alias p2='python2'
 alias p3='python3'
@@ -162,12 +161,6 @@ function rnd-words-jp()
 {
     rnd-words $WORDS_JP_FILE $1
 }
-
-function rnd-words-ko()
-{
-    rnd-words $WORDS_KO_FILE $1
-}
-
 
 ### From https://www.reddit.com/r/commandline/comments/9md3pp/a_very_useful_bashrc_file/ ###
 
@@ -304,6 +297,8 @@ function o()
         open $1
     fi
 }
+
+alias opk='o $(sk)'
 
 # Copy using pv (http://www.ivarch.com/programs/pv.shtml)
 # For more info take a look at: http://www.catonmat.net/blog/unix-utilities-pipe-viewer/
