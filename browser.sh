@@ -72,10 +72,13 @@ function browser-open-session()
     echo 'Loading chrome session file: '$session_file
     session_size=$(cat $session_file | wc -l)
     echo 'Trying to open session with '$session_size' saved tabs'
-    new_tab=$(cat $session_file | head -1 | xargs -I {} chrome-cli open {} -n | head -1 | awk '{print $2}')
+    new_tab=$(for u in `cat $session_file | head -1`; do chrome-cli open $u -n; done | head -1 | awk '{print $2}')
     new_window=$(chrome-cli list tabs | grep $new_tab | tr ':[' ' ' | awk '{print $1}')
-    
-    cat $session_file | tail -n +2 | xargs -I {} chrome-cli open {} -w $new_window
+
+    for u in `cat $session_file | tail -n +2`;
+    do 
+        chrome-cli open $u -w $new_window;
+    done
 }
 
 alias browser-open-session-sk='browser-open-session $(find . -name "*.chrome-session" | sk)'
