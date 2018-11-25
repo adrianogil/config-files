@@ -81,4 +81,9 @@ function browser-open-session()
     done
 }
 
+function browser-sessions()
+{
+    gfind . -name '*.chrome-session' -type f -printf "%-.22T+ %M %n %-8u %-8g %8s %Tx %.8TX %p\n" | sort -r | awk '{print $9}'
+}
+
 alias browser-open-session-sk='browser-open-session $(find . -name "*.chrome-session" | sk)'
