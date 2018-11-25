@@ -81,6 +81,13 @@ alias 'cd..'='cd_up'
 # sk  = https://github.com/lotabout/skim
 function cdk()
 {
+    cd $(find . -type d -regex '\./[^.]*$' | sk)
+}
+
+# Enter a directory from sk
+# sk  = https://github.com/lotabout/skim
+function cdk-all()
+{
     cd $(find . -type d | sk)
 }
 
