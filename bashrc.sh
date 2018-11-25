@@ -11,6 +11,8 @@ source ${CONFIG_FILES_DIR}/find_tools.sh
 source ${CONFIG_FILES_DIR}/useful_aliases.sh
 source ${CONFIG_FILES_DIR}/file_conversions.sh
 source ${CONFIG_FILES_DIR}/screen_management.sh
+# Browser-related tools
+source ${CONFIG_FILES_DIR}/browser.sh
 # Korean
 source ${CONFIG_FILES_DIR}/korean.sh
 # Papers-related tools
