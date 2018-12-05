@@ -10,6 +10,5 @@ function papers-title()
 
     target_pdf=$1
 
-    pdftotext -raw $target_pdf $TMP_DIR/paper_text.txt
-    cat $TMP_DIR/paper_text.txt | head -1
+    python2 ${CONFIG_FILES_DIR}/python/papers/paper_title.py $target_pdf
 }
