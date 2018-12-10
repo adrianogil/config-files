@@ -12,9 +12,7 @@ title_index = title_from_pdfinfo_output.index('Title:')
 title_from_pdfinfo_output = title_from_pdfinfo_output[title_index+6:]
 title_from_pdfinfo_output = title_from_pdfinfo_output.strip()
 
-print(title_from_pdfinfo_output)
-
-if title_from_pdfinfo_output == "":
+if title_from_pdfinfo_output == "" or len(title_from_pdfinfo_output) < 8:
     generate_papertxt_cmd = 'pdftotext -raw "' + target_paper + '" "'  + tmp_dir + '/paper_text.txt"'
     generate_papertxt_output = subprocess.check_output(generate_papertxt_cmd, shell=True)
     generate_papertxt_output = generate_papertxt_output.strip()
@@ -24,3 +22,5 @@ if title_from_pdfinfo_output == "":
     first_line_output = first_line_output.strip()
 
     print(first_line_output)
+else:
+    print(title_from_pdfinfo_output)
