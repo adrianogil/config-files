@@ -56,3 +56,11 @@ function conv-video-to-gif-batch()
         shift
     done
 }
+
+function conv-mov-to-mp4()
+{
+    # Based on https://stackoverflow.com/a/12026739 
+    video_file=$1
+    output_file="${video_file%%.*}".mp4
+    ffmpeg -i $video_file -vcodec copy -acodec copy $output_file
+}
