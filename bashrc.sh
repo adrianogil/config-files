@@ -19,3 +19,5 @@ source ${CONFIG_FILES_DIR}/korean.sh
 source ${CONFIG_FILES_DIR}/papers.sh
 # Hdev
 source ${CONFIG_FILES_DIR}/hdev.sh
+# Slides tools
+source ${CONFIG_FILES_DIR}/slide_tool/slide_tools.sh
