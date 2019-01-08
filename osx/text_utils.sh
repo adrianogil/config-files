@@ -5,3 +5,4 @@ function sublimeb
 }
 
 alias s="sublime"
+alias sw="sublime -n"
