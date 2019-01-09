@@ -7,6 +7,7 @@ elif [[ $0 == *termux* ]]; then
     source ${CONFIG_FILES_DIR}/termux/bashrc_termux.sh
 fi
 
+# Cross config
 source ${CONFIG_FILES_DIR}/cross/bashrc_cross.sh
 
 # Slide tools
