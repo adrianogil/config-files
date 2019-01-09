@@ -20,7 +20,7 @@ function open-model()
 
     echo "Open file from path "$real_file_path
 
-    am start -n "$3D_VIEWER_APP" -d "file://"$real_file_path
+    am start -n "$MODEL3D_VIEWER_APP" -d "file://"$real_file_path
 }
 
 function open-file()
