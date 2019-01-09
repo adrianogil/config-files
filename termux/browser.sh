@@ -18,5 +18,5 @@ function open-chrome-session()
     echo 'Loading chrome session file: '$session_file
     session_size=$(cat $session_file | wc -l)
     echo 'Trying to open session with '$session_size' saved tabs'
-    cat $session_file | xargs -I {} open-url {}
+    for u in `cat $session_file`; do open-url $u; done
 }
