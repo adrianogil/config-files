@@ -3,7 +3,7 @@ CROSS_CONFIG_FILES_DIR=$CONFIG_FILES_DIR/cross/
 
 
 # General useful aliases
-source ${OSX_CONFIG_FILES_DIR}/useful_aliases.sh
+source ${CROSS_CONFIG_FILES_DIR}/useful_aliases.sh
 # Fancy colors
 source ${CROSS_CONFIG_FILES_DIR}/fancy_colors.sh
 # Path Tools
