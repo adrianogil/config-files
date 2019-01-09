@@ -7,4 +7,4 @@ source ${TERMUX_CONFIG_FILES_DIR}/text_utils.sh
 # File Utils
 source ${TERMUX_CONFIG_FILES_DIR}/file_utils.sh
 # Browser-related tools
-source ${OSX_CONFIG_FILES_DIR}/browser.sh
+source ${TERMUX_CONFIG_FILES_DIR}/browser.sh
