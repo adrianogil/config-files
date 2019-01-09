@@ -35,6 +35,49 @@ function open-file()
     am start -a android.intent.action.VIEW -d  "file://"$real_file_path
 }
 
+function open-text()
+{
+    echo "Open text file "$1"using DroidEdit Free"
+
+    real_file_path=$(abspath $1)
+    real_file_path=$(echo $real_file_path | sed "s@data/data/com.termux/files/home/storage/shared@sdcard@g" )
+
+    am start -n "$TEXT_EDITOR_APP" -d "file://"$real_file_path
+}
+alias otxt='open-text'
+
+function open-text-as-tmp()
+{
+    file=$1
+
+    echo "Open text file "$file" in a tmp folder using DroidEdit Free"
+
+    filename=$(basename -- "$file")
+    file_dir="${file%$filename}"
+
+    tmp_path=/sdcard/tmp/tmp_$filename
+
+    cp $file $tmp_path
+
+    echo $tmp_path > $file.tmp
+    text_file=$tmp_path
+
+    real_file_path=$(abspath $text_file)
+    real_file_path=$(echo $real_file_path | sed "s@data/data/com.termux/files/home/storage/shared@sdcard@g" )
+
+    am start -n "$TEXT_EDITOR_APP" -d "file://"$real_file_path
+}
+alias otxt-tmp='open-text-as-tmp'
+
+function txt-reload-from-tmp()
+{
+    file=$1
+    tmp_file=$(cat $file.tmp)
+    mv $tmp_file $file
+    rm $file.tmp
+}
+alias otxt-reload='txt-reload-from-tmp'
+
 function open()
 {
     file=$1
@@ -46,6 +89,8 @@ function open()
     elif [ ${file: -4} == ".txt" ]; then
         open-text $file
     elif [ ${file: -5} == ".note" ]; then
+        open-text $file
+    elif [ ${file: -15} == ".chrome-session" ]; then
         open-text $file
     else
         open-file $file

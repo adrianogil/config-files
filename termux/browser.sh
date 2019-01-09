@@ -4,7 +4,6 @@ function open-url()
     $BROWSER $url
 }
 
-
 # @tool open-chrome-session Open URLs from a chrome session file
 # Using https://github.com/prasmussen/chrome-cli
 function open-chrome-session()
@@ -20,3 +19,4 @@ function open-chrome-session()
     echo 'Trying to open session with '$session_size' saved tabs'
     for u in `cat $session_file`; do open-url $u; done
 }
+alias ocs="open-chrome-session"
