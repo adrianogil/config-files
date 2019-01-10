@@ -47,7 +47,7 @@ function serverssh()
     else
         ssh_port=$1
     fi
-    echo "Starting sshd server using port "$ssh_port
+    echo "Starting sshd server using port "$ssh_port" on IP: "$(ips)
     sshd -p $ssh_port
 }
 
