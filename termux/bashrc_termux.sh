@@ -8,3 +8,5 @@ source ${TERMUX_CONFIG_FILES_DIR}/text_utils.sh
 source ${TERMUX_CONFIG_FILES_DIR}/file_utils.sh
 # Browser-related tools
 source ${TERMUX_CONFIG_FILES_DIR}/browser.sh
+# Netflix tools
+source ${TERMUX_CONFIG_FILES_DIR}/netflix/netflix_control.sh
