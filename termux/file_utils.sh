@@ -90,6 +90,16 @@ function open()
         open-text $file
     elif [ ${file: -5} == ".note" ]; then
         open-text $file
+    elif [ ${file: -3} == ".py" ]; then
+        open-text $file
+    elif [ ${file: -3} == ".sh" ]; then
+        open-text $file
+    elif [ ${file: -4} == ".cpp" ]; then
+        open-text $file
+    elif [ ${file: -4} == ".h" ]; then
+        open-text $file
+    elif [ ${file: -4} == ".md" ]; then
+        open-text $file
     elif [ ${file: -15} == ".chrome-session" ]; then
         open-text $file
     else
