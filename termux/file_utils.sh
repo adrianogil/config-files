@@ -58,6 +58,8 @@ function open-text-as-tmp()
     tmp_path=/sdcard/tmp/tmp_$filename
 
     cp $file $tmp_path
+    echo "$file" > "/sdcard/tmp/.tmp_$filename_info"
+    echo "$tmp_path" >> "/sdcard/tmp/.tmp_$filename_info"
 
     echo $tmp_path > $file.tmp
     text_file=$tmp_path
@@ -77,6 +79,18 @@ function txt-reload-from-tmp()
     rm $file.tmp
 }
 alias otxt-reload='txt-reload-from-tmp'
+
+function txt-reload-all()
+{
+    for f in `find /sdcard/tmp/ -name '.tmp_*info'`; 
+    do
+        original_file=$(cat f | head -1)
+        tmp_file=$(cat f | tail -1)
+
+        mv $tmp_file $original_file
+        rm $original_file.tmp
+    done
+}
 
 function open()
 {

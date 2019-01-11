@@ -4,6 +4,9 @@ alias t1='tail -1'
 
 alias cx='chmod +x'
 
+alias sf="screenfetch"
+alias sp="speedtest-cli"
+
 # @tool simple-http-server
 alias old-http-server='python2 -m SimpleHTTPServer'
 # Improved HTTP Server with upload and directory download
