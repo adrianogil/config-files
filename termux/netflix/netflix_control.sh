@@ -1,6 +1,6 @@
 
-NETFLIX_KIDS_MOVIE_IDS_FILE=termux/netflix/netflix_kids_movies_ids.txt
-NETFLIX_MOVIE_IDS_FILE=termux/netflix/netflix_movies_ids.txt
+NETFLIX_KIDS_MOVIE_IDS_FILE=$CONFIG_FILES_DIR/termux/netflix/netflix_kids_movies_ids.txt
+NETFLIX_MOVIE_IDS_FILE=$CONFIG_FILES_DIR/termux/netflix/netflix_movies_ids.txt
 
 function netflix-rnd()
 {
