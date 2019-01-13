@@ -6,7 +6,7 @@ function netflix-rnd()
 {
     # You should define a txt file with list of NETFLIX movies ids
     # NETFLIX_MOVIE_IDS_FILE
-    open-url "http://www.netflix.com/title/"$(shuf -n1 $NETFLIX_MOVIE_IDS_FILE | awk '{print $1}')    
+    open-url "http://www.netflix.com/title/"$(shuf -n1 $NETFLIX_MOVIE_IDS_FILE | awk '{print $1}')
 }
 
 function netflix-kids-rnd()
