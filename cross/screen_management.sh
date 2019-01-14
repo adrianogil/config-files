@@ -81,7 +81,7 @@ function ss()
     screen -S $screen_name
 }
 
-function sk()
+function squit()
 {
     # Screen Kill
 
