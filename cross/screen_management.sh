@@ -94,4 +94,4 @@ function sk()
 
 alias sl='screen -list'
 alias sr='screen -r'
-alias sw='screen -wipe'
+alias swipe='screen -wipe'
