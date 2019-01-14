@@ -67,7 +67,7 @@ function sname()
     echo "Current screen is called: "$STY
 }
 
-function ss
+function ss()
 {
     if [ -z "$1" ]
     then
@@ -79,6 +79,17 @@ function ss
     screen_name=$(echo $screen_name | tr '[:upper:]' '[:lower:]')
 
     screen -S $screen_name
+}
+
+function sk()
+{
+    # Screen Kill
+
+    target_session=$(screen -list | grep $1 | awk '{print $1}' | head -1)
+
+    screen -X -S ${target_session} quit
+
+    echo "session "${target_session}" was killed!"
 }
 
 alias sl='screen -list'

@@ -8,12 +8,49 @@ alias sf="screenfetch"
 alias sp="speedtest-cli"
 
 # @tool simple-http-server
-alias old-http-server='python2 -m SimpleHTTPServer'
+alias shttp-server-simple='python2 -m SimpleHTTPServer'
 # Improved HTTP Server with upload and directory download
 # Based on https://gist.github.com/UniIsland/3346170#file-simplehttpserverwithupload-py
 # Based on https://stackoverflow.com/questions/2573670/download-whole-directories-in-python-simplehttpserver
-# alias simple-http-server='python2 $CONFIG_FILES_DIR/python/simpleserver/SimpleHTTPServerWithUpload.py'
-alias simple-http-server='python2 $CONFIG_FILES_DIR/python/simpleserver/CustomHTTPServer.py'
+# Simple HTTP Server
+function shttp-server()
+{
+    if [ -z "$1" ]
+    then
+        port=8080
+    else
+        port=$1
+    fi
+    screen -S httpserver-$port -dm python2 $CONFIG_FILES_DIR/python/simpleserver/CustomHTTPServer.py $port
+}
+
+function shttp-server-running()
+{
+    screen -list | grep httpserver | awk '{print $1}'
+}
+
+function rnd-port()
+{
+    # Based on https://unix.stackexchange.com/a/447763
+    while
+        port=$(shuf -n 1 -i 8000-65535)
+        netstat -atun | grep -q "$port"
+    do
+        continue
+    done
+
+    echo "$port"
+}
+
+function url-serve()
+{
+    target_html=$1
+    port=$(rnd-port)
+
+    shttp-server $port
+    echo "Serve HTML file on port "$port
+    open-url http://localhost:$port/$target_html
+}
 
 alias ips-net='ifconfig | grep net'
 function ips()
