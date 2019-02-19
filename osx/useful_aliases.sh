@@ -15,6 +15,7 @@ function dmgs()
     else
         find . -name '*.dmg'
     fi
+}
 
 function osx-change-host-machine()
 {
