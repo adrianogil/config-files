@@ -15,4 +15,10 @@ function dmgs()
     else
         find . -name '*.dmg'
     fi
+
+function osx-change-host-machine()
+{
+    host_name=$1
+
+    sudo scutil --set HostName $host_name
 }
