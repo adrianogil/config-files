@@ -7,6 +7,8 @@ alias cx='chmod +x'
 alias sf="screenfetch"
 alias sp="speedtest-cli"
 
+alias dush="du -sh"
+
 # @tool simple-http-server
 alias shttp-server-simple='python2 -m SimpleHTTPServer'
 # Improved HTTP Server with upload and directory download
@@ -21,6 +23,12 @@ function shttp-server()
     else
         port=$1
     fi
+    screen -S httpserver-$port -dm python2 $CONFIG_FILES_DIR/python/simpleserver/CustomHTTPServer.py $port
+}
+
+function shttp-server-rnd()
+{
+    port=$(rnd-port)
     screen -S httpserver-$port -dm python2 $CONFIG_FILES_DIR/python/simpleserver/CustomHTTPServer.py $port
 }
 
