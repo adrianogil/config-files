@@ -356,4 +356,9 @@ function trees()
     tree $* | less
 }
 
+function workspace()
+{
+    cd ${WORKSPACE_DIR}
+}
+
 alias reload_mes_configs='source ~/.bashrc'
