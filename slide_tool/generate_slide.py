@@ -34,3 +34,5 @@ for s in slide_lines:
 with open(slide_name, 'w') as f:
     for s in new_slide_content:
         f.write(s + "\n")
+
+os.remove(template_file)
