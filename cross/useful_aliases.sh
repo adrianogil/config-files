@@ -362,3 +362,9 @@ function workspace()
 }
 
 alias reload_mes_configs='source ~/.bashrc'
+
+function mysk()
+{
+    target_dir=$(mydirs -l | tr ':' ' ' | awk '{print $1}' | sk)
+    mydirs -o $target_dir
+}
