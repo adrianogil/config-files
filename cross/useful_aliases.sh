@@ -1,4 +1,5 @@
 
+alias l="ls"
 alias h1='head -1'
 alias t1='tail -1'
 
@@ -9,33 +10,22 @@ alias sp="speedtest-cli"
 
 alias dush="du -sh"
 
-# @tool simple-http-server
-alias shttp-server-simple='python2 -m SimpleHTTPServer'
-# Improved HTTP Server with upload and directory download
-# Based on https://gist.github.com/UniIsland/3346170#file-simplehttpserverwithupload-py
-# Based on https://stackoverflow.com/questions/2573670/download-whole-directories-in-python-simplehttpserver
-# Simple HTTP Server
-function shttp-server()
+function smart-cp()
 {
-    if [ -z "$1" ]
-    then
-        port=8080
-    else
-        port=$1
-    fi
-    screen -S httpserver-$port -dm python2 $CONFIG_FILES_DIR/python/simpleserver/CustomHTTPServer.py $port
-}
+    source_file=$1
+    target_file=$2
 
-function shttp-server-rnd()
-{
-    port=$(rnd-port)
-    screen -S httpserver-$port -dm python2 $CONFIG_FILES_DIR/python/simpleserver/CustomHTTPServer.py $port
-}
+    echo "Source file: "$source_file
+    echo "Target file: "$target_file
 
-function shttp-server-running()
-{
-    screen -list | grep httpserver | awk '{print $1}'
+    target_directory=$(dirname "$target_file")
+
+    echo "Attempt to create directory: "$target_directory
+    mkdir -p $target_directory
+    
+    cp "$source_file" "$target_file"
 }
+alias smcp="smart-cp"
 
 function rnd-port()
 {
