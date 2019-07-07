@@ -32,3 +32,15 @@ function osx-change-host-machine()
 
     sudo scutil --set HostName $host_name
 }
+
+function osx-setup-screenshots-folder()
+{
+    if [ -z "$1" ]
+    then
+        target_screenshot_folder=$SSH_DEFAULT_PORT
+    else
+        target_screenshot_folder=$1
+    fi
+
+    defaults write com.apple.screencapture location $target_screenshot_folder && killall SystemUIServer
+}
