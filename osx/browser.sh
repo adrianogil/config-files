@@ -55,9 +55,17 @@ function open-chrome-session-droid()
 
 function browser-current-window()
 {
-    current_tab=$(chrome-cli info | head -1 | awk '{print $2}')
-    current_window=$(chrome-cli list tabs | grep $current_tab | tr ':[' ' ' | awk '{print $1}')
-    chrome-cli list tabs -w $current_window
+    total_windows=$(chrome-cli list windows | wc -l | awk '{print $1}')
+
+    if [ "$total_windows" -eq "1" ]; then
+        current_tab=$(chrome-cli info | head -1 | awk '{print $2}')
+        current_window=$(chrome-cli list tabs | grep $current_tab | tr ':[' ' ' | tr ']' ' ' | awk '{print $1}')
+        chrome-cli list tabs
+    else
+        current_tab=$(chrome-cli info | head -1 | awk '{print $2}')
+        current_window=$(chrome-cli list tabs | grep $current_tab | tr ':[' ' ' | tr ']' ' ' | awk '{print $1}')
+        chrome-cli list tabs -w $current_window
+    fi
 }
 
 function browser-current-window-save-session()
@@ -76,7 +84,7 @@ function browser-current-window-save-session()
     echo 'Saved'$session_size' open tabs from Google Chrome into file '$session_file
 }
 
-# @tool open-chrome-session Open URLs from a chrome session file
+# @tool browser-open-session open-chrome-session Open URLs from a chrome session file
 # Using https://github.com/prasmussen/chrome-cli
 function browser-open-session()
 {
@@ -93,14 +101,32 @@ function browser-open-session()
     new_window=$(chrome-cli list tabs | grep $new_tab | tr ':[' ' ' | awk '{print $1}')
 
     for u in `cat $session_file | tail -n +2`;
-    do 
+    do
         chrome-cli open $u -w $new_window;
     done
 }
 
 function browser-sessions()
 {
-    gfind . -name '*.chrome-session' -type f -printf "%-.22T+ %M %n %-8u %-8g %8s %Tx %.8TX %p\n" | sort -r | awk '{print $9}'
+    if [ -z "$1" ]
+    then
+        target_dir=.
+    else
+        target_dir=$1
+    fi
+
+    gfind ${target_dir} -name '*.chrome-session' -type f -printf "%-.22T+ %M %n %-8u %-8g %8s %Tx %.8TX %p\n" | sort -r | awk '{print $9}'
 }
 
 alias browser-open-session-sk='browser-open-session $(find . -name "*.chrome-session" | sk)'
+
+# @tool bsession-save save browser session
+function bsession-save()
+{
+    browser-current-window-save-session $(find ${MAIN_BROWSER_SESSIONS_PATH} -name "*.chrome-session" | sk | rev | cut -c16- | rev )
+}
+
+function bsession-open()
+{
+    browser-open-session $(find ${MAIN_BROWSER_SESSIONS_PATH} -name "*.chrome-session" | sk)
+}
