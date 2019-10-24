@@ -1,5 +1,8 @@
 
 alias l="ls"
+
+alias lss="less"
+
 alias h1='head -1'
 alias t1='tail -1'
 
@@ -22,7 +25,7 @@ function smart-cp()
 
     echo "Attempt to create directory: "$target_directory
     mkdir -p $target_directory
-    
+
     cp "$source_file" "$target_file"
 }
 alias smcp="smart-cp"
@@ -128,6 +131,18 @@ function cdk-all()
 
 alias p2='python2'
 alias p3='python3'
+
+function p3m()
+{
+    module_path=$1
+    target_module=$(echo ${module_path} | tr '/' '.')
+    target_module=${target_module/.py/}
+    echo "Running module "${target_module}
+    shift
+    python3 -m ${target_module} "$@"
+}
+
+alias pi='pip install'
 
 alias xa='xargs -I {}'
 
