@@ -92,6 +92,18 @@ function squit()
     echo "session "${target_session}" was killed!"
 }
 
+function open_screen()
+{
+    if [ -z "$1" ]
+    then
+        screen_name=$(sl | grep "(Detached)" | rev | cut -c12- | rev | awk '{print $1}' | sk)
+    else
+        screen_name=$1
+    fi
+
+    screen -r ${screen_name}
+}
+alias sr='open_screen'
+
 alias sl='screen -list'
-alias sr='screen -r'
 alias swipe='screen -wipe'
