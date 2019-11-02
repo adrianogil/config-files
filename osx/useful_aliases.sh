@@ -28,9 +28,12 @@ function pdfs()
 
 function osx-change-host-machine()
 {
+    # https://apple.stackexchange.com/questions/287760/set-the-hostname-computer-name-for-macos
     host_name=$1
 
     sudo scutil --set HostName $host_name
+    sudo scutil --set LocalHostName ${host_name}
+    sudo scutil --set ComputerName ${host_name}
 }
 
 function osx-setup-screenshots-folder()
