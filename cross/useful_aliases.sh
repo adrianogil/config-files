@@ -107,6 +107,16 @@ function mdd()
     cd $1
 }
 
+function mddate()
+{
+    target_directory=$(date +%Y%m%d%H%M)
+
+    echo 'Creating directory '${target_directory}
+    mkdir -p ${target_directory}
+    echo 'Entrying directory '${target_directory}
+    cd ${target_directory}
+}
+
 alias mp='mkdir -p'
 
 function cd_up() {
@@ -139,7 +149,7 @@ function p3m()
     target_module=${target_module/.py/}
     echo "Running module "${target_module}
     shift
-    python3 -m ${target_module} "$@"
+    python3 -m ${target_module} $@
 }
 
 alias pi='pip install'
@@ -373,3 +383,5 @@ function mysk()
     target_dir=$(mydirs -l | tr ':' ' ' | awk '{print $1}' | sk)
     mydirs -o $target_dir
 }
+
+alias plot-cmd="python ${CONFIG_FILES_DIR}/python/plottool/plot_command.py"
