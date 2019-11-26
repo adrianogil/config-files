@@ -21,11 +21,20 @@ function conv-m3u8-mp4()
     ffmpeg -i "${video_file}" -c copy -bsf:a aac_adtstoasc "${output_file}"
 }
 
+function conv-mkv-mp4()
+{
+    video_file=$1
+    output_file="${video_file%%.*}".mp4
+
+    ffmpeg -i "${video_file}" -codec copy "${output_file}" -strict -2
+}
+
 function conv-m4a-to-mp3()
 {
     # Based on this post: https://gist.github.com/christofluethi/646ae60d797a46a706a5
     ffmpeg $1.mp3 -i $1.m4a -codec:a libmp3lame -qscale:a 1
 }
+
 
 function conv-video-to-gif()
 {
