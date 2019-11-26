@@ -13,6 +13,13 @@ alias sp="speedtest-cli"
 
 alias dush="du -sh"
 
+function nyahcat()
+{
+    # Continous reading from file output
+    target_file=$1
+    tail -f -n +0 ${target_file}
+}
+
 function smart-cp()
 {
     source_file=$1
