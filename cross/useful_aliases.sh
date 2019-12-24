@@ -388,7 +388,7 @@ alias reload_mes_configs='source ~/.bashrc'
 function mysk()
 {
     target_dir=$(mydirs -l | tr ':' ' ' | awk '{print $1}' | sk)
-    mydirs -o $target_dir
+    mydirs -o ${target_dir}
 }
 
 alias plot-cmd="python ${CONFIG_FILES_DIR}/python/plottool/plot_command.py"
