@@ -8,6 +8,10 @@ alias open-url='open'
 
 alias ot='open -a Terminal'
 
+# sudo ln -s /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport /usr/local/bin/airport
+alias lwifi-list='airport -s'
+alias lwifi-saved-list='defaults read /Library/Preferences/SystemConfiguration/com.apple.airport.preferences |grep SSIDString'
+
 function dmgs()
 {
     if [[ $1 == "-d" ]]; then
@@ -24,6 +28,17 @@ function pdfs()
     else
         find . -name '*.pdf'
     fi
+}
+
+function du-sort-size()
+{
+    du -sh -- * | sort -h
+}
+
+# https://derflounder.wordpress.com/2018/04/07/reclaiming-drive-space-by-thinning-apple-file-system-snapshot-backups/
+function osx-force-space-cleanup()
+{
+    tmutil thinlocalsnapshots / 21474836480 4
 }
 
 function osx-change-host-machine()

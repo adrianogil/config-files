@@ -16,6 +16,11 @@ alias dush="du -sh"
 alias awk1="awk '{print $1}'"
 alias awk2="awk '{print $2}'"
 
+alias k9="sudo kill -9 "
+
+alias p2='python2'
+alias p3='python3'
+
 function nyahcat()
 {
     # Continous reading from file output
@@ -148,10 +153,6 @@ function cdk-all()
     cd $(find . -type d | sk)
 }
 
-
-alias p2='python2'
-alias p3='python3'
-
 function p3m()
 {
     module_path=$1
@@ -166,9 +167,11 @@ alias pi='pip install'
 
 alias xa='xargs -I {}'
 
-# sudo ln -s /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport /usr/local/bin/airport
-alias lwifi-list='airport -s'
-alias lwifi-saved-list='defaults read /Library/Preferences/SystemConfiguration/com.apple.airport.preferences |grep SSIDString'
+function monitor-istats()
+{
+    # gem install iStats
+    while true; do clear; istats; sleep 1; done
+}
 
 ### From https://github.com/joseluisq/awesome-bash-commands ###
 
