@@ -21,6 +21,11 @@ alias k9="sudo kill -9 "
 alias p2='python2'
 alias p3='python3'
 
+function pwok()
+{
+    workon $(lsvirtualenv -b | sk)
+}
+
 function nyahcat()
 {
     # Continous reading from file output
