@@ -12,6 +12,16 @@ alias ot='open -a Terminal'
 alias lwifi-list='airport -s'
 alias lwifi-saved-list='defaults read /Library/Preferences/SystemConfiguration/com.apple.airport.preferences |grep SSIDString'
 
+function verify-host-accessible()
+{
+    TARGET_HOST=$1
+    while ! ping -c1 ${TARGET_HOST} &>/dev/null; do
+        echo "Ping Fail - `date`";
+        sleep 60
+    done ;
+    terminal-notifier -title "Terminal" -message "${TARGET_HOST} is already accessible";
+}
+
 function dmgs()
 {
     if [[ $1 == "-d" ]]; then
