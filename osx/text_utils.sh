@@ -4,6 +4,9 @@ function sublimeb
     sublime --command 'insert_snippet {"contents" : "'$1'"}'
 }
 
+alias c="code"
+alias cw="code -n"
+
 alias s="sublime"
 alias sw="sublime -n"
 
@@ -18,6 +21,16 @@ function tg()
     touch ${new_file}
     git add ${new_file}
 }
+
+function cg()
+{
+    # Open new file into vscode and add it to git
+    new_file=$1
+
+    tg ${new_file}
+    code ${new_file}
+}
+
 
 function sg()
 {
