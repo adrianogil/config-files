@@ -5,7 +5,17 @@ CROSS_CONFIG_FILES_DIR=$CONFIG_FILES_DIR/cross/
 # General useful aliases
 source ${CROSS_CONFIG_FILES_DIR}/useful_aliases.sh
 # Fancy colors
-source ${CROSS_CONFIG_FILES_DIR}/fancy_colors.sh
+case $SHELL in
+*/zsh) 
+   # assume Zsh
+   ;;
+*/bash)
+   # assume Bash
+   source ${CROSS_CONFIG_FILES_DIR}/fancy_colors.sh
+   ;;
+*)
+   # assume something else
+esac
 # Path Tools
 source ${CROSS_CONFIG_FILES_DIR}/path_tools.sh
 # Find Tools
