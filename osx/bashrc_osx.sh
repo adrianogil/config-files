@@ -5,6 +5,7 @@
 OSX_CONFIG_FILES_DIR=$CONFIG_FILES_DIR/osx/
 
 source ${OSX_CONFIG_FILES_DIR}/text_utils.sh
+source ${OSX_CONFIG_FILES_DIR}/sublime.sh
 # General alias
 source ${OSX_CONFIG_FILES_DIR}/path_tools.sh
 source ${OSX_CONFIG_FILES_DIR}/useful_aliases.sh
