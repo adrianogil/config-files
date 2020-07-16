@@ -18,9 +18,6 @@ alias awk2="awk '{print $2}'"
 
 alias k9="sudo kill -9 "
 
-alias p2='python2'
-alias p3='python3'
-
 function pwok()
 {
     workon $(lsvirtualenv -b | sk)
@@ -157,18 +154,6 @@ function cdk-all()
 {
     cd $(find . -type d | sk)
 }
-
-function p3m()
-{
-    module_path=$1
-    target_module=$(echo ${module_path} | tr '/' '.')
-    target_module=${target_module/.py/}
-    echo "Running module "${target_module}
-    shift
-    python3 -m ${target_module} $@
-}
-
-alias pi='pip install'
 
 alias xa='xargs -I {}'
 
