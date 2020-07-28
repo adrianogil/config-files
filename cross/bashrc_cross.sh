@@ -32,3 +32,5 @@ source ${CROSS_CONFIG_FILES_DIR}/hdev.sh
 source ${CROSS_CONFIG_FILES_DIR}/pydev.sh
 # Github-related functions
 source ${CROSS_CONFIG_FILES_DIR}/github.sh
+# Docker-related functions
+source ${CROSS_CONFIG_FILES_DIR}/docker.sh
