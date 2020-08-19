@@ -34,3 +34,5 @@ source ${CROSS_CONFIG_FILES_DIR}/pydev.sh
 source ${CROSS_CONFIG_FILES_DIR}/github.sh
 # Docker-related functions
 source ${CROSS_CONFIG_FILES_DIR}/docker.sh
+# process-related functions
+source ${CROSS_CONFIG_FILES_DIR}/process_utils.sh
