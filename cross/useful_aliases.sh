@@ -141,6 +141,12 @@ function cd_up() {
 }
 alias 'cd..'='cd_up'
 
+# Navigation
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+
 # Enter a directory from sk
 # sk  = https://github.com/lotabout/skim
 function cdk()

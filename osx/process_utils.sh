@@ -16,3 +16,8 @@ function ps-pick()
     echo $target_pid | pbcopy
     echo $target_pid
 }
+
+function ps-monitor()
+{
+    top -pid $(ps-pick)
+}

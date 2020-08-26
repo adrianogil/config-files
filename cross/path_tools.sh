@@ -17,3 +17,8 @@ function abspath() {
         fi
     fi
 }
+
+function path-show() {
+    echo -e ${PATH//:/\\n}
+}
+
