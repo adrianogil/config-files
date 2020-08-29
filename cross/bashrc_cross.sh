@@ -28,8 +28,6 @@ source ${CROSS_CONFIG_FILES_DIR}/screen_management.sh
 source ${CROSS_CONFIG_FILES_DIR}/korean.sh
 # Hdev
 source ${CROSS_CONFIG_FILES_DIR}/hdev.sh
-# Python Dev
-source ${CROSS_CONFIG_FILES_DIR}/pydev.sh
 # Github-related functions
 source ${CROSS_CONFIG_FILES_DIR}/github.sh
 # Docker-related functions
