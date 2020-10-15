@@ -4,7 +4,27 @@ alias l="ls"
 alias lss="less"
 
 alias h1='head -1'
+alias h2='head -2'
+alias h3='head -3'
+alias h4='head -4'
+alias h5='head -5'
+alias h6='head -6'
+alias h7='head -7'
+alias h8='head -8'
+alias h9='head -9'
+alias h10='head -10'
+
 alias t1='tail -1'
+alias t2='tail -2'
+alias t3='tail -3'
+alias t4='tail -4'
+alias t5='tail -5'
+alias t6='tail -6'
+alias t7='tail -7'
+alias t8='tail -8'
+alias t9='tail -9'
+alias t10='tail -10'
+
 
 alias cx='chmod +x'
 
@@ -301,6 +321,14 @@ function ltypes
     fi
 
     ls -p $target_directory | grep -v / | awk -F . '{print $NF}' | sort | uniq -c | awk '{print $2,$1}'
+}
+
+# Show last modified file
+function llastmodified
+{
+    # linux version
+    # TODO: Mac version
+    find . -type f -printf '%T@ %p\n' | sort -n | tail -1 | cut -f2- -d" "
 }
 
 function lsort()
