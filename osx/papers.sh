@@ -10,5 +10,5 @@ function papers-title()
 
     target_pdf=$1
 
-    python2 ${CONFIG_FILES_DIR}/python/papers/paper_title.py $target_pdf
+    python3 ${CONFIG_FILES_DIR}/python/papers/paper_title.py $target_pdf
 }
