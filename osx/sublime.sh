@@ -17,6 +17,15 @@ function sg()
     sublime ${new_file}
 }
 
+function sgx()
+{
+    # Open new file into sublime and add it to git
+    new_file=$1
+
+    sg ${new_file}
+    chmod +x ${new_file}
+}
+
 function sublime-create-pkg-link()
 {
 	current_plugin=$PWD
