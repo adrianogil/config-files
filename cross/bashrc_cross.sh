@@ -36,3 +36,5 @@ source ${CROSS_CONFIG_FILES_DIR}/docker.sh
 source ${CROSS_CONFIG_FILES_DIR}/process_utils.sh
 # Math functions
 source ${CROSS_CONFIG_FILES_DIR}/math_tools.sh
+# Dev Tools
+source ${CROSS_CONFIG_FILES_DIR}/dev_tools.sh
