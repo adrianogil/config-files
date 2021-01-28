@@ -1,3 +1,5 @@
+alias main-code-editor="sublime"
+
 alias s="sublime"
 alias sw="sublime -n"
 
