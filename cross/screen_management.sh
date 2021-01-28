@@ -3,7 +3,13 @@
 # Using TMUX
 function tnew()
 {
-    windows_name=$1
+    if [ -z "$1" ]
+    then
+        windows_name=$(basename $PWD)
+    else
+        windows_name=$1
+    fi
+    
     tmux new -s $windows_name
 }
 alias tn="tnew"
