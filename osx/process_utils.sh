@@ -12,7 +12,7 @@ function ps-resume()
 
 function ps-pick()
 {
-    target_pid=$(ps aux | sk | awk '{print $2}')
+    target_pid=$(ps aux | ${default-fuzzy-finder} | awk '{print $2}')
     echo $target_pid | pbcopy
     echo $target_pid
 }

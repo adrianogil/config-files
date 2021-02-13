@@ -118,15 +118,15 @@ function browser-sessions()
     gfind ${target_dir} -name '*.chrome-session' -type f -printf "%-.22T+ %M %n %-8u %-8g %8s %Tx %.8TX %p\n" | sort -r | awk '{print $9}'
 }
 
-alias browser-open-session-sk='browser-open-session $(find . -name "*.chrome-session" | sk)'
+alias browser-open-session-sk='browser-open-session $(find . -name "*.chrome-session" | ${default-fuzzy-finder})'
 
 # @tool bsession-save save browser session
 function bsession-save()
 {
-    browser-current-window-save-session $(find ${MAIN_BROWSER_SESSIONS_PATH} -name "*.chrome-session" | sk | rev | cut -c16- | rev )
+    browser-current-window-save-session $(find ${MAIN_BROWSER_SESSIONS_PATH} -name "*.chrome-session" | ${default-fuzzy-finder} | rev | cut -c16- | rev )
 }
 
 function bsession-open()
 {
-    browser-open-session $(find ${MAIN_BROWSER_SESSIONS_PATH} -name "*.chrome-session" | sk)
+    browser-open-session $(find ${MAIN_BROWSER_SESSIONS_PATH} -name "*.chrome-session" | ${default-fuzzy-finder})
 }
