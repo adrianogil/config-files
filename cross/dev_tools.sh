@@ -8,3 +8,11 @@ function swagger-generate-html()
 
     cat ${target_swagger_yaml_file} |  python3 ${CONFIG_FILES_DIR}/python/swagger/swagger.py > ${target_html_file}
 }
+
+# Search and execute bash scripts
+function sha()
+{
+    target_shellscript=$(find . -name '*.sh' | default-fuzzy-finder)
+    echo 'Running '${target_shellscript}
+    $($target_shellscript)
+}
