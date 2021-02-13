@@ -40,7 +40,7 @@ alias k9="sudo kill -9 "
 
 function pwok()
 {
-    workon $(lsvirtualenv -b | ${default-fuzzy-finder})
+    workon $(lsvirtualenv -b | default-fuzzy-finder)
 }
 
 function nyahcat()
@@ -171,14 +171,14 @@ alias .....="cd ../../../.."
 # sk  = https://github.com/lotabout/skim
 function cdk()
 {
-    cd $(find . -type d -regex '\./[^.]*$' | ${default-fuzzy-finder})
+    cd $(find . -type d -regex '\./[^.]*$' | default-fuzzy-finder)
 }
 
 # Enter a directory from sk
 # sk  = https://github.com/lotabout/skim
 function cdk-all()
 {
-    cd $(find . -type d | ${default-fuzzy-finder})
+    cd $(find . -type d | default-fuzzy-finder)
 }
 
 alias xa='xargs -I {}'
@@ -361,7 +361,7 @@ function o()
     fi
 }
 
-alias opk='o $(${default-fuzzy-finder})'
+alias opk='o $(default-fuzzy-finder)'
 
 # Copy using pv (http://www.ivarch.com/programs/pv.shtml)
 # For more info take a look at: http://www.catonmat.net/blog/unix-utilities-pipe-viewer/
@@ -417,7 +417,7 @@ alias reload_mes_configs='source ~/.bashrc'
 
 function mysk()
 {
-    target_dir=$(mydirs -l | tr ':' ' ' | awk '{print $1}' | ${default-fuzzy-finder})
+    target_dir=$(mydirs -l | tr ':' ' ' | awk '{print $1}' | default-fuzzy-finder)
     mydirs -o ${target_dir}
 }
 

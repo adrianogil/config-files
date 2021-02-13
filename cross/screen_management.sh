@@ -102,7 +102,7 @@ function open_screen()
 {
     if [ -z "$1" ]
     then
-        screen_name=$(sl | grep "(Detached)" | rev | cut -c12- | rev | awk '{print $1}' | ${default-fuzzy-finder})
+        screen_name=$(sl | grep "(Detached)" | rev | cut -c12- | rev | awk '{print $1}' | default-fuzzy-finder)
     else
         screen_name=$1
     fi
