@@ -3,6 +3,17 @@ alias main-code-editor="sublime"
 alias s="sublime"
 alias sw="sublime -n"
 
+alias smw='smerge-open'
+
+function smerge-open()
+{
+    if [ -z "$1" ]
+    then
+          smerge -n .
+    else
+          smerge -n $1
+    fi
+}
 
 function sublimeb
 {
