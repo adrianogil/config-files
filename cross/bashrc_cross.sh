@@ -38,3 +38,21 @@ source ${CROSS_CONFIG_FILES_DIR}/process_utils.sh
 source ${CROSS_CONFIG_FILES_DIR}/math_tools.sh
 # Dev Tools
 source ${CROSS_CONFIG_FILES_DIR}/dev_tools.sh
+
+function zap()
+{
+   target_number=$1
+   if [ -z "$target_number" ]
+   then
+         echo "Number to send message: "
+         read target_number
+   fi
+
+   if [ -z "$target_number" ]
+   then
+         echo "Missing a number!"
+   else
+         open "https://api.whatsapp.com/send/?phone="${target_number}
+   fi
+}
+
