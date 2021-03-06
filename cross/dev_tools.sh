@@ -14,5 +14,5 @@ function sha()
 {
     target_shellscript=$(find . -name '*.sh' | default-fuzzy-finder)
     echo 'Running '${target_shellscript}
-    $($target_shellscript)
+    ${target_shellscript}
 }
