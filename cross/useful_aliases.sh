@@ -320,7 +320,9 @@ function ltypes
         target_directory=$1
     fi
 
-    ls -p $target_directory | grep -v / | awk -F . '{print $NF}' | sort | uniq -c | awk '{print $2,$1}'
+    find ${target_directory} -type f | grep -o ".[^.]\+$" | sort | uniq -c
+
+    # ls -p $target_directory | grep -v / | awk -F . '{print $NF}' | sort | uniq -c | awk '{print $2,$1}'
 }
 
 # Show last modified file
