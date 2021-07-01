@@ -44,7 +44,9 @@ function sublime-create-pkg-link()
 	current_plugin=$PWD
 	plugin_name=$(basename ${current_plugin})
 
-	target_folder="$HOME/Library/Application Support/Sublime Text 3/Packages/"${plugin_name}
+    sublime_packages_folder=$(mydirs -p sublime-packages)
+
+	target_folder="${sublime_packages_folder}"/${plugin_name}
 
 	echo "Creating Sublime plugin: "${plugin_name}" at folder "${target_folder}
 

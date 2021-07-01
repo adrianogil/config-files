@@ -56,9 +56,13 @@ _tenter()
     COMPREPLY=( $(compgen -W "${_current_windows}" -- ${cur}) )
     return 0
 }
-complete -F _tenter tenter
-complete -F _tenter te
-complete -F _tenter t
+if [ -x "$BASH" ] && shopt -q >/dev/null 2>&1; then                # bash
+    complete -F _tenter tenter
+    complete -F _tenter te
+    complete -F _tenter t
+fi
+
+
 
 alias treload-conf="tmux source-file ~/.tmux.conf"
 

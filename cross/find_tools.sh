@@ -18,7 +18,7 @@ function f
     then
         echo 'usage: f <search_string> <path>'
     else
-        if [ "$1" == "-v" ]; then
+        if [[ "$1" == "-v" ]]; then
             if [ -z "$3" ]
             then
                 target_directory='.'
@@ -66,7 +66,7 @@ function fcount
     then
         echo 'usage: f <search_string> <path>'
     else
-        if [ "$1" == "-v" ]; then
+        if [[ "$1" == "-v" ]]; then
             if [ -z "$3" ]
             then
                 target_directory='.'

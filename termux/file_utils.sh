@@ -96,25 +96,25 @@ function open()
 {
     file=$1
 
-    if [ ${file: -4} == ".pdf" ]; then
+    if [[ ${file: -4} == ".pdf" ]]; then
         open-pdf $file
-    elif [ ${file: -4} == ".stl" ]; then
+    elif [[ ${file: -4} == ".stl" ]]; then
         open-model $file
-    elif [ ${file: -4} == ".txt" ]; then
+    elif [[ ${file: -4} == ".txt" ]]; then
         open-text $file
-    elif [ ${file: -5} == ".note" ]; then
+    elif [[ ${file: -5} == ".note" ]]; then
         open-text $file
-    elif [ ${file: -3} == ".py" ]; then
+    elif [[ ${file: -3} == ".py" ]]; then
         open-text $file
-    elif [ ${file: -3} == ".sh" ]; then
+    elif [[ ${file: -3} == ".sh" ]]; then
         open-text $file
-    elif [ ${file: -4} == ".cpp" ]; then
+    elif [[ ${file: -4} == ".cpp" ]]; then
         open-text $file
-    elif [ ${file: -4} == ".h" ]; then
+    elif [[ ${file: -4} == ".h" ]]; then
         open-text $file
-    elif [ ${file: -4} == ".md" ]; then
+    elif [[ ${file: -4} == ".md" ]]; then
         open-text $file
-    elif [ ${file: -15} == ".chrome-session" ]; then
+    elif [[ ${file: -15} == ".chrome-session" ]]; then
         open-text $file
     else
         open-file $file

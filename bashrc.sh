@@ -1,5 +1,5 @@
 
-if [ "$(uname)" == "Darwin" ]; then
+if [[ "$(uname)" == "Darwin" ]]; then
     # OSX config
     source ${CONFIG_FILES_DIR}/osx/bashrc_osx.sh
 elif [[ $0 == *termux* ]]; then
