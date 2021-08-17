@@ -424,3 +424,10 @@ function mysk()
 }
 
 alias plot-cmd="python ${CONFIG_FILES_DIR}/python/plottool/plot_command.py"
+
+function symlink-create()
+{
+    target=$1
+    symlink_target=$2
+    ln -sf ${target} "${symlink_target}"
+}
