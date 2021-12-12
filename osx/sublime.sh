@@ -1,3 +1,8 @@
+if ! command -v sublime &> /dev/null
+then
+    alias sublime=subl
+fi
+
 alias main-code-editor="sublime"
 
 alias s="sublime"
