@@ -21,8 +21,3 @@ function cg()
     tg ${new_file}
     code ${new_file}
 }
-
-function rider()
-{
-    open -na "JetBrains Rider.app" --args $PWD
-}
