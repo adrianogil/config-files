@@ -62,8 +62,6 @@ if [ -x "$BASH" ] && shopt -q >/dev/null 2>&1; then                # bash
     complete -F _tenter t
 fi
 
-
-
 alias treload-conf="tmux source-file ~/.tmux.conf"
 
 # TODO

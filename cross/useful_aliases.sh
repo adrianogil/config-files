@@ -1,7 +1,6 @@
 
 alias pick-copy='default-fuzzy-finder | copy-clipboard-function'
 
-
 alias l="ls"
 
 alias lss="less"
