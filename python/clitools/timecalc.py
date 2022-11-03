@@ -35,6 +35,11 @@ def calculate_subtraction(expression):
 
 
 def calculate_time_expression(expression):
+	if "operand" in expression["operand_a"]:
+		expression["operand_a"] = calculate_time_expression(expression["operand_a"])
+	if "operand" in expression["operand_b"]:
+		expression["operand_b"]  =calculate_time_expression(expression["operand_b"])
+
 	if expression["operand"] == "+":
 		return calculate_sum(expression)
 	if expression["operand"] == "-":
@@ -58,9 +63,12 @@ def  get_resulting_time_expression(time_expression):
 			current_number = ""
 			if current_expression:
 				current_expression["operand_b"] = current_time
-
+		elif "hours" in current_time:
+			current_time["minutes"] = 0
 
 		if is_operand(s):
+			if current_expression:
+				current_time = current_expression
 			current_expression = {}
 			current_expression["operand"] = s
 			current_expression['operand_a'] = current_time
@@ -70,7 +78,7 @@ def  get_resulting_time_expression(time_expression):
 		current_number = ""
 		if current_expression:
 			current_expression["operand_b"] = current_time
-	
+
 	# Calculate expression
 	result = calculate_time_expression(current_expression)
 
