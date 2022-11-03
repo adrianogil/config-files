@@ -78,6 +78,10 @@ def  get_resulting_time_expression(time_expression):
 		current_number = ""
 		if current_expression:
 			current_expression["operand_b"] = current_time
+	elif "hours" in current_time:
+		current_time["minutes"] = 0
+		if current_expression:
+			current_expression["operand_b"] = current_time
 
 	# Calculate expression
 	result = calculate_time_expression(current_expression)
