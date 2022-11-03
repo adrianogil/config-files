@@ -19,3 +19,9 @@ function config-osx-zsh()
 	brew install --cask font-hack-nerd-font
 	brew install --cask font-hack-nerd-font
 }
+
+function config-osx-install-tessaract()
+{
+	brew install tesseract
+}
+
