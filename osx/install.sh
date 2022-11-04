@@ -25,3 +25,9 @@ function config-osx-install-tessaract()
 	brew install tesseract
 }
 
+
+function config-osx-install-coreutils()
+{
+	# gshuf
+	brew install coreutils
+}
