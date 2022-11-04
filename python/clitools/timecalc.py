@@ -52,6 +52,13 @@ def  get_resulting_time_expression(time_expression):
 	current_number = ''
 	current_time = {}
 	current_expression = None
+
+	new_time_expression = ""
+	for s in time_expression:
+		if is_number(s) or is_operand(s) or s == 'h':
+			new_time_expression += s
+	time_expression = new_time_expression
+
 	for s in time_expression:
 		if is_number(s):
 			current_number += s
