@@ -9,7 +9,17 @@ function config-osx-install-json()
 
 function config-osx-install-tools()
 {
-	config-osx-install-json()	
+	config-osx-install-json
+
+	# Git
+	brew install git-delta
+	brew install grv
+
+	# Basic CMD Tools
+	# to use strftime with awk
+	brew install gawk
+	# gshuf
+	brew install coreutils
 }
 
 
@@ -28,6 +38,25 @@ function config-osx-install-tessaract()
 
 function config-osx-install-coreutils()
 {
-	# gshuf
-	brew install coreutils
+	
+}
+
+
+function config-osx-install-resource-managers()
+{
+	brew install btop
+	brew install bmon
+	
+	# btm
+	brew install bottom
+}
+
+function config-osx-install-docker-tools()
+{
+	npm install -g dockly
+}
+
+function config-osx-install-network-tools()
+{
+	brew install gping
 }

@@ -15,3 +15,5 @@ source ${OSX_CONFIG_FILES_DIR}/browser.sh
 source ${OSX_CONFIG_FILES_DIR}/papers.sh
 # Procecss-related functions
 source ${OSX_CONFIG_FILES_DIR}/process_utils.sh
+# Function to ease install operations
+source ${OSX_CONFIG_FILES_DIR}/install.sh
