@@ -430,8 +430,6 @@ function mysk()
     mydirs -o ${target_dir}
 }
 
-alias plot-cmd="python ${CONFIG_FILES_DIR}/python/plottool/plot_command.py"
-
 function symlink-create()
 {
     target=$1
