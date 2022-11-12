@@ -176,6 +176,11 @@ function cdk()
     cd $(find . -type d -regex '\./[^.]*$' | default-fuzzy-finder)
 }
 
+function cd-fz()
+{
+    cd $(dirname $(fzf))
+}
+
 # Enter a directory from sk
 # sk  = https://github.com/lotabout/skim
 function cdk-all()
