@@ -38,7 +38,6 @@ alias dush="du -sh"
 alias awk1="awk '{print $1}'"
 alias awk2="awk '{print $2}'"
 
-alias k9="sudo kill -9 "
 
 function pwok()
 {
