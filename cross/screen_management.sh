@@ -46,6 +46,12 @@ function t()
     fi
 }
 
+function tfz()
+{
+    target_screen=$(tlist | default-fuzzy-finder | sed 's/:/ /g' | awk '{print $1}')
+    t ${target_screen}
+}
+
 _tenter()
 {
     local cur prev opts
