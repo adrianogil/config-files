@@ -12,3 +12,12 @@ source ${CONFIG_FILES_DIR}/cross/bashrc_cross.sh
 
 # Slide tools
 source ${CONFIG_FILES_DIR}/slide_tool/slide_tools.sh
+
+# @tool gt-fz: Git Tools
+function config-fz()
+{
+    configaction=$(find ${CONFIG_FILES_DIR}/*/ -name "*.sh" |  xargs -I {} cat {} | grep '# config-tools ' | cut -c16- | sk | tr ":" " " | awk '{print $1}')
+
+    eval ${configaction}
+}
+alias cf-fz="config-fz"

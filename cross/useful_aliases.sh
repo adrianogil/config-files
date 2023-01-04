@@ -331,12 +331,10 @@ function ltypes
     # ls -p $target_directory | grep -v / | awk -F . '{print $NF}' | sort | uniq -c | awk '{print $2,$1}'
 }
 
-# Show last modified file
+# config-tools llastmodified: Show last modified file
 function llastmodified
 {
-    # linux version
-    # TODO: Mac version
-    find . -type f -printf '%T@ %p\n' | sort -n | tail -1 | cut -f2- -d" "
+    find . -type f -print0 | xargs -0 ls -tl
 }
 
 function lsort()
