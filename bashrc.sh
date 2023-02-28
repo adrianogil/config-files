@@ -2,6 +2,9 @@
 if [[ "$(uname)" == "Darwin" ]]; then
     # OSX config
     source ${CONFIG_FILES_DIR}/osx/bashrc_osx.sh
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+    # Linux config
+    source ${CONFIG_FILES_DIR}/linux/bashrc_linux.sh
 elif [[ $0 == *termux* ]]; then
     # Termux config
     source ${CONFIG_FILES_DIR}/termux/bashrc_termux.sh
