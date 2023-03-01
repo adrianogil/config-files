@@ -1,5 +1,10 @@
+# Linux - text utils
+
 alias c="code"
 alias cw="code -n"
+
+alias copy-text-to-clipboard="xclip -selection clipboard"
+alias paste-text-from-clipboard="xclip -selection clipboard -o"
 
 function tg()
 {

@@ -1,5 +1,10 @@
+# OSX - text utils
+
 alias c="code"
 alias cw="code -n"
+
+alias copy-text-to-clipboard="pbcopy"
+alias paste-text-from-clipboard="pbpaste"
 
 function tg()
 {
