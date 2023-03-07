@@ -12,7 +12,7 @@ def get_modification_date(file):
 	if file_name.startswith('Screen Shot '):
 		modification_date = file_name[12:19].replace('-', '.')
 	elif file_name.startswith('Screenshot from '):
-		modification_date = file_name[17:24].replace('-', '.')
+		modification_date = file_name[16:23].replace('-', '.')
 	else:
 		modification_time = os.path.getmtime(file)
 		# Converting the time in seconds to a timestamp
