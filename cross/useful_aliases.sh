@@ -434,4 +434,7 @@ function symlink-create()
     ln -sf ${target} "${symlink_target}"
 }
 
-alias files-organize="python3 ${CONFIG_FILES_DIR}/python/clitools/files_organizer.py"
+function files-organize()
+{
+    python3 ${CONFIG_FILES_DIR}/python/clitools/files_organizer.py
+}

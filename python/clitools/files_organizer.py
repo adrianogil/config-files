@@ -11,6 +11,8 @@ def get_modification_date(file):
 
 	if file_name.startswith('Screen Shot '):
 		modification_date = file_name[12:19].replace('-', '.')
+	elif file_name.startswith('Screenshot from '):
+		modification_date = file_name[17:24].replace('-', '.')
 	else:
 		modification_time = os.path.getmtime(file)
 		# Converting the time in seconds to a timestamp
@@ -42,6 +44,6 @@ def organize_files(target_dir):
 if __name__ == '__main__':
 	import sys
 
-	target_dir = sys.argv[1]
+	target_dir = sys.argv[1] if len(sys.argv) > 1 else os.getcwd()
 
 	organize_files(target_dir)
