@@ -38,6 +38,8 @@ source ${CROSS_CONFIG_FILES_DIR}/process_utils.sh
 source ${CROSS_CONFIG_FILES_DIR}/math_tools.sh
 # Dev Tools
 source ${CROSS_CONFIG_FILES_DIR}/dev_tools.sh
+# Basic CMDs
+source ${CROSS_CONFIG_FILES_DIR}/basic_cmds.sh
 
 function zap()
 {
