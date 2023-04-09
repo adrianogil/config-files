@@ -23,3 +23,9 @@ function ps-monitor()
 }
 
 alias k9="sudo kill -9 "
+
+function ps-from-port()
+{
+	target_port=$1
+	lsof -i :${target_port}
+}
