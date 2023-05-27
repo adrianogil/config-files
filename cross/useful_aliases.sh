@@ -172,7 +172,7 @@ alias .....="cd ../../../.."
 # sk  = https://github.com/lotabout/skim
 function cdk()
 {
-    cd $(find . -type d -regex '\./[^.]*$' | default-fuzzy-finder)
+    cd "$(find . -type d -regex '\./[^.]*$' | default-fuzzy-finder)"
 }
 
 function cd-fz()
