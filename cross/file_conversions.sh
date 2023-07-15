@@ -1,5 +1,5 @@
 
-function conv-webp-jpg()
+function conv-webp-img()
 {
     webp_file=$1
 
@@ -10,7 +10,7 @@ function conv-webp-jpg()
         target_output=$1
     fi
 
-    ffmpeg -i $webp_file $target_output
+    dwebp $webp_file -o $target_output
 }
 
 function conv-m3u8-mp4()
