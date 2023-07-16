@@ -16,6 +16,7 @@ alias ot='open -a Terminal'
 alias lwifi-list='airport -s'
 alias lwifi-saved-list='defaults read /Library/Preferences/SystemConfiguration/com.apple.airport.preferences |grep SSIDString'
 
+
 function verify-host-accessible()
 {
     TARGET_HOST=$1
