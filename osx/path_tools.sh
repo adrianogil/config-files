@@ -1,4 +1,4 @@
 function abspathcp()
 {
-    abspath $1 | pbcopy
+    abspath $1 | copy-text-to-clipboard
 }

@@ -105,7 +105,7 @@ function pwdcp()
     if [[ $0 == *termux* ]]; then
         pwd | termux-clipboard-set
     else
-        pwd | pbcopy
+        pwd | copy-text-to-clipboard
     fi
 }
 
