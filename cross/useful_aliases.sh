@@ -1,4 +1,6 @@
 
+alias reload_mes_configs='source ~/.bashrc'
+
 alias pick-copy='default-fuzzy-finder | copy-clipboard-function'
 
 alias l="ls"
@@ -81,60 +83,8 @@ function rnd-port()
     echo "$port"
 }
 
-function url-serve()
-{
-    target_html=$1
-    port=$(rnd-port)
-
-    shttp-server $port
-    echo "Serve HTML file on port "$port
-    open-url http://localhost:$port/$target_html
-}
-
-alias ips-net='ifconfig | grep net'
-function ips()
-{
-    ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $2 }' | cut -f2 -d: | head -n1
-}
-
-function ips-external()
-{
-    curl -4 ifconfig.me
-}
-
-
 # Generate a random number from 0 to 999999
 alias rndnumber='echo $(( ( RANDOM % 1000 * 1000 + RANDOM % 1000) ))'
-
-function pwdcp()
-{
-    if [[ $0 == *termux* ]]; then
-        pwd | termux-clipboard-set
-    else
-        pwd | copy-text-to-clipboard
-    fi
-}
-
-function weather()
-{
-    finger $(echo $1 | tr '[:upper:]' '[:lower:]')@graph.no
-}
-
-SSH_DEFAULT_PORT=7375
-
-alias ssh2moi='ssh -p $SSH_DEFAULT_PORT'
-
-function serverssh()
-{
-    if [ -z "$1" ]
-    then
-        ssh_port=$SSH_DEFAULT_PORT
-    else
-        ssh_port=$1
-    fi
-    echo "Starting sshd server using port "$ssh_port" on IP: "$(ips)
-    sshd -p $ssh_port
-}
 
 # Directory creation
 function md()
@@ -423,14 +373,6 @@ function trees()
 function workspace()
 {
     cd ${WORKSPACE_DIR}
-}
-
-alias reload_mes_configs='source ~/.bashrc'
-
-function mysk()
-{
-    target_dir=$(mydirs -l | tr ':' ' ' | awk '{print $1}' | default-fuzzy-finder)
-    mydirs -o ${target_dir}
 }
 
 function symlink-create()

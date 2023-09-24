@@ -22,3 +22,11 @@ function path-show() {
     echo -e ${PATH//:/\\n}
 }
 
+function pwdcp()
+{
+    if [[ $0 == *termux* ]]; then
+        pwd | termux-clipboard-set
+    else
+        pwd | copy-text-to-clipboard
+    fi
+}
