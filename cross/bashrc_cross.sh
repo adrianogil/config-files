@@ -42,6 +42,8 @@ source ${CROSS_CONFIG_FILES_DIR}/dev_tools.sh
 source ${CROSS_CONFIG_FILES_DIR}/basic_cmds.sh
 # Network-related functions
 source ${CROSS_CONFIG_FILES_DIR}/network_tools.sh
+# Directory-related functions
+source ${CROSS_CONFIG_FILES_DIR}/dir_tools.sh
 
 function zap()
 {

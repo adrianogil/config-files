@@ -86,63 +86,6 @@ function rnd-port()
 # Generate a random number from 0 to 999999
 alias rndnumber='echo $(( ( RANDOM % 1000 * 1000 + RANDOM % 1000) ))'
 
-# Directory creation
-function md()
-{
-    echo 'Creating directory '$1
-    mkdir -p $1
-}
-
-function mdd()
-{
-    echo 'Creating directory '$1
-    mkdir -p $1
-    echo 'Entrying directory '$1
-    cd $1
-}
-
-function mddate()
-{
-    target_directory=$(date +%Y%m%d%H%M)
-
-    echo 'Creating directory '${target_directory}
-    mkdir -p ${target_directory}
-    echo 'Entrying directory '${target_directory}
-    cd ${target_directory}
-}
-
-alias mp='mkdir -p'
-
-function cd_up() {
-  cd $(printf "%0.s../" $(seq 1 $1 ));
-}
-alias 'cd..'='cd_up'
-
-# Navigation
-alias ..="cd .."
-alias ...="cd ../.."
-alias ....="cd ../../.."
-alias .....="cd ../../../.."
-
-# Enter a directory from sk
-# sk  = https://github.com/lotabout/skim
-function cdk()
-{
-    cd "$(find . -type d -regex '\./[^.]*$' | default-fuzzy-finder)"
-}
-
-function cd-fz()
-{
-    cd $(dirname $(fzf))
-}
-
-# Enter a directory from sk
-# sk  = https://github.com/lotabout/skim
-function cdk-all()
-{
-    cd $(find . -type d | default-fuzzy-finder)
-}
-
 alias xa='xargs -I {}'
 
 function monitor-istats()
@@ -368,11 +311,6 @@ alias vc="$HOME/.vocab"
 function trees()
 {
     tree $* | less
-}
-
-function workspace()
-{
-    cd ${WORKSPACE_DIR}
 }
 
 function symlink-create()
