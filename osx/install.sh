@@ -22,7 +22,6 @@ function config-osx-install-tools()
 	brew install coreutils
 }
 
-
 function config-osx-zsh()
 {
 
@@ -34,13 +33,6 @@ function config-osx-install-tessaract()
 {
 	brew install tesseract
 }
-
-
-function config-osx-install-coreutils()
-{
-	
-}
-
 
 function config-osx-install-resource-managers()
 {

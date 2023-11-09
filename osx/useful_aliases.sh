@@ -45,6 +45,7 @@ function pdfs()
     fi
 }
 
+# config-tools du-sort-size: Sort files by size
 function du-sort-size()
 {
     du -sh -- * | sort -h
