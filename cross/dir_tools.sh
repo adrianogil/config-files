@@ -52,3 +52,9 @@ function cd-fz()
 {
     cd $(dirname $(fzf))
 }
+
+# config-tools cdback: Fuzzy-search and enter a directory from cd stack
+function cdback()
+{
+    cd $(dirs -lv | default-fuzzy-finder | awk '{print $2}')
+}
