@@ -9,3 +9,9 @@ function cf-cp-fz()
 	echo "Copied "${target_file}" as "${destination_file}
 }
 alias cp-fz="cf-cp-fz"
+
+# config-tools myvars: List all variables names and their current values
+function myvars()
+{
+	printenv | less
+}
