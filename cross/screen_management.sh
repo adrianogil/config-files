@@ -14,6 +14,15 @@ function tnew()
 }
 alias tn="tnew"
 
+function tnew-basic-sessions()
+{
+    # Create sessions I usually start
+
+    tmux new-session -d -s "home" -c $HOME/
+    tmux new-session -d -s "notes" -c $HOME/Notes/
+    tmux new-session -d -s "gdev" -c $HOME/workspace/
+}
+
 function tlist()
 {
     tmux ls
