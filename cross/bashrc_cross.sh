@@ -44,6 +44,8 @@ source ${CROSS_CONFIG_FILES_DIR}/basic_cmds.sh
 source ${CROSS_CONFIG_FILES_DIR}/network_tools.sh
 # Directory-related functions
 source ${CROSS_CONFIG_FILES_DIR}/dir_tools.sh
+# Mp3-related functions
+source ${CROSS_CONFIG_FILES_DIR}/mp3_tools.sh
 
 function zap()
 {
