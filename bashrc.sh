@@ -16,11 +16,13 @@ source ${CONFIG_FILES_DIR}/cross/bashrc_cross.sh
 # Slide tools
 source ${CONFIG_FILES_DIR}/slide_tool/slide_tools.sh
 
-# @tool gt-fz: Git Tools
+# @tool config-fz: Config Tools
 function config-fz()
 {
-    configaction=$(find ${CONFIG_FILES_DIR}/*/ -name "*.sh" |  xargs -I {} cat {} | grep '# config-tools ' | cut -c16- | default-fuzzy-finder | tr ":" " " | awk '{print $1}')
+    # Run a ConfigFiles command using default-fuzzy-finder
+    config_action=$(find ${CONFIG_FILES_DIR}/*/ -name "*.sh" |  xargs -I {} cat {} | grep '# config-tools ' | cut -c16- | default-fuzzy-finder | tr ":" " " | awk '{print $1}')
+    echo "Running "${config_action}
 
-    eval ${configaction}
+    eval ${config_action}
 }
 alias cf-fz="config-fz"
