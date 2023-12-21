@@ -41,16 +41,10 @@ alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
 
-# Enter a directory from sk
-# sk  = https://github.com/lotabout/skim
+# config-tools cdk: Enter a directory from using default-fuzzy-finder
 function cdk()
 {
     cd "$(find . -type d -regex '\./[^.]*$' | default-fuzzy-finder)"
-}
-
-function cd-fz()
-{
-    cd $(dirname $(fzf))
 }
 
 # config-tools cdback: Fuzzy-search and enter a directory from cd stack
