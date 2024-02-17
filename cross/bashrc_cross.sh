@@ -6,7 +6,7 @@ CROSS_CONFIG_FILES_DIR=$CONFIG_FILES_DIR/cross/
 source ${CROSS_CONFIG_FILES_DIR}/useful_aliases.sh
 # Fancy colors
 case $SHELL in
-*/zsh) 
+*/zsh)
    # assume Zsh
    ;;
 */bash)
@@ -46,6 +46,8 @@ source ${CROSS_CONFIG_FILES_DIR}/network_tools.sh
 source ${CROSS_CONFIG_FILES_DIR}/dir_tools.sh
 # Mp3-related functions
 source ${CROSS_CONFIG_FILES_DIR}/mp3_tools.sh
+# File-related functions
+source ${CROSS_CONFIG_FILES_DIR}/file_tools.sh
 
 function zap()
 {
