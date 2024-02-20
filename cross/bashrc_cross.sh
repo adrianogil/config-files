@@ -48,6 +48,8 @@ source ${CROSS_CONFIG_FILES_DIR}/dir_tools.sh
 source ${CROSS_CONFIG_FILES_DIR}/mp3_tools.sh
 # File-related functions
 source ${CROSS_CONFIG_FILES_DIR}/file_tools.sh
+# Video-related functions
+source ${CROSS_CONFIG_FILES_DIR}/video_tools.sh
 
 function zap()
 {
