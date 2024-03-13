@@ -63,7 +63,26 @@ alias tl="tlist"
 function tenter()
 {
     windows_name=$1
-    tmux attach -t $windows_name
+
+    # determine the user's current position relative tmux:
+    # serverless - there is no running tmux server
+    # attached   - the user is currently attached to the running tmux server
+    # detached   - the user is currently not attached to the running tmux server
+    T_RUNTYPE="serverless"
+    if [ "$TMUX_RUNNING" -eq 0 ]; then
+        if [ "$TMUX" ]; then # inside tmux
+            T_RUNTYPE="attached"
+        else # outside tmux
+            T_RUNTYPE="detached"
+        fi
+    fi
+
+    # if attached, create a new session and then switch to it
+    if [ "$T_RUNTYPE" = "attached" ]; then
+        tmux switch-client -t $windows_name
+    else
+        tmux attach -t $windows_name
+    fi
 }
 alias te="tenter"
 
