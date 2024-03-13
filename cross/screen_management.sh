@@ -9,8 +9,39 @@ function tnew()
     else
         windows_name=$1
     fi
-    
-    tmux new -s $windows_name
+
+    # determine the user's current position relative tmux:
+    # serverless - there is no running tmux server
+    # attached   - the user is currently attached to the running tmux server
+    # detached   - the user is currently not attached to the running tmux server
+    T_RUNTYPE="serverless"
+    if [ "$TMUX_RUNNING" -eq 0 ]; then
+        if [ "$TMUX" ]; then # inside tmux
+            T_RUNTYPE="attached"
+        else # outside tmux
+            T_RUNTYPE="detached"
+        fi
+    fi
+
+    if [ -z "$2" ]
+    then
+        # if attached, create a new session and then switch to it
+        if [ "$T_RUNTYPE" = "attached" ]; then
+            tmux new -d -s $windows_name
+            tmux switch-client -t $windows_name
+        else
+            tmux new -s $windows_name
+        fi
+    else
+        target_directory=$2
+        # if attached, create a new session and then switch to it
+        if [ "$T_RUNTYPE" = "attached" ]; then
+            tmux new -d -s $windows_name -c $target_directory
+            tmux switch-client -t $windows_name
+        else
+            tmux new -s $windows_name -c $target_directory
+        fi
+    fi
 }
 alias tn="tnew"
 
