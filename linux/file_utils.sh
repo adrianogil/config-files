@@ -3,6 +3,6 @@ alias open="xdg-open"
 
 function o()
 {
-    file=$1
-    open $1
+    target_file=$1
+    open $target_file
 }

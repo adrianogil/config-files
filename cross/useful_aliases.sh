@@ -238,17 +238,6 @@ function lsort()
     gfind "$target_directory" -name "$target_name" -type f -printf "%-.22T+ %M %n %-8u %-8g %8s %Tx %.8TX %p\n" | sort -r | awk '{print $1"\t"$9}'
 }
 
-function o()
-{
-    file=$1
-
-    if [[ $0 == *termux* ]]; then
-        droid-open $1
-    else
-        open $1
-    fi
-}
-
 alias opk='o $(default-fuzzy-finder)'
 
 # Copy using pv (http://www.ivarch.com/programs/pv.shtml)
