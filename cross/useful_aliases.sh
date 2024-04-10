@@ -1,6 +1,8 @@
 
 alias reload_mes_configs='source ~/.bashrc'
 
+alias default-fuzzy-finder='fzf'
+
 alias pick-copy='default-fuzzy-finder | copy-clipboard-function'
 
 alias l="ls"

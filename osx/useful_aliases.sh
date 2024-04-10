@@ -2,7 +2,7 @@
 
 # https://github.com/danyshaanan/osx-wifi-cli
 
-alias default-fuzzy-finder='sk'
+# alias default-fuzzy-finder='sk'
 alias copy-clipboard-function='pbcopy'
 
 alias wifi='osx-wifi-cli'
