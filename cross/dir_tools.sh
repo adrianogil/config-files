@@ -18,6 +18,7 @@ function mdd()
     cd $1
 }
 
+# config-tools mddate: Create a directory with current date
 function mddate()
 {
     target_directory=$(date +%Y%m%d%H%M)
@@ -28,8 +29,7 @@ function mddate()
     cd ${target_directory}
 }
 
-alias mp='mkdir -p'
-
+# config-tools cd_up: Go up n directories
 function cd_up() {
   cd $(printf "%0.s../" $(seq 1 $1 ));
 }
@@ -45,6 +45,22 @@ alias .....="cd ../../../.."
 function cdk()
 {
     cd "$(find . -type d -regex '\./[^.]*$' | default-fuzzy-finder)"
+}
+
+function _list_parents() {
+    local path="$PWD"
+    while [ "$path" != "/" ] && [ -n "$path" ]; do
+        echo "$path"
+        path="${path%/*}"
+    done
+    echo "/"
+}
+
+# config-tools cdp: Fuzzy-search and enter a parent directory
+function cdp() {
+    local parents
+    parents=$(_list_parents | default-fuzzy-finder)
+    cd "$parents"
 }
 
 # config-tools cdback: Fuzzy-search and enter a directory from cd stack
