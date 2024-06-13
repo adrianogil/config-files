@@ -10,6 +10,9 @@ function tnew()
         windows_name=$1
     fi
 
+    # Initialize TMUX_RUNNING to 0 if not set
+    TMUX_RUNNING=${TMUX_RUNNING:-0}
+
     # determine the user's current position relative tmux:
     # serverless - there is no running tmux server
     # attached   - the user is currently attached to the running tmux server
@@ -64,7 +67,10 @@ function tenter()
 {
     windows_name=$1
 
-    # determine the user's current position relative tmux:
+    # Initialize TMUX_RUNNING to 0 if not set
+    TMUX_RUNNING=${TMUX_RUNNING:-0}
+
+    # determine the user's current position relative to tmux:
     # serverless - there is no running tmux server
     # attached   - the user is currently attached to the running tmux server
     # detached   - the user is currently not attached to the running tmux server
