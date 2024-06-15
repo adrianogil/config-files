@@ -16,6 +16,9 @@ source ${CONFIG_FILES_DIR}/cross/bashrc_cross.sh
 # Slide tools
 source ${CONFIG_FILES_DIR}/slide_tool/slide_tools.sh
 
+# Python tools
+source ${CONFIG_FILES_DIR}/python/python_tools.sh
+
 # @tool config-fz: Config Tools
 function config-fz()
 {
