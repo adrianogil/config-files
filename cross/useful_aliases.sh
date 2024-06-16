@@ -262,6 +262,11 @@ function rnd-line()
     head -$((${RANDOM} % `wc -l < $file` + 1)) $file | tail -1
 }
 
+function rnd-time-quote()
+{
+    o "https://literature-clock.jenevoldsen.com/"
+}
+
 
 # https://www.omgubuntu.co.uk/2016/08/learn-new-word-terminal
 alias vc="$HOME/.vocab"
