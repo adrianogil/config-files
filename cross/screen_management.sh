@@ -135,6 +135,13 @@ fi
 
 alias treload-conf="tmux source-file ~/.tmux.conf"
 
+function troot(){
+    # Get the current session name
+    session_name=$(tmux display-message -p '#S')
+    session_root_path=$(mydirs -p ${session_name})
+    cd ${session_root_path}
+}
+
 # TODO
 # Study code from https://gist.githubusercontent.com/ttscoff/a37427a8c331f072904d/raw/968192d7d0aabcde280155d0872dfa8cd8270619/tmux.bash
 
