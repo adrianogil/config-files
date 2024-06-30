@@ -29,6 +29,26 @@ function mddate()
     cd ${target_directory}
 }
 
+function mdweek()
+{
+    target_directory=$(date +%Y/%m/%Y.%mW%W)
+
+    echo 'Creating directory '${target_directory}
+    mkdir -p ${target_directory}
+    echo 'Entrying directory '${target_directory}
+    cd ${target_directory}
+
+}
+
+function cdweek()
+{
+    target_directory=$(date +%Y/%m/%Y.%mW%W)
+
+    echo 'Entrying directory '${target_directory}
+    cd ${target_directory}
+
+}
+
 # config-tools cd_up: Go up n directories
 function cd_up() {
   cd $(printf "%0.s../" $(seq 1 $1 ));
