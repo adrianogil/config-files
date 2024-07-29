@@ -100,7 +100,7 @@ function t()
 
     if [ -z "$1" ]
     then
-        tlist
+        tfz
     elif [[ $_current_screen_list == *"$1"* ]];
     then
         echo "Let's open existing screen"
