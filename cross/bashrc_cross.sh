@@ -16,6 +16,8 @@ case $SHELL in
 *)
    # assume something else
 esac
+# Backup Tools
+source ${CROSS_CONFIG_FILES_DIR}/backup_tools.sh
 # Path Tools
 source ${CROSS_CONFIG_FILES_DIR}/path_tools.sh
 # Find Tools
