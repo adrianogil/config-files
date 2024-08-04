@@ -275,3 +275,8 @@ function trees()
 {
     tree $* | less
 }
+
+function tree-du()
+{
+    tree --du -shaC
+}
