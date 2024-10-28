@@ -98,16 +98,16 @@ function t()
 {
     _current_screen_list=$(tlist | sed 's/:/ /g' | awk '{print $1}')
 
-    if [ -z "$1" ]
-    then
+    if [ -z "$_current_screen_list" ]; then
+        echo "No screens available. Usage: t <new-screen-name> to create a new screen."
+    elif [ -z "$1" ]; then
         tfz
-    elif [[ $_current_screen_list == *"$1"* ]];
-    then
+    elif [[ $_current_screen_list == *"$1"* ]]; then
         echo "Let's open existing screen"
-        tenter $1
+        tenter "$1"
     else
         echo "Let's create a new screen"
-        tnew $1
+        tnew "$1"
     fi
 }
 
