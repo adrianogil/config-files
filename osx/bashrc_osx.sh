@@ -19,3 +19,5 @@ source ${OSX_CONFIG_FILES_DIR}/install.sh
 source ${OSX_CONFIG_FILES_DIR}/general_utils.sh
 
 source ${OSX_CONFIG_FILES_DIR}/file_utils.sh
+
+source ${OSX_CONFIG_FILES_DIR}/dir_tools.sh
