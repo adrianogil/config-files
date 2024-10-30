@@ -98,7 +98,7 @@ function t()
 {
     _current_screen_list=$(tlist | sed 's/:/ /g' | awk '{print $1}')
 
-    if [ -z "$_current_screen_list" ]; then
+    if [ -z "$_current_screen_list" ] && [ -z "$1" ]; then
         echo "No screens available. Usage: t <new-screen-name> to create a new screen."
     elif [ -z "$1" ]; then
         tfz
