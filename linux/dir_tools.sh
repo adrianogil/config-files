@@ -9,8 +9,8 @@ cd() {
     # Get the absolute path of the new directory
     local new_dir=$(pwd)
 
-    # Avoid duplicates if the new directory is the same as the last visited
-    if [[ "${VISITED_DIRS[-1]}" != "$new_dir" ]]; then
+    # Check if VISITED_DIRS is not empty before checking the last element
+    if [[ ${#VISITED_DIRS[@]} -eq 0 || "${VISITED_DIRS[-1]}" != "$new_dir" ]]; then
         # Add the new directory to the history array
         VISITED_DIRS+=("$new_dir")
 
