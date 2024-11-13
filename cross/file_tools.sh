@@ -6,6 +6,7 @@ function symlink-create()
     ln -sf ${target} "${symlink_target}"
 }
 
+# config-tools files-organize: Organize files in a directory
 function files-organize()
 {
     python3 ${CONFIG_FILES_DIR}/python/clitools/files_organizer.py
@@ -28,3 +29,15 @@ function smart-cp()
 }
 alias smcp="smart-cp"
 
+# config-tools files-zip: Zip files with a search parameter
+function files-zip() {
+    local search_param=$1
+    local zip_name=$2
+
+    if [ -z "$search_param" ] || [ -z "$zip_name" ]; then
+        echo "Usage: zip_files <search_parameter> <zip_file_name>"
+        return 1
+    fi
+
+    find . -type f -name "$search_param" | zip "$zip_name" -@
+}
