@@ -3,11 +3,11 @@ function conv-webp-img()
 {
     webp_file=$1
 
-    if [ -z "$1" ]
+    if [ -z "$2" ]
     then
         target_output='out.jpg'
     else
-        target_output=$1
+        target_output=$2
     fi
 
     dwebp $webp_file -o $target_output
