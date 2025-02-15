@@ -15,3 +15,9 @@ function myvars()
 {
 	printenv | less
 }
+
+# config-tools which-shell: Print the shell name
+function which-shell()
+{
+    ps -p $$ -o pid,comm=
+}
