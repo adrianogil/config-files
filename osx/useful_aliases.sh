@@ -78,3 +78,8 @@ function osx-setup-screenshots-folder()
 
     defaults write com.apple.screencapture location $target_screenshot_folder && killall SystemUIServer
 }
+
+function jekyll-serve()
+{
+    docker run --rm -v "$PWD:/srv/jekyll" -p 4000:4000 -it jekyll/jekyll jekyll serve --watch --force_polling
+}
