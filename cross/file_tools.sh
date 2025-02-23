@@ -41,3 +41,10 @@ function files-zip() {
 
     find . -type f -name "$search_param" | zip "$zip_name" -@
 }
+
+# config-tools files-last-modified: Get the last modified file in a directory
+function files-last-modified()
+{
+    ls -ctd ./* | head -1
+}
+alias lmod="files-last-modified"
