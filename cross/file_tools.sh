@@ -42,9 +42,34 @@ function files-zip() {
     find . -type f -name "$search_param" | zip "$zip_name" -@
 }
 
-# config-tools files-last-modified: Get the last modified file in a directory
+# config-tools files-last-modified: Get the last modified file in current directory
 function files-last-modified()
 {
     ls -ctd ./* | head -1
 }
 alias lmod="files-last-modified"
+
+
+# config-tools file-to-prompt: Copy file content to clipboard in a format suitable for prompt
+function file-to-prompt() {
+    local file="${1:-}"
+    # If no arg, pick one interactively
+    if [[ -z $file ]]; then
+        file=$(find . -type f | default-fuzzy-finder) || return 1
+    fi
+
+    # Validate
+    if [[ ! -r $file ]]; then
+    printf 'file_to_prompt: %s: No such readable file\n' "$file" >&2
+    return 1
+    fi
+
+    local filename="${file##*/}"
+
+    # Stream into clipboard, with safe quoting
+    {
+        printf '%s\n' '```'"$filename"
+        cat "$file"
+        printf '%s' '```'
+    } | copy-text-to-clipboard
+}
