@@ -64,7 +64,7 @@ function file-to-prompt() {
     return 1
     fi
 
-    local filename="${file##*/}"
+    local filename=$file
 
     # Stream into clipboard, with safe quoting
     {
