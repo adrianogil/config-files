@@ -73,3 +73,4 @@ function file-to-prompt() {
         printf '%s' '```'
     } | copy-text-to-clipboard
 }
+alias fto="file-to-prompt"
