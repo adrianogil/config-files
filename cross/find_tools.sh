@@ -43,6 +43,11 @@ function f
     fi
 }
 
+function ffz
+{
+    f "$1" "$2" "$3" | default-fuzzy-finder
+}
+
 function fcount-subdirs()
 {
     target_directory=$1
