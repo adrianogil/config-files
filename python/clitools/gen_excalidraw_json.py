@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
-Convert a simplified Excalidraw-ish JSON from the clipboard (or a file)
-into a full Excalidraw clipboard JSON and copy it back to the clipboard.
+OOP converter: simplified JSON (clipboard/file) -> Excalidraw clipboard JSON (clipboard/file).
 
-Input (example):
+Input example:
 {
   "elements": [
     {"id":"rect1","type":"Rectangle","text":"Texto 1"},
@@ -12,44 +11,38 @@ Input (example):
   ]
 }
 
-Output shape (clipboard):
-{ "type": "excalidraw/clipboard", "elements":[...], "files":{} }
-
 Usage:
-  python slim_to_excaliclip.py
-  python slim_to_excaliclip.py --in in.json --out out.json
+  python slim_to_excaliclip_oop_v2.py
+  python slim_to_excaliclip_oop_v2.py --in in.json --out out.json
 """
 
 from __future__ import annotations
 import argparse
 import json
-import math
 import os
 import random
 import subprocess
 import sys
 import time
 import uuid
-from typing import Any, Dict, List, Optional, Tuple
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
+from typing import Any, Dict, Iterable, List, Optional, Tuple, Type, Callable
 
-# ------------- Clipboard helpers (pyperclip if available, else OS tools) -------------
+# ============================= Clipboard helpers =============================
+
 def _have_cmd(cmd: str) -> bool:
     from shutil import which
     return which(cmd) is not None
 
 def read_clipboard_text() -> str:
-    # Try pyperclip
     try:
         import pyperclip  # type: ignore
         return pyperclip.paste()
     except Exception:
         pass
-
-    # macOS
     if sys.platform == "darwin" and _have_cmd("pbpaste"):
         return subprocess.check_output(["pbpaste"]).decode("utf-8")
-
-    # Windows (PowerShell)
     if os.name == "nt":
         try:
             return subprocess.check_output(
@@ -57,57 +50,55 @@ def read_clipboard_text() -> str:
             ).decode("utf-8")
         except Exception:
             pass
-        # Fallback: clip.exe cannot read
-
-    # Linux / X11
     for cmd in (["xclip", "-selection", "clipboard", "-o"],
                 ["xsel", "--clipboard", "--output"]):
         if _have_cmd(cmd[0]):
             return subprocess.check_output(cmd).decode("utf-8")
-
     raise RuntimeError("No clipboard read method available. Install 'pyperclip' or an OS clipboard tool.")
 
 def write_clipboard_text(text: str) -> None:
-    # Try pyperclip
     try:
         import pyperclip  # type: ignore
         pyperclip.copy(text)
         return
     except Exception:
         pass
-
-    # macOS
     if sys.platform == "darwin" and _have_cmd("pbcopy"):
         p = subprocess.Popen(["pbcopy"], stdin=subprocess.PIPE)
         p.communicate(input=text.encode("utf-8"))
         return
-
-    # Windows (PowerShell)
     if os.name == "nt":
         try:
             subprocess.run(
-                ["powershell", "-NoProfile", "-Command", "Set-Clipboard -Value ([Console]::In.ReadToEnd())"],
-                input=text.encode("utf-8"),
-                check=True
+                ["powershell", "-NoProfile", "-Command",
+                 "Set-Clipboard -Value ([Console]::In.ReadToEnd())"],
+                input=text.encode("utf-8"), check=True
             )
             return
         except Exception:
             pass
-
-    # Linux / X11
     for cmd in (["xclip", "-selection", "clipboard"],
                 ["xsel", "--clipboard", "--input"]):
         if _have_cmd(cmd[0]):
             p = subprocess.Popen(cmd, stdin=subprocess.PIPE)
             p.communicate(input=text.encode("utf-8"))
             return
-
     raise RuntimeError("No clipboard write method available. Install 'pyperclip' or an OS clipboard tool.")
 
-# ------------- Excalidraw element helpers -------------
-NOW_MS = lambda: int(time.time() * 1000)
+# ============================= Build context & utils =============================
 
-DEFAULTS = {
+def now_ms() -> int:
+    return int(time.time() * 1000)
+
+def uid() -> str:
+    # Vary IDs a bit to resemble Excalidraw variability
+    return uuid.uuid4().hex if random.random() < 0.5 else str(uuid.uuid4())
+
+# ---- spacing knobs ----
+LAYOUT_GAP_X = 320.0   # distance between consecutive nodes (was 220)
+ARROW_GAP    = 24.0    # distance from element edge to arrow endpoints (was 10)
+
+DEFAULTS: Dict[str, Any] = {
     "strokeColor": "#1e1e1e",
     "backgroundColor": "transparent",
     "fillStyle": "solid",       # solid | hachure | cross-hatch
@@ -116,22 +107,20 @@ DEFAULTS = {
     "roughness": 1,
     "opacity": 100,
     "fontSize": 20,
-    "fontFamily": 1,            # 1=Virgil, 2=Arial, 3=Cascadia; 5 also works in some builds
+    "fontFamily": 1,            # 1=Virgil, 2=Arial, 3=Cascadia
     "textAlign": "center",
     "verticalAlign": "middle",
 }
 
-RECT_W = 185.0
-RECT_H = 134.0
-GRID_GAP_X = 220.0
-GRID_ORIGIN = (0.0, 0.0)
+def text_metrics(text: str, font_size: float) -> Tuple[float, float, float]:
+    width = max(1.0, len(text) * font_size * 0.60)
+    height = max(font_size, font_size * 1.25)
+    baseline = font_size * 1.0
+    return width, height, baseline
 
-def _uid() -> str:
-    return uuid.uuid4().hex if random.random() < 0.5 else str(uuid.uuid4())
-
-def _base(eltype: str, x: float, y: float) -> Dict[str, Any]:
+def base_element(eltype: str, x: float, y: float) -> Dict[str, Any]:
     return {
-        "id": _uid(),
+        "id": uid(),
         "type": eltype,
         "x": float(x),
         "y": float(y),
@@ -153,159 +142,296 @@ def _base(eltype: str, x: float, y: float) -> Dict[str, Any]:
         "versionNonce": random.randint(1, 2**31 - 1),
         "isDeleted": False,
         "boundElements": None,
-        "updated": NOW_MS(),
+        "updated": now_ms(),
         "link": None,
         "locked": False,
     }
 
-def _text_metrics(text: str, font_size: float) -> Tuple[float, float, float]:
-    width = max(1.0, len(text) * font_size * 0.60)
-    height = max(font_size, font_size * 1.25)
-    baseline = font_size * 1.0
-    return width, height, baseline
+def bbox(el: Dict[str, Any]) -> Tuple[float, float, float, float]:
+    return float(el["x"]), float(el["y"]), float(el.get("width", 0.0)), float(el.get("height", 0.0))
 
-# ------------- High level conversion -------------
-class SlimElement:
+def center_of(el: Dict[str, Any]) -> Tuple[float, float]:
+    x, y, w, h = bbox(el)
+    return x + w / 2.0, y + h / 2.0
+
+def anchor_towards(el: Dict[str, Any], toward: Tuple[float, float], gap: float = 10.0) -> Tuple[float, float, float]:
+    """
+    Pick an anchor on the element's bounding box facing toward (tx, ty).
+    Returns (ax, ay, gap).
+    """
+    x, y, w, h = bbox(el)
+    cx, cy = x + w / 2.0, y + h / 2.0
+    tx, ty = toward
+    dx, dy = tx - cx, ty - cy
+    if abs(dx) >= abs(dy):
+        # left/right
+        if dx >= 0:
+            return x + w + gap, cy, gap  # right side
+        else:
+            return x - gap, cy, gap       # left side
+    else:
+        # top/bottom
+        if dy >= 0:
+            return cx, y + h + gap, gap  # bottom
+        else:
+            return cx, y - gap, gap      # top
+
+@dataclass
+class BuildContext:
+    """Holds shared state during a build."""
+    out_elements: List[Dict[str, Any]] = field(default_factory=list)
+
+    # Index by real Excalidraw element id -> element dict
+    id_index: Dict[str, Dict[str, Any]] = field(default_factory=dict)
+
+    # Index by *slim* id -> connectable element dict (the primary element to bind to)
+    connectable_index: Dict[str, Dict[str, Any]] = field(default_factory=dict)
+
+    def add(self, el: Dict[str, Any]) -> None:
+        self.out_elements.append(el)
+        if "id" in el:
+            self.id_index[el["id"]] = el
+
+    def register_connectable(self, slim_id: Optional[str], el: Dict[str, Any]) -> None:
+        if slim_id:
+            self.connectable_index[slim_id] = el
+
+    def resolve_target(self, ref: str) -> Optional[Dict[str, Any]]:
+        """Accepts either a slim id or a real Excalidraw id."""
+        return self.connectable_index.get(ref) or self.id_index.get(ref)
+
+# ============================= Registry & base class =============================
+
+ELEMENT_REGISTRY: Dict[str, Type["ExcalidrawObject"]] = {}
+
+def register_element(*type_names: str) -> Callable[[Type["ExcalidrawObject"]], Type["ExcalidrawObject"]]:
+    def _wrap(cls: Type["ExcalidrawObject"]) -> Type["ExcalidrawObject"]:
+        for name in type_names:
+            ELEMENT_REGISTRY[name.lower()] = cls
+        return cls
+    return _wrap
+
+class ExcalidrawObject(ABC):
+    """Base class for all simplified elements."""
     def __init__(self, raw: Dict[str, Any]):
         self.raw = raw
-        self.type = str(raw.get("type", "")).lower()
-        self.id = raw.get("id")
+        # Slim id (user-level, e.g., "rect1"). Optional for elements without IDs.
+        self.slim_id: Optional[str] = raw.get("id")
 
-def layout_rects(slim_rects: List[SlimElement]) -> Dict[str, Tuple[float, float]]:
-    """
-    Simple horizontal layout: rects placed left-to-right.
-    Returns mapping rect_id -> (x, y).
-    """
-    positions: Dict[str, Tuple[float, float]] = {}
-    x0, y0 = GRID_ORIGIN
-    for i, s in enumerate(slim_rects):
-        x = x0 + i * GRID_GAP_X
-        y = y0
-        if s.id:
-            positions[s.id] = (x, y)
-    return positions
+    @classmethod
+    def from_slim(cls, raw: Dict[str, Any]) -> "ExcalidrawObject":
+        return cls(raw)
 
-def build_rectangle_and_text(rect_id: Optional[str], label: str, x: float, y: float) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-    # Rectangle
-    rect = _base("rectangle", x, y)
-    if rect_id:
-        rect["id"] = rect_id  # respect provided id if present
-    rect["width"] = RECT_W
-    rect["height"] = RECT_H
-    rect["roundness"] = {"type": 3}
+    @classmethod
+    @abstractmethod
+    def can_build_from(cls, raw: Dict[str, Any]) -> bool:
+        ...
 
-    # Text bound to rect as container
-    text_el = _base("text", 0, 0)
-    tx_w, tx_h, baseline = _text_metrics(label, DEFAULTS["fontSize"])
-    text_el.update({
-        "text": label,
-        "rawText": label,
-        "fontSize": DEFAULTS["fontSize"],
-        "fontFamily": DEFAULTS["fontFamily"],
-        "textAlign": DEFAULTS["textAlign"],
-        "verticalAlign": DEFAULTS["verticalAlign"],
-        "containerId": rect["id"],
-        "originalText": label,
-        "autoResize": True,
-        "lineHeight": 1.25,
-        "width": tx_w,
-        "height": tx_h,
-        "baseline": baseline,
-    })
-    # center text within rectangle
-    text_el["x"] = rect["x"] + (rect["width"] - tx_w) / 2.0
-    text_el["y"] = rect["y"] + (rect["height"] - tx_h) / 2.0
-    text_el["roundness"] = None
+    @abstractmethod
+    def build(self, ctx: BuildContext) -> None:
+        """Append produced Excalidraw elements to ctx and register connectables if applicable."""
+        ...
 
-    # bound elements linkage
-    rect["boundElements"] = [{"type": "text", "id": text_el["id"]}]
+def make_object(raw: Dict[str, Any]) -> ExcalidrawObject:
+    t = str(raw.get("type", "")).lower().strip()
+    cls = ELEMENT_REGISTRY.get(t)
+    if not cls:
+        raise ValueError(f"Unsupported element type: {raw.get('type')!r}")
+    return cls.from_slim(raw)
 
-    return rect, text_el
+# ============================= Layout =============================
 
-def build_arrow(from_rect: Dict[str, Any], to_rect: Dict[str, Any]) -> Dict[str, Any]:
-    # Start at middle of right edge of from_rect, end at middle of left edge of to_rect
-    start_x = from_rect["x"] + from_rect["width"] + 10.0
-    start_y = from_rect["y"] + from_rect["height"] / 2.0
-    end_x   = to_rect["x"] - 10.0
-    end_y   = to_rect["y"] + to_rect["height"] / 2.0
+from dataclasses import dataclass
+from typing import Iterable, Tuple, List
 
-    dx = end_x - start_x
-    dy = end_y - start_y
+@dataclass
+class LayoutEngine:
+    origin: Tuple[float, float] = (0.0, 0.0)
+    gap_x: float = LAYOUT_GAP_X      # <-- uses the constant
+    rect_w: float = 185.0
+    rect_h: float = 134.0
 
-    arr = _base("arrow", start_x, start_y)
-    arr.update({
-        "points": [[0, 0], [dx, dy]],
-        "width": abs(dx),
-        "height": abs(dy),
-        "lastCommittedPoint": None,
-        "startBinding": {
-            "elementId": from_rect["id"],
-            "focus": 0.0,
-            "gap": 10.0,
-        },
-        "endBinding": {
-            "elementId": to_rect["id"],
-            "focus": 0.0,
-            "gap": 10.0,
-        },
-        "startArrowhead": None,
-        "endArrowhead": "arrow",
-        "roundness": {"type": 2},
-        "elbowed": False,
-    })
+    def assign_positions(self, rects: Iterable["Rectangle"]) -> None:
+        """Left-to-right layout. Honors explicit x/y/width/height if provided."""
+        x0, y0 = self.origin
+        i = 0
+        for r in rects:
+            if r.x is None:
+                r.x = x0 + i * self.gap_x
+            if r.y is None:
+                r.y = y0
+            if r.width is None:
+                r.width = self.rect_w
+            if r.height is None:
+                r.height = self.rect_h
+            i += 1
 
-    # Append arrow refs to rectangles' boundElements
-    for rect in (from_rect, to_rect):
-        if rect.get("boundElements") is None:
-            rect["boundElements"] = []
-        rect["boundElements"].append({"id": arr["id"], "type": "arrow"})
 
-    return arr
+# ============================= Elements =============================
+
+def _try_float(v: Any) -> Optional[float]:
+    try:
+        if v is None:
+            return None
+        return float(v)
+    except Exception:
+        return None
+
+@register_element("rectangle", "rect")
+class Rectangle(ExcalidrawObject):
+    def __init__(self, raw: Dict[str, Any]):
+        super().__init__(raw)
+        self.label: str = str(raw.get("text") or (self.slim_id or ""))
+        # Optional coordinates/dimensions
+        self.x: Optional[float] = _try_float(raw.get("x"))
+        self.y: Optional[float] = _try_float(raw.get("y"))
+        self.width: Optional[float] = _try_float(raw.get("width"))
+        self.height: Optional[float] = _try_float(raw.get("height"))
+
+    @classmethod
+    def can_build_from(cls, raw: Dict[str, Any]) -> bool:
+        return str(raw.get("type", "")).lower() in {"rectangle", "rect"}
+
+    def build(self, ctx: BuildContext) -> None:
+        assert self.x is not None and self.y is not None
+        assert self.width is not None and self.height is not None
+
+        rect = base_element("rectangle", self.x, self.y)
+        # Preserve slim id as Excalidraw element id when present (nice for debugging & linking)
+        if self.slim_id:
+            rect["id"] = self.slim_id
+        rect["width"] = self.width
+        rect["height"] = self.height
+        rect["roundness"] = {"type": 3}
+        rect["boundElements"] = []
+
+        # Bound text
+        text_el = base_element("text", 0, 0)
+        font_size = DEFAULTS["fontSize"]
+        w, h, baseline = text_metrics(self.label, font_size)
+        text_el.update({
+            "text": self.label,
+            "rawText": self.label,
+            "fontSize": font_size,
+            "fontFamily": DEFAULTS["fontFamily"],
+            "textAlign": DEFAULTS["textAlign"],
+            "verticalAlign": DEFAULTS["verticalAlign"],
+            "containerId": rect["id"],
+            "originalText": self.label,
+            "autoResize": True,
+            "lineHeight": 1.25,
+            "width": w,
+            "height": h,
+            "baseline": baseline,
+        })
+        # center inside rectangle
+        text_el["x"] = rect["x"] + (rect["width"] - w) / 2.0
+        text_el["y"] = rect["y"] + (rect["height"] - h) / 2.0
+
+        rect["boundElements"].append({"type": "text", "id": text_el["id"]})
+
+        # Register outputs
+        ctx.add(rect)
+        ctx.add(text_el)
+        # Make this rectangle the connectable target for this slim id
+        ctx.register_connectable(self.slim_id, rect)
+
+@register_element("arrow")
+class Arrow(ExcalidrawObject):
+    def __init__(self, raw: Dict[str, Any]):
+        super().__init__(raw)
+        self.from_ref: Optional[str] = raw.get("from")
+        self.to_ref: Optional[str] = raw.get("to")
+
+    @classmethod
+    def can_build_from(cls, raw: Dict[str, Any]) -> bool:
+        return str(raw.get("type", "")).lower() == "arrow"
+
+    def build(self, ctx: BuildContext) -> None:
+        src = ctx.resolve_target(self.from_ref) if self.from_ref else None
+        dst = ctx.resolve_target(self.to_ref) if self.to_ref else None
+
+        if not src or not dst:
+            arr = base_element("arrow", 0.0, 0.0)
+            arr.update({
+                "points": [[0, 0], [100, 0]],
+                "width": 100.0,
+                "height": 0.0,
+                "lastCommittedPoint": None,
+                "startBinding": None,
+                "endBinding": None,
+                "startArrowhead": None,
+                "endArrowhead": "arrow",
+                "roundness": {"type": 2},
+                "elbowed": False,
+            })
+            ctx.add(arr)
+            ctx.register_connectable(self.slim_id, arr)
+            return
+
+        # Choose anchors on the bounding boxes facing each other,
+        # but keep ARROW_GAP pixels away from the element edges.
+        sx, sy = center_of(src)
+        dx, dy = center_of(dst)
+        ax, ay, gap_s = anchor_towards(src, (dx, dy), gap=ARROW_GAP)
+        bx, by, gap_d = anchor_towards(dst, (sx, sy), gap=ARROW_GAP)
+
+        arr = base_element("arrow", ax, ay)
+        arr.update({
+            "points": [[0, 0], [bx - ax, by - ay]],
+            "width": abs(bx - ax),
+            "height": abs(by - ay),
+            "lastCommittedPoint": None,
+            "startBinding": {"elementId": src["id"], "focus": 0.0, "gap": gap_s},
+            "endBinding": {"elementId": dst["id"], "focus": 0.0, "gap": gap_d},
+            "startArrowhead": None,
+            "endArrowhead": "arrow",
+            "roundness": {"type": 2},
+            "elbowed": False,
+        })
+
+        for target in (src, dst):
+            if target.get("boundElements") is None:
+                target["boundElements"] = []
+            target["boundElements"].append({"id": arr["id"], "type": "arrow"})
+
+        ctx.add(arr)
+        ctx.register_connectable(self.slim_id, arr)
+
+# ============================= Orchestrator =============================
+
+def parse_objects(slim: Dict[str, Any]) -> List[ExcalidrawObject]:
+    objs: List[ExcalidrawObject] = []
+    for raw in slim.get("elements", []):
+        t = str(raw.get("type", "")).lower().strip()
+        cls = ELEMENT_REGISTRY.get(t)
+        if not cls:
+            raise ValueError(f"Unsupported element type: {raw.get('type')!r}")
+        objs.append(cls.from_slim(raw))
+    return objs
 
 def convert_slim_to_clipboard(slim: Dict[str, Any]) -> Dict[str, Any]:
-    raw_elems = slim.get("elements", [])
-    slims = [SlimElement(e) for e in raw_elems]
+    objs = parse_objects(slim)
+    ctx = BuildContext()
 
-    # Collect rectangles (case-insensitive "rectangle")
-    rect_slim = [s for s in slims if s.type in ("rectangle", "rect")]
-    # Layout rectangles
-    positions = layout_rects(rect_slim)
+    # Layout pass for rectangles
+    rects: List[Rectangle] = [o for o in objs if isinstance(o, Rectangle)]
+    layout = LayoutEngine()
+    layout.assign_positions(rects)
 
-    # Build full elements
-    id_to_rect: Dict[str, Dict[str, Any]] = {}
-    elements_out: List[Dict[str, Any]] = []
+    # Build pass: build connectables first (rectangles), then others (arrows)
+    for r in rects:
+        r.build(ctx)
+    for o in objs:
+        if not isinstance(o, Rectangle):
+            o.build(ctx)
 
-    # 1) rectangles + bound text
-    for s in rect_slim:
-        label = str(s.raw.get("text", s.id or ""))
-        x, y = positions.get(s.id, GRID_ORIGIN)
-        rect, text_el = build_rectangle_and_text(s.id, label, x, y)
-        id_to_rect[rect["id"]] = rect
-        elements_out.append(rect)
-        elements_out.append(text_el)
+    return {"type": "excalidraw/clipboard", "elements": ctx.out_elements, "files": {}}
 
-    # 2) arrows
-    for s in slims:
-        if s.type == "arrow":
-            src_id = s.raw.get("from")
-            dst_id = s.raw.get("to")
-            if not src_id or not dst_id:
-                continue
-            if src_id not in id_to_rect or dst_id not in id_to_rect:
-                continue
-            arr = build_arrow(id_to_rect[src_id], id_to_rect[dst_id])
-            elements_out.append(arr)
+# ============================= CLI =============================
 
-    # Package clipboard payload
-    return {
-        "type": "excalidraw/clipboard",
-        "elements": elements_out,
-        "files": {},
-    }
-
-# ------------- CLI -------------
-def main():
-    ap = argparse.ArgumentParser(description="Convert slim JSON → Excalidraw clipboard JSON.")
+def main() -> None:
+    ap = argparse.ArgumentParser(description="Convert slim JSON → Excalidraw clipboard JSON (OOP, generic index).")
     ap.add_argument("--in", dest="infile", help="Read slim JSON from file instead of clipboard.")
     ap.add_argument("--out", dest="outfile", help="Write Excalidraw clipboard JSON to file instead of clipboard.")
     args = ap.parse_args()
@@ -318,15 +444,15 @@ def main():
         text = read_clipboard_text()
         try:
             slim = json.loads(text)
-        except Exception as e:
+        except Exception:
             print("Clipboard doesn't contain valid JSON. Use --in to specify a file.", file=sys.stderr)
             raise
 
     # Convert
     clip = convert_slim_to_clipboard(slim)
+    out_text = json.dumps(clip, ensure_ascii=False, indent=2)
 
     # Write
-    out_text = json.dumps(clip, ensure_ascii=False, indent=2)
     if args.outfile:
         with open(args.outfile, "w", encoding="utf-8") as f:
             f.write(out_text)
