@@ -48,6 +48,16 @@ function ffz
     f "$1" "$2" "$3" | default-fuzzy-finder
 }
 
+function ffz-sh
+{
+    f "$1" "$2" "$3" | default-fuzzy-finder | sh
+}
+
+function ffz-cp
+{
+    f "$1" "$2" "$3" | default-fuzzy-finder | copy-clipboard-function
+}
+
 function fcount-subdirs()
 {
     target_directory=$1
