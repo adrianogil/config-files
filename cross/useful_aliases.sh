@@ -2,6 +2,7 @@
 alias reload_mes_configs='source ~/.bashrc'
 
 alias default-fuzzy-finder='fzf'
+alias fz='fzf'
 
 alias pick-copy='default-fuzzy-finder | copy-clipboard-function'
 
@@ -44,6 +45,19 @@ alias awk2="awk '{print $2}'"
 
 # alias for getting date yearmonthdayhourminute
 alias ymdhm="date +%Y%m%d%H%M"
+
+# config-tools shfz: Find an shell using find and fzf and run it
+function shfz()
+{
+    target_file=$(find . -type f -name "*.sh" | default-fuzzy-finder)
+    # Ask if user wants to run the file
+    read -p "Do you want to run the file $target_file ? (y/n) " -n 1 -r
+
+    echo    # (optional) move to a new line
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        bash $target_file
+    fi
+}
 
 function pwok()
 {
