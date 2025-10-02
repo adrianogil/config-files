@@ -46,17 +46,21 @@ alias awk2="awk '{print $2}'"
 # alias for getting date yearmonthdayhourminute
 alias ymdhm="date +%Y%m%d%H%M"
 
+get-user-confirmation() {
+  if [ -n "$ZSH_VERSION" ]; then
+    read -k1 "ans?$1"; echo; printf '%s' "$ans"
+  else
+    read -r -n1 -p "$1" ans; echo; printf '%s' "$ans"
+  fi
+}
+
+
 # config-tools shfz: Find an shell using find and fzf and run it
 function shfz()
 {
     target_file=$(find . -type f -name "*.sh" | default-fuzzy-finder)
-    # Ask if user wants to run the file
-    read -p "Do you want to run the file $target_file ? (y/n) " -n 1 -r
-
-    echo    # (optional) move to a new line
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        bash $target_file
-    fi
+    echo "Running ${target_file}"
+    bash $target_file
 }
 
 function pwok()
