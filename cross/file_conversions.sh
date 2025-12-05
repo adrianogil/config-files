@@ -81,3 +81,19 @@ function conv-mov-to-mp4()
     output_file="${video_file%%.*}".mp4
     ffmpeg -i $video_file -vcodec copy -acodec copy $output_file
 }
+
+
+conv_opus_to_mp3() {
+    local target_file="$1"
+    if [[ -z "$target_file" ]]; then
+        echo "Usage: conv-opus-to-mp3 <file.opus>" >&2
+        return 1
+    fi
+
+    local filename filename_no_ext
+    filename=$(basename -- "$target_file")
+    filename_no_ext="${filename%.*}"
+
+    ffmpeg -i "$target_file" -codec:a libmp3lame -qscale:a 2 "${filename_no_ext}.mp3"
+}
+alias conv-opus-to-mp3='conv_opus_to_mp3'
