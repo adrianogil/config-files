@@ -29,3 +29,4 @@ function config-fz()
     eval ${config_action}
 }
 alias cf-fz="config-fz"
+alias cz='config-fz'

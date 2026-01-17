@@ -4,11 +4,15 @@ alias rl='reload_mes_configs'
 
 alias default-fuzzy-finder='fzf'
 alias fz='fzf'
+
+# config-tools pick-copy: Pick a file using fzf and copy its path to clipboard
 alias pick-copy='default-fuzzy-finder | copy-clipboard-function'
 
+# config-tools cat-fz: Cat a file using fzf and read it using less
 alias cat-fz='default-fuzzy-finder | xargs cat | less'
-alias cz='cat-fz'
+alias ctz='cat-fz'
 
+# config-tools vim-fz: Open a file using fzf and edit it using vim
 alias vim-fz='default-fuzzy-finder | xargs vim'
 alias vz='vim-fz'
 
