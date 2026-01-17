@@ -1,10 +1,16 @@
 
 alias reload_mes_configs='source ~/.bashrc'
+alias rl='reload_mes_configs'
 
 alias default-fuzzy-finder='fzf'
 alias fz='fzf'
-
 alias pick-copy='default-fuzzy-finder | copy-clipboard-function'
+
+alias cat-fz='default-fuzzy-finder | xargs cat | less'
+alias cz='cat-fz'
+
+alias vim-fz='default-fuzzy-finder | xargs vim'
+alias vz='vim-fz'
 
 alias l="ls"
 
