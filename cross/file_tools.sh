@@ -74,3 +74,32 @@ function file-to-prompt() {
     } | copy-text-to-clipboard
 }
 alias fto="file-to-prompt"
+
+# config-tools dir-to-prompt: Copy directory file contents to clipboard in a format suitable for prompt
+function dir-to-prompt() {
+    local dir="${1:-}"
+    # If no arg, pick one interactively
+    if [[ -z $dir ]]; then
+        dir=$(find . -type d | default-fuzzy-finder) || return 1
+    fi
+
+    # Validate
+    if [[ ! -d $dir ]]; then
+        printf 'dir-to-prompt: %s: Not a directory\n' "$dir" >&2
+        return 1
+    fi
+
+    if [[ ! -r $dir ]]; then
+        printf 'dir-to-prompt: %s: Not a readable directory\n' "$dir" >&2
+        return 1
+    fi
+
+    {
+        while IFS= read -r file; do
+            printf '%s\n' '```'"$file"
+            cat "$file"
+            printf '%s\n' '```'
+        done < <(find "$dir" -type f)
+    } | copy-text-to-clipboard
+}
+alias dto="dir-to-prompt"
