@@ -1,5 +1,6 @@
 
 
+
 function df-inspect-using-bash()
 {
     target_image=$1
@@ -7,6 +8,7 @@ function df-inspect-using-bash()
     docker run -it --entrypoint /bin/sh ${target_image}
 }
 
+# config-tools docker-run-fzf: Run a Docker image selected via fzf
 function docker-run-fzf()
 {
     local selection DOCKER_IMAGE
