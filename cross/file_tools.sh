@@ -103,3 +103,103 @@ function dir-to-prompt() {
     } | copy-text-to-clipboard
 }
 alias dto="dir-to-prompt"
+
+# config-tools file-info: Show detailed information about a file
+function file-info() {
+    local target="${1:-}"
+
+    if [[ -z $target ]]; then
+        printf 'Usage: file-info <path>\n' >&2
+        return 1
+    fi
+
+    if [[ ! -e $target ]]; then
+        printf 'file-info: %s: No such file or directory\n' "$target" >&2
+        return 1
+    fi
+
+    printf '\n== Path ==\n%s\n' "$target"
+    printf '\n== file ==\n'
+    file -- "$target"
+
+    printf '\n== ls -la ==\n'
+    ls -la -- "$target"
+
+    if type dush >/dev/null 2>&1; then
+        printf '\n== dush ==\n'
+        dush -- "$target"
+    fi
+
+    if command -v stat >/dev/null 2>&1; then
+        printf '\n== stat ==\n'
+        stat -- "$target" 2>/dev/null || stat "$target"
+    fi
+
+    local created_at=""
+    local updated_at=""
+    local epoch_created=""
+
+    if stat --version >/dev/null 2>&1; then
+        created_at=$(stat -c %w -- "$target" 2>/dev/null)
+        updated_at=$(stat -c %y -- "$target" 2>/dev/null)
+    else
+        epoch_created=$(stat -f %B -- "$target" 2>/dev/null)
+        if [[ -n $epoch_created && $epoch_created != 0 ]]; then
+            if date -r 0 >/dev/null 2>&1; then
+                created_at=$(date -r "$epoch_created" "+%Y-%m-%d %H:%M:%S %z")
+            else
+                created_at=$(date -d "@$epoch_created" "+%Y-%m-%d %H:%M:%S %z")
+            fi
+        fi
+        updated_at=$(stat -f "%Sm" -t "%Y-%m-%d %H:%M:%S %z" -- "$target" 2>/dev/null)
+    fi
+
+    if [[ -z $created_at || $created_at == "-" ]]; then
+        created_at="unavailable"
+    fi
+
+    if [[ -z $updated_at ]]; then
+        updated_at="unavailable"
+    fi
+
+    printf '\n== timestamps ==\n'
+    printf 'Created: %s\n' "$created_at"
+    printf 'Updated: %s\n' "$updated_at"
+
+    if command -v getfacl >/dev/null 2>&1; then
+        printf '\n== ACLs ==\n'
+        getfacl -p -- "$target"
+    fi
+
+    if command -v xattr >/dev/null 2>&1; then
+        printf '\n== extended attributes ==\n'
+        xattr -l -- "$target"
+    fi
+
+    if command -v lsattr >/dev/null 2>&1; then
+        printf '\n== lsattr ==\n'
+        lsattr -- "$target"
+    fi
+
+    if command -v sha256sum >/dev/null 2>&1; then
+        printf '\n== sha256sum ==\n'
+        sha256sum -- "$target"
+    elif command -v shasum >/dev/null 2>&1; then
+        printf '\n== shasum -a 256 ==\n'
+        shasum -a 256 -- "$target"
+    fi
+
+    if command -v md5sum >/dev/null 2>&1; then
+        printf '\n== md5sum ==\n'
+        md5sum -- "$target"
+    elif command -v md5 >/dev/null 2>&1; then
+        printf '\n== md5 ==\n'
+        md5 -- "$target"
+    fi
+
+    if command -v exiftool >/dev/null 2>&1; then
+        printf '\n== exiftool ==\n'
+        exiftool -- "$target"
+    fi
+}
+alias finfo="file-info"
