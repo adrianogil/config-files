@@ -125,6 +125,11 @@ function file-info() {
     printf '\n== ls -la ==\n'
     ls -la -- "$target"
 
+    if type dush >/dev/null 2>&1; then
+        printf '\n== dush ==\n'
+        dush -- "$target"
+    fi
+
     if command -v stat >/dev/null 2>&1; then
         printf '\n== stat ==\n'
         stat -- "$target" 2>/dev/null || stat "$target"
