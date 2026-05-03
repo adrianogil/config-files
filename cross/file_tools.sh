@@ -203,3 +203,39 @@ function file-info() {
     fi
 }
 alias finfo="file-info"
+
+# config-tools file-navigate-fzf: Recursively navigate files/dirs with fzf, then inspect or cd
+function file-navigate-fzf() {
+    local current_dir="${1:-.}"
+    local selection=""
+    local entries=""
+    local abs_target=""
+    local rel_target=""
+
+    while true; do
+        entries=$(find "$current_dir" -mindepth 1 -maxdepth 1 -printf '%P\n' | sort)
+        selection=$(printf '.\n%s\n' "$entries" | default-fuzzy-finder --prompt="${current_dir}/ > ") || return 1
+
+        if [[ -z $selection ]]; then
+            return 1
+        fi
+
+        abs_target="$current_dir/$selection"
+
+        if [[ -d $abs_target ]]; then
+            if [[ $selection == "." ]]; then
+                cd "$current_dir" || return 1
+                return 0
+            fi
+
+            current_dir="$abs_target"
+            continue
+        fi
+
+        rel_target="${abs_target#./}"
+        printf '%s\n' "$rel_target"
+        file-info "$abs_target"
+        return 0
+    done
+}
+alias navi-file="file-navigate-fzf"
