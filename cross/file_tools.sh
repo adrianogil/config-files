@@ -211,23 +211,46 @@ function file-navigate-fzf() {
     local entries=""
     local abs_target=""
     local rel_target=""
+    local name=""
+
+    current_dir="${current_dir%/}"
 
     while true; do
-        entries=$(find "$current_dir" -mindepth 1 -maxdepth 1 -printf '%P\n' | sort)
-        selection=$(printf '.\n%s\n' "$entries" | default-fuzzy-finder --prompt="${current_dir}/ > ") || return 1
+        entries=$(
+            find "$current_dir" -mindepth 1 -maxdepth 1 2>/dev/null \
+                | while IFS= read -r path; do
+                    name="${path#"$current_dir/"}"
 
-        if [[ -z $selection ]]; then
+                    if [[ -d "$path" ]]; then
+                        printf '%s/\n' "$name"
+                    else
+                        printf '%s\n' "$name"
+                    fi
+                done \
+                | sort
+        )
+
+        selection=$(
+            printf './\n%s\n' "$entries" |
+                default-fuzzy-finder --prompt="${current_dir}/ > "
+        ) || return 1
+
+        if [[ -z "$selection" ]]; then
             return 1
         fi
 
+        # "./" means: select current directory and cd into it
+        if [[ "$selection" == "./" ]]; then
+            cd "$current_dir" || return 1
+            return 0
+        fi
+
+        # Remove trailing "/" used only as a directory marker
+        selection="${selection%/}"
+
         abs_target="$current_dir/$selection"
 
-        if [[ -d $abs_target ]]; then
-            if [[ $selection == "." ]]; then
-                cd "$current_dir" || return 1
-                return 0
-            fi
-
+        if [[ -d "$abs_target" ]]; then
             current_dir="$abs_target"
             continue
         fi
@@ -235,7 +258,70 @@ function file-navigate-fzf() {
         rel_target="${abs_target#./}"
         printf '%s\n' "$rel_target"
         file-info "$abs_target"
+        echo "$rel_target" | copy-text-to-clipboard
         return 0
     done
 }
 alias navi-file="file-navigate-fzf"
+alias ndz="file-navigate-fzf"
+
+# config-tools code-file-navigate-fzf: Recursively navigate files/dirs with fzf, then open selected file/dir in VS Code
+function code-file-navigate-fzf() {
+    local current_dir="${1:-.}"
+    local selection=""
+    local entries=""
+    local target_path=""
+    local name=""
+
+    current_dir="${current_dir%/}"
+
+    while true; do
+        entries=$(
+            find "$current_dir" -mindepth 1 -maxdepth 1 2>/dev/null \
+                | while IFS= read -r path; do
+                    name="${path#"$current_dir/"}"
+
+                    if [[ -d "$path" ]]; then
+                        printf '%s/\n' "$name"
+                    else
+                        printf '%s\n' "$name"
+                    fi
+                done \
+                | sort
+        )
+
+        selection=$(
+            printf './\n%s\n' "$entries" |
+                default-fuzzy-finder --prompt="code ${current_dir}/ > "
+        ) || return 1
+
+        if [[ -z "$selection" ]]; then
+            return 1
+        fi
+
+        # "./" means: open the current directory in VS Code
+        if [[ "$selection" == "./" ]]; then
+            code "$current_dir"
+            return $?
+        fi
+
+        # Remove trailing "/" used only as a directory marker
+        selection="${selection%/}"
+
+        target_path="$current_dir/$selection"
+
+        # If target is a directory, enter it and continue navigating
+        if [[ -d "$target_path" ]]; then
+            current_dir="$target_path"
+            continue
+        fi
+
+        # If target is a file, open it in VS Code
+        printf '%s\n' "${target_path#./}"
+        code "$target_path"
+        return $?
+    done
+}
+
+alias code-navi-file="code-file-navigate-fzf"
+alias cndz="code-file-navigate-fzf"
