@@ -263,7 +263,7 @@ function file-navigate-fzf() {
     done
 }
 alias navi-file="file-navigate-fzf"
-alias ndz="file-navigate-fzf"
+alias z="file-navigate-fzf"
 
 # config-tools code-file-navigate-fzf: Recursively navigate files/dirs with fzf, then open selected file/dir in VS Code
 function code-file-navigate-fzf() {
