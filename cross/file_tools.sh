@@ -29,6 +29,38 @@ function smart-cp()
 }
 alias smcp="smart-cp"
 
+# config-tools rename: Rename or move a file/directory
+function rename()
+{
+    local source_path=""
+    local target_path=""
+
+    if [[ $# -eq 2 ]]; then
+        source_path=$1
+        target_path=$2
+    elif [[ $# -eq 0 ]]; then
+        source_path=$(find . -mindepth 1 | default-fuzzy-finder) || return 1
+
+        if [[ -z $source_path ]]; then
+            return 1
+        fi
+
+        printf 'Rename %s to: ' "$source_path"
+        IFS= read -r target_path
+    else
+        printf 'Usage: rename <source> <target>\n' >&2
+        printf '       rename\n' >&2
+        return 1
+    fi
+
+    if [[ -z $target_path ]]; then
+        printf 'rename: missing target path\n' >&2
+        return 1
+    fi
+
+    mv -- "$source_path" "$target_path"
+}
+
 # config-tools files-zip: Zip files with a search parameter
 function files-zip() {
     local search_param=$1
