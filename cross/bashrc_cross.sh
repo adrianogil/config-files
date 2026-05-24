@@ -40,6 +40,8 @@ source ${CROSS_CONFIG_FILES_DIR}/process_utils.sh
 source ${CROSS_CONFIG_FILES_DIR}/math_tools.sh
 # Dev Tools
 source ${CROSS_CONFIG_FILES_DIR}/dev_tools.sh
+# Codex config
+source ${CROSS_CONFIG_FILES_DIR}/codex_configs.sh
 # Basic CMDs
 source ${CROSS_CONFIG_FILES_DIR}/basic_cmds.sh
 # Network-related functions
@@ -69,4 +71,3 @@ function zap()
          open "https://api.whatsapp.com/send/?phone="${target_number}
    fi
 }
-
