@@ -263,7 +263,7 @@ function file-navigate-fzf() {
         )
 
         selection=$(
-            printf './\n%s\n' "$entries" |
+            printf './\n../\n%s\n' "$entries" |
                 default-fuzzy-finder --prompt="${current_dir}/ > "
         ) || return 1
 
@@ -275,6 +275,11 @@ function file-navigate-fzf() {
         if [[ "$selection" == "./" ]]; then
             cd "$current_dir" || return 1
             return 0
+        fi
+
+        if [[ "$selection" == "../" ]]; then
+            current_dir=$(cd "$current_dir/.." 2>/dev/null && pwd -P) || return 1
+            continue
         fi
 
         # Remove trailing "/" used only as a directory marker
