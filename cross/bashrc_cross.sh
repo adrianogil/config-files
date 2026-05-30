@@ -42,6 +42,8 @@ source ${CROSS_CONFIG_FILES_DIR}/math_tools.sh
 source ${CROSS_CONFIG_FILES_DIR}/dev_tools.sh
 # Codex config
 source ${CROSS_CONFIG_FILES_DIR}/codex_configs.sh
+# LLM CLI config
+source ${CROSS_CONFIG_FILES_DIR}/llm.sh
 # Basic CMDs
 source ${CROSS_CONFIG_FILES_DIR}/basic_cmds.sh
 # Network-related functions
