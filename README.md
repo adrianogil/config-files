@@ -1,35 +1,130 @@
 # config-files
-A set of small utilities functions that I find useful
 
-## Target OS
-Most of functions should work on Linux, OSX and Termux
+Personal shell configuration and small command-line utilities for Linux, macOS, and Termux.
 
-## How to Install
-On terminal, just export a variable 'CONFIG_FILES_DIR' with the path of this project.
+The repo is organized as a set of sourceable shell modules plus a few Python helpers. The main entry point is `bashrc.sh`, which loads the platform-specific files first and then the shared cross-platform tools.
 
-```
+## Supported Environments
+
+- macOS: loads `osx/bashrc_osx.sh`
+- Linux: loads `linux/bashrc_linux.sh`
+- Termux: loads `termux/bashrc_termux.sh`
+- Shared tools: loads `cross/bashrc_cross.sh`, `slide_tool/slide_tools.sh`, and `python/python_tools.sh`
+
+Most commands are shell functions and aliases intended for interactive terminal use.
+
+## Install
+
+Set `CONFIG_FILES_DIR` to this repository and source `bashrc.sh` from your shell startup file:
+
+```sh
 export CONFIG_FILES_DIR=<path-to-config-files>
-source $CONFIG_FILES_DIR/bashrc.sh
+source "$CONFIG_FILES_DIR/bashrc.sh"
 ```
 
-You can also use [gil-install](https://github.com/adrianogil/gil-tools/blob/master/src/python/gil_install.py)
+Example:
+
+```sh
+export CONFIG_FILES_DIR="$HOME/workspace/scripts/config-files"
+source "$CONFIG_FILES_DIR/bashrc.sh"
 ```
+
+You can also install through [`gil-install`](https://github.com/adrianogil/gil-tools/blob/master/src/python/gil_install.py):
+
+```sh
 cd <path-to-config-files>
 gil-install -i
 ```
 
-## Commands
+## Repository Layout
 
-### config-fz
+```text
+bashrc.sh              Main entry point
+cross/                 Shared aliases and functions
+linux/                 Linux-specific shell helpers
+osx/                   macOS-specific shell helpers
+termux/                Android/Termux-specific shell helpers
+python/                Python-backed CLI helpers
+slide_tool/            Markdown-to-slide helper scripts
+install.gil            gil-install metadata
+```
 
-The `config-fz` function is a utility that allows you to run a command from the ConfigFiles using a fuzzy finder for selection. 
-This function is particularly useful when you need to quickly find and execute a command from the ConfigFiles without having to remember the exact command or navigate through the directories.
+## Command Discovery
 
-## Contributing
+The fastest way to rediscover commands is `config-fz`:
 
-Feel free to submit PRs. I will do my best to review and merge them if I consider them essential.
+```sh
+config-fz
+```
 
-## See also
+Aliases:
 
-- https://github.com/adrianogil/gil-tools
-- https://github.com/adrianogil/dotfiles
+```sh
+cf-fz
+cz
+```
+
+`config-fz` scans shell files for `# config-tools ...` annotations, opens the list in `default-fuzzy-finder`, and runs the selected command. By default, `default-fuzzy-finder` is aliased to `fzf`.
+
+Useful examples from the annotated command set:
+
+| Command | Purpose |
+| --- | --- |
+| `bkp` | Back up a file or directory |
+| `bkp-restore` | Restore a backup |
+| `cdk` | Fuzzy-select and enter a child directory |
+| `cdp` | Fuzzy-select and enter a parent directory |
+| `file-info` | Show metadata, hashes, attributes, and timestamps for a file |
+| `file-to-prompt` | Copy one file as a prompt-ready Markdown code block |
+| `dir-to-prompt` | Copy a directory of files as prompt-ready Markdown code blocks |
+| `file-navigate-fzf` | Browse files/directories interactively and inspect the selected file |
+| `code-file-navigate-fzf` | Browse files/directories interactively and open a selection in VS Code |
+| `files-organize` | Run the Python file organizer helper |
+| `docker-run-fzf` | Pick and run a Docker image through `fzf` |
+| `myvars` | Inspect environment variables |
+| `which-shell` | Print the current shell process |
+
+There are also OS-specific tools for clipboard integration, browser sessions, editor shortcuts, and file opening.
+
+## Common Aliases
+
+Some aliases are intentionally short because this repo is optimized for interactive use:
+
+| Alias | Expands to |
+| --- | --- |
+| `rl` | Reload shell configuration |
+| `fz` | `fzf` |
+| `fto` | `file-to-prompt` |
+| `dto` | `dir-to-prompt` |
+| `finfo` | `file-info` |
+| `z` | `file-navigate-fzf` |
+| `cndz` | `code-file-navigate-fzf` |
+| `tn` | `tnew` |
+| `te` | `tenter` |
+| `tl` | `tlist` |
+| `x` | `codex` |
+| `cdx` | `codex app` |
+
+## Development Checks
+
+These checks are useful after editing shell modules:
+
+```sh
+find . -name '*.sh' -print0 | xargs -0 -n1 bash -n
+CONFIG_FILES_DIR="$PWD" bash --noprofile --norc -c 'source bashrc.sh'
+CONFIG_FILES_DIR="$PWD" zsh -f -c 'source bashrc.sh'
+python3 -m compileall -q python
+```
+
+The clean Bash and Zsh commands avoid loading unrelated dotfiles, which keeps the result focused on this repo.
+
+## Notes
+
+- `fzf` is expected for fuzzy-selection commands.
+- Clipboard commands are platform-specific: macOS uses `pbcopy`/`pbpaste`, Linux uses `xclip`, and Termux uses Android-oriented helpers.
+- Some helpers assume optional tools such as `tmux`, `screen`, `code`, `brew`, `docker`, `youtube-dl`, or `ffmpeg`.
+
+## See Also
+
+- [gil-tools](https://github.com/adrianogil/gil-tools)
+- [dotfiles](https://github.com/adrianogil/dotfiles)
