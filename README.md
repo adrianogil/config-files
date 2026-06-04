@@ -107,16 +107,22 @@ Some aliases are intentionally short because this repo is optimized for interact
 
 ## Development Checks
 
-These checks are useful after editing shell modules:
+Run the smoke test after editing shell modules or Python helpers:
+
+```sh
+scripts/smoke-test.sh
+```
+
+It runs these checks:
 
 ```sh
 find . -name '*.sh' -print0 | xargs -0 -n1 bash -n
 CONFIG_FILES_DIR="$PWD" bash --noprofile --norc -c 'source bashrc.sh'
 CONFIG_FILES_DIR="$PWD" zsh -f -c 'source bashrc.sh'
-python3 -m compileall -q python
+python3 syntax checks for files under python/
 ```
 
-The clean Bash and Zsh commands avoid loading unrelated dotfiles, which keeps the result focused on this repo.
+The clean Bash and Zsh commands avoid loading unrelated dotfiles, which keeps the result focused on this repo. The Python check compiles source in memory, so it does not create `__pycache__` directories.
 
 ## Notes
 
