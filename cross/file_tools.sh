@@ -236,7 +236,7 @@ function file-info() {
 }
 alias finfo="file-info"
 
-# config-tools file-navigate-fzf: Recursively navigate files/dirs with fzf, then inspect or cd
+# config-tools file-navigate-fzf: Recursively navigate files/dirs with fzf, then copy selected file path or cd
 function file-navigate-fzf() {
     local current_dir="${1:-.}"
     local selection=""
@@ -293,12 +293,12 @@ function file-navigate-fzf() {
         fi
 
         rel_target="${abs_target#./}"
-        printf '%s\n' "$rel_target"
-        file-info "$abs_target"
         echo "$rel_target" | copy-text-to-clipboard
+        printf 'Copied %s\n' "$rel_target"
         return 0
     done
 }
+
 alias navi-file="file-navigate-fzf"
 alias z="file-navigate-fzf"
 

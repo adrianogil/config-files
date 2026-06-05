@@ -77,7 +77,7 @@ Useful examples from the annotated command set:
 | `file-info` | Show metadata, hashes, attributes, and timestamps for a file |
 | `file-to-prompt` | Copy one file as a prompt-ready Markdown code block |
 | `dir-to-prompt` | Copy a directory of files as prompt-ready Markdown code blocks |
-| `file-navigate-fzf` | Browse files/directories interactively and inspect the selected file |
+| `file-navigate-fzf` | Browse files/directories interactively and copy the selected file path |
 | `code-file-navigate-fzf` | Browse files/directories interactively and open a selection in VS Code |
 | `files-organize` | Run the Python file organizer helper |
 | `docker-run-fzf` | Pick and run a Docker image through `fzf` |
