@@ -17,6 +17,49 @@ function sha()
     ${target_shellscript}
 }
 
+# config-tools json-fmt: Validate and pretty-print JSON from a file or stdin
+function json-fmt()
+{
+    local input_file="${1:-}"
+
+    if [[ $# -gt 1 ]]; then
+        printf 'Usage: json-fmt [file|-]\n' >&2
+        return 2
+    fi
+
+    if [[ -n $input_file && $input_file != - && ! -r $input_file ]]; then
+        printf 'json-fmt: %s: No such readable file\n' "$input_file" >&2
+        return 1
+    fi
+
+    if command -v jq >/dev/null 2>&1; then
+        if [[ -n $input_file && $input_file != - ]]; then
+            jq . -- "$input_file"
+        else
+            jq .
+        fi
+        return $?
+    fi
+
+    if ! command -v python3 >/dev/null 2>&1; then
+        printf 'json-fmt: install jq or Python 3 to format JSON\n' >&2
+        return 127
+    fi
+
+    if [[ -n $input_file && $input_file != - ]]; then
+        python3 -c 'import json, sys
+with open(sys.argv[1], encoding="utf-8") as source:
+    data = json.load(source)
+json.dump(data, sys.stdout, ensure_ascii=False, indent=2)
+print()' "$input_file"
+    else
+        python3 -c 'import json, sys
+data = json.load(sys.stdin)
+json.dump(data, sys.stdout, ensure_ascii=False, indent=2)
+print()'
+    fi
+}
+
 function jabba-check-instslled-versions()
 {
     jabba ls    
