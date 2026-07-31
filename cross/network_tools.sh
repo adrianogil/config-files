@@ -68,6 +68,27 @@ function serve-dir()
     "$python_command" -m http.server "$port" --bind "$bind_address"
 }
 
+# config-tools weather-now: Show a concise current weather report
+function weather-now()
+{
+    local location="$*"
+    local encoded_location=""
+    local weather_url=""
+
+    if ! command -v curl >/dev/null 2>&1; then
+        printf 'weather-now: curl is required\n' >&2
+        return 127
+    fi
+
+    encoded_location=${location// /+}
+    weather_url="https://wttr.is/${encoded_location}?m&format=4"
+
+    if ! curl --fail --silent --show-error --location --max-time 15 "$weather_url"; then
+        printf 'weather-now: unable to retrieve weather data\n' >&2
+        return 1
+    fi
+}
+
 SSH_DEFAULT_PORT=7375
 
 alias ssh2moi='ssh -p $SSH_DEFAULT_PORT'
