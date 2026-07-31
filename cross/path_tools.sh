@@ -22,6 +22,44 @@ function path-show() {
     echo -e ${PATH//:/\\n}
 }
 
+# config-tools path-dedupe: Remove duplicate entries from PATH
+function path-dedupe()
+{
+    local remaining="${PATH}:"
+    local entry=""
+    local existing=""
+    local duplicate=0
+    local removed=0
+    local IFS=:
+    local -a unique_entries=()
+
+    while [[ $remaining == *:* ]]; do
+        entry=${remaining%%:*}
+        remaining=${remaining#*:}
+        duplicate=0
+
+        for existing in "${unique_entries[@]}"; do
+            if [[ $entry == "$existing" ]]; then
+                duplicate=1
+                break
+            fi
+        done
+
+        if (( duplicate )); then
+            removed=$((removed + 1))
+        else
+            unique_entries+=("$entry")
+        fi
+    done
+
+    PATH="${unique_entries[*]}"
+    export PATH
+
+    printf 'Removed %d duplicate PATH entr%s.\n' \
+        "$removed" "$([[ $removed -eq 1 ]] && printf 'y' || printf 'ies')"
+    printf '%s\n' "$PATH"
+}
+
 function pwdcp()
 {
     if [[ $0 == *termux* ]]; then
