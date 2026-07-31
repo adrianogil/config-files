@@ -9,6 +9,39 @@ function ips-external()
     curl -4 ifconfig.me
 }
 
+# config-tools port-owner: Show the process listening on a TCP or UDP port
+function port-owner()
+{
+    local port="${1:-}"
+    local output=""
+
+    if [[ ! $port =~ ^[0-9]+$ ]] || (( port < 1 || port > 65535 )); then
+        printf 'Usage: port-owner <port (1-65535)>\n' >&2
+        return 2
+    fi
+
+    if command -v lsof >/dev/null 2>&1; then
+        output=$(
+            {
+                lsof -nP -iTCP:"$port" -sTCP:LISTEN
+                lsof -nP -iUDP:"$port"
+            } 2>/dev/null | awk '$0 !~ /^COMMAND[[:space:]]/ || !seen_header++'
+        )
+    elif command -v ss >/dev/null 2>&1; then
+        output=$(ss -H -lntup "sport = :$port" 2>/dev/null)
+    else
+        printf 'port-owner: install lsof or ss to inspect listening ports\n' >&2
+        return 127
+    fi
+
+    if [[ -z $output ]]; then
+        printf 'port-owner: no process is listening on port %s\n' "$port" >&2
+        return 1
+    fi
+
+    printf '%s\n' "$output"
+}
+
 SSH_DEFAULT_PORT=7375
 
 alias ssh2moi='ssh -p $SSH_DEFAULT_PORT'
