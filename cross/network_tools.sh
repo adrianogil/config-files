@@ -42,6 +42,32 @@ function port-owner()
     printf '%s\n' "$output"
 }
 
+# config-tools serve-dir: Serve the current directory over HTTP
+function serve-dir()
+{
+    local port="${1:-8000}"
+    local bind_address="${SERVE_DIR_BIND:-127.0.0.1}"
+    local python_command=""
+
+    if [[ $# -gt 1 || ! $port =~ ^[0-9]+$ ]] || (( port < 1 || port > 65535 )); then
+        printf 'Usage: serve-dir [port (1-65535)]\n' >&2
+        return 2
+    fi
+
+    if command -v python3 >/dev/null 2>&1; then
+        python_command=python3
+    elif command -v python >/dev/null 2>&1 && python -c 'import http.server' >/dev/null 2>&1; then
+        python_command=python
+    else
+        printf 'serve-dir: Python 3 is required\n' >&2
+        return 127
+    fi
+
+    printf 'Serving %s at http://%s:%s/ (Ctrl-C to stop)\n' \
+        "$PWD" "$bind_address" "$port"
+    "$python_command" -m http.server "$port" --bind "$bind_address"
+}
+
 SSH_DEFAULT_PORT=7375
 
 alias ssh2moi='ssh -p $SSH_DEFAULT_PORT'
