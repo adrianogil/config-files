@@ -81,6 +81,28 @@ function files-last-modified()
 }
 alias lmod="files-last-modified"
 
+# config-tools largest-files: List the largest files below a directory
+function largest-files()
+{
+    local target_directory="${1:-.}"
+    local count="${2:-20}"
+
+    if [[ $# -gt 2 || ! $count =~ ^[1-9][0-9]*$ ]]; then
+        printf 'Usage: largest-files [directory] [count]\n' >&2
+        return 2
+    fi
+
+    if [[ ! -d $target_directory ]]; then
+        printf 'largest-files: %s: Not a directory\n' "$target_directory" >&2
+        return 1
+    fi
+
+    printf 'KiB\tFile\n'
+    find "$target_directory" -type f -exec du -k {} + 2>/dev/null \
+        | sort -nr \
+        | head -n "$count"
+}
+
 
 # config-tools file-to-prompt: Copy file content to clipboard in a format suitable for prompt
 function file-to-prompt() {
