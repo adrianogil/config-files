@@ -182,26 +182,74 @@ function rnd-words-jp()
 # random-hexdump
 alias rnd-hexdump="cat /dev/urandom | hexdump -C | grep 'ca fe'"
 
-# Easy way to extract archives
-extract () {
-   if [ -f $1 ] ; then
-       case $1 in
-           *.tar.bz2)   tar xvjf $1;;
-           *.tar.gz)    tar xvzf $1;;
-           *.bz2)       bunzip2 $1 ;;
-           *.rar)       unrar x $1 ;;
-           *.gz)        gunzip $1  ;;
-           *.tar)       tar xvf $1 ;;
-           *.tbz2)      tar xvjf $1;;
-           *.tgz)       tar xvzf $1;;
-           *.zip)       unzip $1   ;;
-           *.Z)         uncompress $1  ;;
-           *.7z)        7z x $1;;
-           *) echo "don't know how to extract '$1'..." ;;
-       esac
-   else
-       echo "'$1' is not a valid file!"
-   fi
+# config-tools extract: Extract a supported archive into a directory
+function extract()
+{
+    local archive="${1:-}"
+    local destination="${2:-.}"
+    local command_name=""
+    local output_name=""
+
+    if [[ -z $archive || $# -gt 2 ]]; then
+        printf 'Usage: extract <archive> [destination]\n' >&2
+        return 2
+    fi
+
+    if [[ ! -f $archive ]]; then
+        printf 'extract: %s: No such archive\n' "$archive" >&2
+        return 1
+    fi
+
+    case "$archive" in
+        *.tar.bz2|*.tbz2) command_name=tar ;;
+        *.tar.gz|*.tgz) command_name=tar ;;
+        *.tar.xz|*.txz) command_name=tar ;;
+        *.tar) command_name=tar ;;
+        *.zip) command_name=unzip ;;
+        *.rar) command_name=unrar ;;
+        *.7z) command_name=7z ;;
+        *.bz2) command_name=bzip2 ;;
+        *.gz) command_name=gzip ;;
+        *.xz) command_name=xz ;;
+        *.Z) command_name=uncompress ;;
+        *)
+            printf 'extract: unsupported archive format: %s\n' "$archive" >&2
+            return 2
+            ;;
+    esac
+
+    if ! command -v "$command_name" >/dev/null 2>&1; then
+        printf 'extract: %s is required to extract %s\n' "$command_name" "$archive" >&2
+        return 127
+    fi
+
+    mkdir -p -- "$destination" || return 1
+
+    case "$archive" in
+        *.tar.bz2|*.tbz2) tar -xjf "$archive" -C "$destination" ;;
+        *.tar.gz|*.tgz) tar -xzf "$archive" -C "$destination" ;;
+        *.tar.xz|*.txz) tar -xJf "$archive" -C "$destination" ;;
+        *.tar) tar -xf "$archive" -C "$destination" ;;
+        *.zip) unzip "$archive" -d "$destination" ;;
+        *.rar) unrar x "$archive" "$destination/" ;;
+        *.7z) 7z x "$archive" "-o$destination" ;;
+        *.bz2)
+            output_name=$(basename -- "${archive%.bz2}")
+            bzip2 -dc -- "$archive" > "$destination/$output_name"
+            ;;
+        *.gz)
+            output_name=$(basename -- "${archive%.gz}")
+            gzip -dc -- "$archive" > "$destination/$output_name"
+            ;;
+        *.xz)
+            output_name=$(basename -- "${archive%.xz}")
+            xz -dc -- "$archive" > "$destination/$output_name"
+            ;;
+        *.Z)
+            output_name=$(basename -- "${archive%.Z}")
+            uncompress -c -- "$archive" > "$destination/$output_name"
+            ;;
+    esac
 }
 
 ############################################################################################
