@@ -11,14 +11,6 @@ run_step() {
     "$@"
 }
 
-check_shell_syntax() {
-    local file
-
-    while IFS= read -r -d '' file; do
-        bash -n "$file"
-    done < <(find "$repo_root" -name '*.sh' -not -path "$repo_root/.git/*" -print0)
-}
-
 check_bash_source() {
     CONFIG_FILES_DIR="$repo_root" bash --noprofile --norc -c 'source "$CONFIG_FILES_DIR/bashrc.sh"'
 }
@@ -53,7 +45,7 @@ if failed:
 PY
 }
 
-run_step "Shell syntax" check_shell_syntax
+run_step "Shell syntax" "$repo_root/scripts/check-shell-syntax.sh"
 run_step "Clean bash source" check_bash_source
 run_step "Clean zsh source" check_zsh_source
 run_step "Python syntax" check_python_syntax

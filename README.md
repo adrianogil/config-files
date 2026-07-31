@@ -107,7 +107,19 @@ Some aliases are intentionally short because this repo is optimized for interact
 
 ## Development Checks
 
-Run the smoke test after editing shell modules or Python helpers:
+Run the focused shell syntax check after editing shell configuration or
+function modules:
+
+```sh
+scripts/check-shell-syntax.sh
+```
+
+It parses every shared `*.sh` file with both `bash -n` and `zsh -n`. It also
+supports shell-specific `*.bash` and `*.zsh` files, checking each only with its
+matching parser. If Bash or Zsh is not installed, that parser is reported as
+skipped instead of causing an unclear command-not-found failure.
+
+Run the full smoke test after editing shell modules or Python helpers:
 
 ```sh
 scripts/smoke-test.sh
@@ -116,7 +128,7 @@ scripts/smoke-test.sh
 It runs these checks:
 
 ```sh
-find . -name '*.sh' -print0 | xargs -0 -n1 bash -n
+scripts/check-shell-syntax.sh
 CONFIG_FILES_DIR="$PWD" bash --noprofile --norc -c 'source bashrc.sh'
 CONFIG_FILES_DIR="$PWD" zsh -f -c 'source bashrc.sh'
 python3 syntax checks for files under python/
