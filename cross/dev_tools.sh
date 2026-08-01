@@ -83,6 +83,34 @@ function command-benchmark()
     python3 "$CONFIG_FILES_DIR/python/clitools/command_benchmark.py" "$@"
 }
 
+# config-tools dotenv-check: Validate dotenv syntax and duplicate definitions
+function dotenv-check()
+{
+    local dotenv_file="${1:-.env}"
+
+    if [[ $# -gt 1 ]]; then
+        printf 'Usage: dotenv-check [file]\n' >&2
+        return 2
+    fi
+
+    if [[ ! -f $dotenv_file ]]; then
+        printf 'dotenv-check: %s: No such file\n' "$dotenv_file" >&2
+        return 1
+    fi
+
+    if ! command -v python3 >/dev/null 2>&1; then
+        printf 'dotenv-check: Python 3 is required\n' >&2
+        return 127
+    fi
+
+    if [[ -z ${CONFIG_FILES_DIR:-} ]]; then
+        printf 'dotenv-check: CONFIG_FILES_DIR is not set\n' >&2
+        return 1
+    fi
+
+    python3 "$CONFIG_FILES_DIR/python/clitools/dotenv_check.py" "$dotenv_file"
+}
+
 function jabba-check-instslled-versions()
 {
     jabba ls    
