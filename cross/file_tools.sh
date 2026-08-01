@@ -236,6 +236,33 @@ function empty-dirs()
     fi
 }
 
+# config-tools recent-files: Find files modified within a recent time window
+function recent-files()
+{
+    local target_directory="${1:-.}"
+    local minutes="${2:-60}"
+    local files=""
+
+    if [[ $# -gt 2 || ! $minutes =~ ^[1-9][0-9]*$ ]]; then
+        printf 'Usage: recent-files [directory] [minutes]\n' >&2
+        return 2
+    fi
+
+    if [[ ! -d $target_directory ]]; then
+        printf 'recent-files: %s: Not a directory\n' "$target_directory" >&2
+        return 1
+    fi
+
+    files=$(find "$target_directory" -type f -mmin "-$minutes" -print | sort) \
+        || return 1
+
+    if [[ -z $files ]]; then
+        printf 'No files modified within the last %s minute(s).\n' "$minutes"
+    else
+        printf '%s\n' "$files"
+    fi
+}
+
 # config-tools files-last-modified: Get the last modified file in current directory
 function files-last-modified()
 {
