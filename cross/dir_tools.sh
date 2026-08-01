@@ -82,3 +82,31 @@ function cdp() {
     parents=$(_list_parents | default-fuzzy-finder)
     cd "$parents"
 }
+
+# config-tools dir-depth: Report the deepest directory nesting
+function dir-depth()
+{
+    local target_directory="${1:-.}"
+
+    if [[ $# -gt 1 ]]; then
+        printf 'Usage: dir-depth [directory]\n' >&2
+        return 2
+    fi
+
+    if [[ ! -d $target_directory ]]; then
+        printf 'dir-depth: %s: Not a directory\n' "$target_directory" >&2
+        return 1
+    fi
+
+    if ! command -v python3 >/dev/null 2>&1; then
+        printf 'dir-depth: Python 3 is required\n' >&2
+        return 127
+    fi
+
+    if [[ -z ${CONFIG_FILES_DIR:-} ]]; then
+        printf 'dir-depth: CONFIG_FILES_DIR is not set\n' >&2
+        return 1
+    fi
+
+    python3 "$CONFIG_FILES_DIR/python/clitools/dir_depth.py" "$target_directory"
+}
