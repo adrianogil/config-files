@@ -184,6 +184,33 @@ function archive-create()
     esac
 }
 
+# config-tools broken-links: Find symbolic links whose targets do not exist
+function broken-links()
+{
+    local target_directory="${1:-.}"
+    local links=""
+
+    if [[ $# -gt 1 ]]; then
+        printf 'Usage: broken-links [directory]\n' >&2
+        return 2
+    fi
+
+    if [[ ! -d $target_directory ]]; then
+        printf 'broken-links: %s: Not a directory\n' "$target_directory" >&2
+        return 1
+    fi
+
+    links=$(
+        find "$target_directory" -type l ! -exec test -e {} \; -print
+    ) || return 1
+
+    if [[ -z $links ]]; then
+        printf 'No broken symbolic links found.\n'
+    else
+        printf '%s\n' "$links"
+    fi
+}
+
 # config-tools files-last-modified: Get the last modified file in current directory
 function files-last-modified()
 {
