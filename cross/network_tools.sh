@@ -313,6 +313,64 @@ print(urllib.parse.quote_from_bytes(sys.stdin.buffer.read(), safe="-._~"))'
     return 127
 }
 
+function _dns-info-query()
+{
+    local backend=$1
+    local domain=$2
+    local record_type=$3
+    local output=""
+    local query_result=0
+
+    if [[ $backend == dig ]]; then
+        output=$(dig +short "$domain" "$record_type" 2>&1) || query_result=$?
+    else
+        output=$(host -t "$record_type" "$domain" 2>&1) || query_result=$?
+    fi
+
+    printf '\n== %s ==\n' "$record_type"
+
+    if [[ $query_result -ne 0 ]]; then
+        printf 'Query failed: %s\n' "$output" >&2
+        return 1
+    fi
+
+    if [[ -z $output ]]; then
+        printf '(none)\n'
+    else
+        printf '%s\n' "$output"
+    fi
+}
+
+# config-tools dns-info: Show common DNS records for a domain
+function dns-info()
+{
+    local domain="${1:-}"
+    local backend=""
+    local record_type=""
+    local query_status=0
+
+    if [[ $# -ne 1 || -z $domain || $domain == -* ]]; then
+        printf 'Usage: dns-info <domain>\n' >&2
+        return 2
+    fi
+
+    if command -v dig >/dev/null 2>&1; then
+        backend=dig
+    elif command -v host >/dev/null 2>&1; then
+        backend=host
+    else
+        printf 'dns-info: install dig or host to query DNS records\n' >&2
+        return 127
+    fi
+
+    printf 'DNS records for %s\n' "$domain"
+    for record_type in A AAAA MX NS TXT; do
+        _dns-info-query "$backend" "$domain" "$record_type" || query_status=1
+    done
+
+    return "$query_status"
+}
+
 SSH_DEFAULT_PORT=7375
 
 alias ssh2moi='ssh -p $SSH_DEFAULT_PORT'
