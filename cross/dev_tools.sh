@@ -111,6 +111,34 @@ function dotenv-check()
     python3 "$CONFIG_FILES_DIR/python/clitools/dotenv_check.py" "$dotenv_file"
 }
 
+# config-tools code-stats: Summarize source files and lines by language
+function code-stats()
+{
+    local target_directory="${1:-.}"
+
+    if [[ $# -gt 1 ]]; then
+        printf 'Usage: code-stats [directory]\n' >&2
+        return 2
+    fi
+
+    if [[ ! -d $target_directory ]]; then
+        printf 'code-stats: %s: Not a directory\n' "$target_directory" >&2
+        return 1
+    fi
+
+    if ! command -v python3 >/dev/null 2>&1; then
+        printf 'code-stats: Python 3 is required\n' >&2
+        return 127
+    fi
+
+    if [[ -z ${CONFIG_FILES_DIR:-} ]]; then
+        printf 'code-stats: CONFIG_FILES_DIR is not set\n' >&2
+        return 1
+    fi
+
+    python3 "$CONFIG_FILES_DIR/python/clitools/code_stats.py" "$target_directory"
+}
+
 function jabba-check-instslled-versions()
 {
     jabba ls    
