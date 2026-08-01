@@ -74,3 +74,68 @@ function chmod-explain()
 
     python3 "$CONFIG_FILES_DIR/python/clitools/chmod_explain.py" "$1"
 }
+
+function _timezone_choices()
+{
+    printf '%s\n' \
+        'Manaus|America/Manaus' \
+        'SP|America/Sao_Paulo' \
+        'BRT|America/Sao_Paulo' \
+        'EST|Etc/GMT+5' \
+        'USA Chicago|America/Chicago' \
+        'South Korea|Asia/Seoul' \
+        'China|Asia/Shanghai'
+}
+
+function _timezone_select()
+{
+    local prompt=$1
+    local selection=""
+
+    selection=$(
+        _timezone_choices \
+            | default-fuzzy-finder \
+                --prompt="$prompt" --delimiter='|' --with-nth=1 \
+                --height=40% --reverse
+    ) || {
+        printf 'timezone-convert: time zone selection cancelled\n' >&2
+        return 1
+    }
+
+    [[ -n $selection && $selection == *'|'* ]] || return 1
+    printf '%s\n' "${selection#*|}"
+}
+
+# config-tools timezone-convert: Convert a datetime between time zones
+function timezone-convert()
+{
+    local datetime_value="${1:-}"
+    local source_zone="${2:-}"
+    local target_zone="${3:-}"
+
+    if [[ $# -lt 1 || $# -gt 3 || -z $datetime_value ]]; then
+        printf 'Usage: timezone-convert <datetime> [from-zone] [to-zone]\n' >&2
+        return 2
+    fi
+
+    if [[ -z $source_zone ]]; then
+        source_zone=$(_timezone_select 'from timezone> ') || return 1
+    fi
+
+    if [[ -z $target_zone ]]; then
+        target_zone=$(_timezone_select 'to timezone> ') || return 1
+    fi
+
+    if ! command -v python3 >/dev/null 2>&1; then
+        printf 'timezone-convert: Python 3 is required\n' >&2
+        return 127
+    fi
+
+    if [[ -z ${CONFIG_FILES_DIR:-} ]]; then
+        printf 'timezone-convert: CONFIG_FILES_DIR is not set\n' >&2
+        return 1
+    fi
+
+    python3 "$CONFIG_FILES_DIR/python/clitools/timezone_convert.py" \
+        "$datetime_value" "$source_zone" "$target_zone"
+}
