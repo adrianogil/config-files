@@ -60,6 +60,29 @@ print()'
     fi
 }
 
+# config-tools command-benchmark: Benchmark repeated command execution
+function command-benchmark()
+{
+    local runs="${1:-}"
+
+    if [[ $# -lt 2 || ! $runs =~ ^[1-9][0-9]*$ ]]; then
+        printf 'Usage: command-benchmark <runs> <command...>\n' >&2
+        return 2
+    fi
+
+    if ! command -v python3 >/dev/null 2>&1; then
+        printf 'command-benchmark: Python 3 is required\n' >&2
+        return 127
+    fi
+
+    if [[ -z ${CONFIG_FILES_DIR:-} ]]; then
+        printf 'command-benchmark: CONFIG_FILES_DIR is not set\n' >&2
+        return 1
+    fi
+
+    python3 "$CONFIG_FILES_DIR/python/clitools/command_benchmark.py" "$@"
+}
+
 function jabba-check-instslled-versions()
 {
     jabba ls    
