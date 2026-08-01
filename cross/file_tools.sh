@@ -74,6 +74,55 @@ function files-zip() {
     find . -type f -name "$search_param" | zip "$zip_name" -@
 }
 
+# config-tools archive-list: Preview archive contents without extracting
+function archive-list()
+{
+    local archive="${1:-}"
+    local command_name=""
+
+    if [[ $# -ne 1 ]]; then
+        printf 'Usage: archive-list <archive>\n' >&2
+        return 2
+    fi
+
+    if [[ ! -r $archive || ! -f $archive ]]; then
+        printf 'archive-list: %s: No such readable archive\n' "$archive" >&2
+        return 1
+    fi
+
+    case "$archive" in
+        *.tar|*.tar.gz|*.tgz|*.tar.bz2|*.tbz2|*.tar.xz|*.txz) command_name=tar ;;
+        *.zip) command_name=unzip ;;
+        *.7z) command_name=7z ;;
+        *.rar) command_name=unrar ;;
+        *.gz) command_name=gzip ;;
+        *.bz2) command_name=bzip2 ;;
+        *.xz) command_name=xz ;;
+        *)
+            printf 'archive-list: unsupported archive format: %s\n' "$archive" >&2
+            return 2
+            ;;
+    esac
+
+    if ! command -v "$command_name" >/dev/null 2>&1; then
+        printf 'archive-list: %s is required to inspect %s\n' \
+            "$command_name" "$archive" >&2
+        return 127
+    fi
+
+    case "$archive" in
+        *.tar|*.tar.gz|*.tgz|*.tar.bz2|*.tbz2|*.tar.xz|*.txz)
+            tar -tf "$archive"
+            ;;
+        *.zip) unzip -l "$archive" ;;
+        *.7z) 7z l "$archive" ;;
+        *.rar) unrar l "$archive" ;;
+        *.gz) gzip -l "$archive" ;;
+        *.bz2) bzip2 -tv "$archive" ;;
+        *.xz) xz -l "$archive" ;;
+    esac
+}
+
 # config-tools files-last-modified: Get the last modified file in current directory
 function files-last-modified()
 {
