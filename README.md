@@ -64,7 +64,7 @@ cf-fz
 cz
 ```
 
-`config-fz` scans shell files for `# config-tools ...` annotations, opens the list in `default-fuzzy-finder`, and runs the selected command. By default, `default-fuzzy-finder` is aliased to `fzf`.
+`config-fz` scans shell files for `# config-tools ...` annotations, opens the list in `default-fuzzy-finder`, and runs the selected command. By default, `default-fuzzy-finder` delegates to `fzf`.
 
 Useful examples from the annotated command set:
 

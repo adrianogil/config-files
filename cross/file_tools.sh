@@ -272,6 +272,70 @@ function checksum-verify()
     printf 'OK: %s checksum matches for %s\n' "$method" "$target_file"
 }
 
+# config-tools disk-free: Show available disk space and warn when it is low
+function disk-free()
+{
+    local target_path="${1:-.}"
+    local warning_threshold="${DISK_FREE_WARN_PERCENT:-10}"
+    local df_output=""
+    local filesystem=""
+    local available_kib=0
+    local used_percent=0
+    local free_percent=0
+    local mounted_on=""
+    local available_human=""
+
+    if [[ $# -gt 1 ]]; then
+        printf 'Usage: disk-free [path]\n' >&2
+        return 2
+    fi
+
+    if [[ ! -e $target_path ]]; then
+        printf 'disk-free: %s: No such file or directory\n' "$target_path" >&2
+        return 1
+    fi
+
+    if [[ ! $warning_threshold =~ ^[1-9][0-9]*$ ]] \
+        || (( warning_threshold > 99 )); then
+        printf 'disk-free: DISK_FREE_WARN_PERCENT must be between 1 and 99\n' >&2
+        return 2
+    fi
+
+    df_output=$(df -Pk "$target_path") || return 1
+    filesystem=$(printf '%s\n' "$df_output" | awk 'NR == 2 {print $1}')
+    available_kib=$(printf '%s\n' "$df_output" | awk 'NR == 2 {print $4}')
+    used_percent=$(printf '%s\n' "$df_output" | awk 'NR == 2 {gsub(/%/, "", $5); print $5}')
+    mounted_on=$(printf '%s\n' "$df_output" | awk 'NR == 2 {print $NF}')
+
+    if [[ ! $available_kib =~ ^[0-9]+$ || ! $used_percent =~ ^[0-9]+$ ]]; then
+        printf 'disk-free: unable to parse df output for %s\n' "$target_path" >&2
+        return 1
+    fi
+
+    free_percent=$((100 - used_percent))
+    available_human=$(
+        awk -v kib="$available_kib" 'BEGIN {
+            value = kib
+            unit = "KiB"
+            if (value >= 1024) { value /= 1024; unit = "MiB" }
+            if (value >= 1024) { value /= 1024; unit = "GiB" }
+            if (value >= 1024) { value /= 1024; unit = "TiB" }
+            printf "%.1f %s", value, unit
+        }'
+    )
+
+    printf 'Filesystem: %s\n' "$filesystem"
+    printf 'Mounted on: %s\n' "$mounted_on"
+    printf 'Available:  %s (%d%% free)\n' "$available_human" "$free_percent"
+
+    if (( free_percent < warning_threshold )); then
+        printf 'WARNING: free space is below %d%%.\n' "$warning_threshold" >&2
+        return 1
+    fi
+
+    printf 'Status:     OK\n'
+}
+
 
 # config-tools file-to-prompt: Copy file content to clipboard in a format suitable for prompt
 function file-to-prompt() {
