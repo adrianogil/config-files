@@ -201,6 +201,89 @@ function weather-now()
     fi
 }
 
+# config-tools ssl-expiry: Show TLS certificate validity and remaining days
+function ssl-expiry()
+{
+    local domain="${1:-}"
+    local port="${2:-443}"
+    local certificate=""
+    local details=""
+    local end_date=""
+    local end_epoch=""
+    local now_epoch=""
+    local remaining_seconds=0
+    local remaining_days=0
+    local certificate_status=0
+
+    if [[ $# -lt 1 || $# -gt 2 || -z $domain || ! $port =~ ^[0-9]+$ ]] \
+        || (( port < 1 || port > 65535 )); then
+        printf 'Usage: ssl-expiry <domain> [port (1-65535)]\n' >&2
+        return 2
+    fi
+
+    if ! command -v openssl >/dev/null 2>&1; then
+        printf 'ssl-expiry: openssl is required\n' >&2
+        return 127
+    fi
+
+    certificate=$(
+        openssl s_client -connect "${domain}:${port}" -servername "$domain" \
+            </dev/null 2>/dev/null
+    )
+
+    if [[ -z $certificate ]]; then
+        printf 'ssl-expiry: unable to retrieve a certificate from %s:%s\n' \
+            "$domain" "$port" >&2
+        return 1
+    fi
+
+    details=$(
+        printf '%s\n' "$certificate" \
+            | openssl x509 -noout -subject -issuer -startdate -enddate 2>/dev/null
+    ) || {
+        printf 'ssl-expiry: invalid certificate response from %s:%s\n' \
+            "$domain" "$port" >&2
+        return 1
+    }
+
+    end_date=$(printf '%s\n' "$details" | sed -n 's/^notAfter=//p')
+    now_epoch=$(date +%s)
+
+    if end_epoch=$(date -j -f '%b %e %T %Y %Z' "$end_date" +%s 2>/dev/null); then
+        :
+    elif end_epoch=$(date -d "$end_date" +%s 2>/dev/null); then
+        :
+    else
+        end_epoch=""
+    fi
+
+    printf 'Host: %s:%s\n' "$domain" "$port"
+    printf '%s\n' "$details"
+
+    if [[ -n $end_epoch ]]; then
+        remaining_seconds=$((end_epoch - now_epoch))
+        if (( remaining_seconds >= 0 )); then
+            remaining_days=$(((remaining_seconds + 86399) / 86400))
+            printf 'Remaining: %d day(s)\n' "$remaining_days"
+        else
+            remaining_days=$(((-remaining_seconds + 86399) / 86400))
+            printf 'Expired: %d day(s) ago\n' "$remaining_days"
+        fi
+    else
+        printf 'Remaining: unavailable (could not parse certificate date)\n'
+    fi
+
+    if printf '%s\n' "$certificate" \
+        | openssl x509 -checkend 0 -noout >/dev/null 2>&1; then
+        printf 'Status: valid\n'
+    else
+        printf 'Status: expired\n' >&2
+        certificate_status=1
+    fi
+
+    return "$certificate_status"
+}
+
 SSH_DEFAULT_PORT=7375
 
 alias ssh2moi='ssh -p $SSH_DEFAULT_PORT'
