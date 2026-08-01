@@ -292,6 +292,29 @@ function largest-files()
         | head -n "$count"
 }
 
+# config-tools largest-dirs: Rank directories by total disk usage
+function largest-dirs()
+{
+    local target_directory="${1:-.}"
+    local count="${2:-20}"
+    local usage=""
+
+    if [[ $# -gt 2 || ! $count =~ ^[1-9][0-9]*$ ]]; then
+        printf 'Usage: largest-dirs [directory] [count]\n' >&2
+        return 2
+    fi
+
+    if [[ ! -d $target_directory ]]; then
+        printf 'largest-dirs: %s: Not a directory\n' "$target_directory" >&2
+        return 1
+    fi
+
+    usage=$(du -k "$target_directory") || return 1
+
+    printf 'KiB\tDirectory\n'
+    printf '%s\n' "$usage" | sort -nr | head -n "$count"
+}
+
 function _checksum-select-method()
 {
     local method=""
