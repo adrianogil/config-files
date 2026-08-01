@@ -211,6 +211,31 @@ function broken-links()
     fi
 }
 
+# config-tools empty-dirs: Find empty directories recursively
+function empty-dirs()
+{
+    local target_directory="${1:-.}"
+    local directories=""
+
+    if [[ $# -gt 1 ]]; then
+        printf 'Usage: empty-dirs [directory]\n' >&2
+        return 2
+    fi
+
+    if [[ ! -d $target_directory ]]; then
+        printf 'empty-dirs: %s: Not a directory\n' "$target_directory" >&2
+        return 1
+    fi
+
+    directories=$(find "$target_directory" -type d -empty -print) || return 1
+
+    if [[ -z $directories ]]; then
+        printf 'No empty directories found.\n'
+    else
+        printf '%s\n' "$directories"
+    fi
+}
+
 # config-tools files-last-modified: Get the last modified file in current directory
 function files-last-modified()
 {
