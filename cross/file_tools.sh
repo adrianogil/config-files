@@ -604,6 +604,34 @@ function permissions-audit()
     python3 "$CONFIG_FILES_DIR/python/clitools/permissions_audit.py" "$target_directory"
 }
 
+# config-tools symlink-map: Show symbolic links, resolved targets, and status
+function symlink-map()
+{
+    local target_directory="${1:-.}"
+
+    if [[ $# -gt 1 ]]; then
+        printf 'Usage: symlink-map [directory]\n' >&2
+        return 2
+    fi
+
+    if [[ ! -d $target_directory ]]; then
+        printf 'symlink-map: %s: Not a directory\n' "$target_directory" >&2
+        return 1
+    fi
+
+    if ! command -v python3 >/dev/null 2>&1; then
+        printf 'symlink-map: Python 3 is required\n' >&2
+        return 127
+    fi
+
+    if [[ -z ${CONFIG_FILES_DIR:-} ]]; then
+        printf 'symlink-map: CONFIG_FILES_DIR is not set\n' >&2
+        return 1
+    fi
+
+    python3 "$CONFIG_FILES_DIR/python/clitools/symlink_map.py" "$target_directory"
+}
+
 
 # config-tools file-to-prompt: Copy file content to clipboard in a format suitable for prompt
 function file-to-prompt() {
