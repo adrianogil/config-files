@@ -632,6 +632,34 @@ function symlink-map()
     python3 "$CONFIG_FILES_DIR/python/clitools/symlink_map.py" "$target_directory"
 }
 
+# config-tools text-encoding: Detect file encoding, BOM, and binary content
+function text-encoding()
+{
+    local target_file="${1:-}"
+
+    if [[ $# -ne 1 ]]; then
+        printf 'Usage: text-encoding <file>\n' >&2
+        return 2
+    fi
+
+    if [[ ! -f $target_file ]]; then
+        printf 'text-encoding: %s: No such file\n' "$target_file" >&2
+        return 1
+    fi
+
+    if ! command -v python3 >/dev/null 2>&1; then
+        printf 'text-encoding: Python 3 is required\n' >&2
+        return 127
+    fi
+
+    if [[ -z ${CONFIG_FILES_DIR:-} ]]; then
+        printf 'text-encoding: CONFIG_FILES_DIR is not set\n' >&2
+        return 1
+    fi
+
+    python3 "$CONFIG_FILES_DIR/python/clitools/text_encoding.py" "$target_file"
+}
+
 
 # config-tools file-to-prompt: Copy file content to clipboard in a format suitable for prompt
 function file-to-prompt() {
