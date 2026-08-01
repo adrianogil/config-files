@@ -53,3 +53,24 @@ function uuid-new()
         esac
     done
 }
+
+# config-tools chmod-explain: Explain numeric or symbolic file permissions
+function chmod-explain()
+{
+    if [[ $# -ne 1 ]]; then
+        printf 'Usage: chmod-explain <mode>\n' >&2
+        return 2
+    fi
+
+    if ! command -v python3 >/dev/null 2>&1; then
+        printf 'chmod-explain: Python 3 is required\n' >&2
+        return 127
+    fi
+
+    if [[ -z ${CONFIG_FILES_DIR:-} ]]; then
+        printf 'chmod-explain: CONFIG_FILES_DIR is not set\n' >&2
+        return 1
+    fi
+
+    python3 "$CONFIG_FILES_DIR/python/clitools/chmod_explain.py" "$1"
+}
