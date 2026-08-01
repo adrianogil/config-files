@@ -208,6 +208,70 @@ function checksum()
     printf '%s  %s\n' "$value" "$target_file"
 }
 
+# config-tools checksum-verify: Verify a file against an expected checksum
+function checksum-verify()
+{
+    local target_file="${1:-}"
+    local expected="${2:-}"
+    local method="${3:-}"
+    local expected_length=0
+    local actual=""
+
+    if [[ $# -lt 2 || $# -gt 3 ]]; then
+        printf 'Usage: checksum-verify <file> <hash> [sha256|sha512|sha1|md5]\n' >&2
+        return 2
+    fi
+
+    if [[ ! -r $target_file || ! -f $target_file ]]; then
+        printf 'checksum-verify: %s: No such readable file\n' "$target_file" >&2
+        return 1
+    fi
+
+    if [[ -z $method ]]; then
+        method=$(_checksum-select-method) || return 1
+    fi
+
+    case "$method" in
+        md5|MD5)
+            method=md5
+            expected_length=32
+            ;;
+        sha1|SHA1|sha-1|SHA-1)
+            method=sha1
+            expected_length=40
+            ;;
+        sha256|SHA256|sha-256|SHA-256)
+            method=sha256
+            expected_length=64
+            ;;
+        sha512|SHA512|sha-512|SHA-512)
+            method=sha512
+            expected_length=128
+            ;;
+        *)
+            printf 'checksum-verify: unsupported method: %s\n' "$method" >&2
+            return 2
+            ;;
+    esac
+
+    if [[ ! $expected =~ ^[0-9a-fA-F]+$ ]] || (( ${#expected} != expected_length )); then
+        printf 'checksum-verify: expected a %d-character hexadecimal %s hash\n' \
+            "$expected_length" "$method" >&2
+        return 2
+    fi
+
+    expected=$(printf '%s' "$expected" | tr '[:upper:]' '[:lower:]')
+    actual=$(_checksum-value "$target_file" "$method") || return $?
+
+    if [[ $actual != "$expected" ]]; then
+        printf 'FAIL: %s checksum does not match for %s\n' "$method" "$target_file" >&2
+        printf 'Expected: %s\nActual:   %s\n' "$expected" "$actual" >&2
+        return 1
+    fi
+
+    printf 'OK: %s checksum matches for %s\n' "$method" "$target_file"
+}
+
 
 # config-tools file-to-prompt: Copy file content to clipboard in a format suitable for prompt
 function file-to-prompt() {
