@@ -103,6 +103,111 @@ function largest-files()
         | head -n "$count"
 }
 
+function _checksum-select-method()
+{
+    local method=""
+
+    method=$(
+        printf 'sha256\nsha512\nsha1\nmd5\n' \
+            | default-fuzzy-finder --prompt='checksum method> ' --height=40% --reverse
+    ) || {
+        printf 'checksum: method selection cancelled or unavailable\n' >&2
+        return 1
+    }
+
+    [[ -n $method ]] || return 1
+    printf '%s\n' "$method"
+}
+
+function _checksum-value()
+{
+    local target_file=$1
+    local method=$2
+    local value=""
+
+    case "$method" in
+        md5)
+            if command -v md5sum >/dev/null 2>&1; then
+                value=$(md5sum -- "$target_file" | awk '{print $1}')
+            elif command -v md5 >/dev/null 2>&1; then
+                value=$(md5 -q -- "$target_file")
+            elif command -v openssl >/dev/null 2>&1; then
+                value=$(openssl dgst -md5 "$target_file" | awk '{print $NF}')
+            fi
+            ;;
+        sha1)
+            if command -v sha1sum >/dev/null 2>&1; then
+                value=$(sha1sum -- "$target_file" | awk '{print $1}')
+            elif command -v shasum >/dev/null 2>&1; then
+                value=$(shasum -a 1 -- "$target_file" | awk '{print $1}')
+            elif command -v openssl >/dev/null 2>&1; then
+                value=$(openssl dgst -sha1 "$target_file" | awk '{print $NF}')
+            fi
+            ;;
+        sha256)
+            if command -v sha256sum >/dev/null 2>&1; then
+                value=$(sha256sum -- "$target_file" | awk '{print $1}')
+            elif command -v shasum >/dev/null 2>&1; then
+                value=$(shasum -a 256 -- "$target_file" | awk '{print $1}')
+            elif command -v openssl >/dev/null 2>&1; then
+                value=$(openssl dgst -sha256 "$target_file" | awk '{print $NF}')
+            fi
+            ;;
+        sha512)
+            if command -v sha512sum >/dev/null 2>&1; then
+                value=$(sha512sum -- "$target_file" | awk '{print $1}')
+            elif command -v shasum >/dev/null 2>&1; then
+                value=$(shasum -a 512 -- "$target_file" | awk '{print $1}')
+            elif command -v openssl >/dev/null 2>&1; then
+                value=$(openssl dgst -sha512 "$target_file" | awk '{print $NF}')
+            fi
+            ;;
+    esac
+
+    if [[ -z $value ]]; then
+        printf 'checksum: no %s implementation is available\n' "$method" >&2
+        return 127
+    fi
+
+    printf '%s\n' "$value"
+}
+
+# config-tools checksum: Generate a checksum for a file
+function checksum()
+{
+    local target_file="${1:-}"
+    local method="${2:-}"
+    local value=""
+
+    if [[ $# -lt 1 || $# -gt 2 ]]; then
+        printf 'Usage: checksum <file> [sha256|sha512|sha1|md5]\n' >&2
+        return 2
+    fi
+
+    if [[ ! -r $target_file || ! -f $target_file ]]; then
+        printf 'checksum: %s: No such readable file\n' "$target_file" >&2
+        return 1
+    fi
+
+    if [[ -z $method ]]; then
+        method=$(_checksum-select-method) || return 1
+    fi
+
+    case "$method" in
+        md5|MD5) method=md5 ;;
+        sha1|SHA1|sha-1|SHA-1) method=sha1 ;;
+        sha256|SHA256|sha-256|SHA-256) method=sha256 ;;
+        sha512|SHA512|sha-512|SHA-512) method=sha512 ;;
+        *)
+            printf 'checksum: unsupported method: %s\n' "$method" >&2
+            return 2
+            ;;
+    esac
+
+    value=$(_checksum-value "$target_file" "$method") || return $?
+    printf '%s  %s\n' "$value" "$target_file"
+}
+
 
 # config-tools file-to-prompt: Copy file content to clipboard in a format suitable for prompt
 function file-to-prompt() {

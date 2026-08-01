@@ -2,7 +2,10 @@
 alias reload_mes_configs='source ~/.bashrc'
 alias rl='reload_mes_configs'
 
-alias default-fuzzy-finder='fzf'
+function default-fuzzy-finder()
+{
+    fzf "$@"
+}
 alias fz='fzf'
 
 # config-tools pick-copy: Pick a file using fzf and copy its path to clipboard
