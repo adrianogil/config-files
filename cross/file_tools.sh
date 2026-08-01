@@ -123,6 +123,67 @@ function archive-list()
     esac
 }
 
+# config-tools archive-create: Create an archive based on its output extension
+function archive-create()
+{
+    local output_archive="${1:-}"
+    local command_name=""
+    local output_directory=""
+    local input_path=""
+
+    if [[ $# -lt 2 ]]; then
+        printf 'Usage: archive-create <output> <paths...>\n' >&2
+        return 2
+    fi
+
+    if [[ -e $output_archive ]]; then
+        printf 'archive-create: refusing to overwrite existing path: %s\n' \
+            "$output_archive" >&2
+        return 1
+    fi
+
+    case "$output_archive" in
+        *.tar|*.tar.gz|*.tgz|*.tar.bz2|*.tbz2|*.tar.xz|*.txz) command_name=tar ;;
+        *.zip) command_name=zip ;;
+        *.7z) command_name=7z ;;
+        *)
+            printf 'archive-create: unsupported archive format: %s\n' \
+                "$output_archive" >&2
+            return 2
+            ;;
+    esac
+
+    if ! command -v "$command_name" >/dev/null 2>&1; then
+        printf 'archive-create: %s is required to create %s\n' \
+            "$command_name" "$output_archive" >&2
+        return 127
+    fi
+
+    output_directory=$(dirname -- "$output_archive")
+    if [[ ! -d $output_directory ]]; then
+        printf 'archive-create: output directory does not exist: %s\n' \
+            "$output_directory" >&2
+        return 1
+    fi
+
+    shift
+    for input_path in "$@"; do
+        if [[ ! -e $input_path ]]; then
+            printf 'archive-create: input does not exist: %s\n' "$input_path" >&2
+            return 1
+        fi
+    done
+
+    case "$output_archive" in
+        *.tar) tar -cf "$output_archive" -- "$@" ;;
+        *.tar.gz|*.tgz) tar -czf "$output_archive" -- "$@" ;;
+        *.tar.bz2|*.tbz2) tar -cjf "$output_archive" -- "$@" ;;
+        *.tar.xz|*.txz) tar -cJf "$output_archive" -- "$@" ;;
+        *.zip) zip -r "$output_archive" -- "$@" ;;
+        *.7z) 7z a "$output_archive" "$@" ;;
+    esac
+}
+
 # config-tools files-last-modified: Get the last modified file in current directory
 function files-last-modified()
 {
