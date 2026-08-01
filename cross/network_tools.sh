@@ -89,6 +89,71 @@ with socket.create_connection((sys.argv[1], int(sys.argv[2])), timeout=1):
     return 1
 }
 
+# config-tools kill-port: Terminate the process listening on a TCP or UDP port
+function kill-port()
+{
+    local port="${1:-}"
+    local force="${2:-}"
+    local pids=""
+    local pid=""
+    local answer=""
+    local kill_status=0
+
+    if [[ $# -lt 1 || $# -gt 2 || ! $port =~ ^[0-9]+$ ]] \
+        || (( port < 1 || port > 65535 )) \
+        || [[ -n $force && $force != --force ]]; then
+        printf 'Usage: kill-port <port (1-65535)> [--force]\n' >&2
+        return 2
+    fi
+
+    if command -v lsof >/dev/null 2>&1; then
+        pids=$(
+            {
+                lsof -tiTCP:"$port" -sTCP:LISTEN
+                lsof -tiUDP:"$port"
+            } 2>/dev/null | sort -u
+        )
+    elif command -v fuser >/dev/null 2>&1; then
+        pids=$(
+            {
+                fuser "$port/tcp"
+                fuser "$port/udp"
+            } 2>/dev/null | tr ' ' '\n' | awk '/^[0-9]+$/' | sort -u
+        )
+    else
+        printf 'kill-port: install lsof or fuser to inspect listening ports\n' >&2
+        return 127
+    fi
+
+    if [[ -z $pids ]]; then
+        printf 'kill-port: no process is listening on port %s\n' "$port" >&2
+        return 1
+    fi
+
+    printf 'Processes listening on port %s:\n' "$port"
+    ps -p "$(printf '%s\n' "$pids" | paste -sd, -)" -o pid=,user=,comm=
+
+    if [[ $force != --force ]]; then
+        printf 'Terminate these processes? [y/N] ' >&2
+        IFS= read -r answer
+        case "$answer" in
+            y|Y|yes|YES|Yes) ;;
+            *)
+                printf 'Cancelled.\n'
+                return 1
+                ;;
+        esac
+    fi
+
+    while IFS= read -r pid; do
+        [[ -z $pid ]] && continue
+        kill "$pid" || kill_status=1
+    done <<< "$pids"
+
+    [[ $kill_status -eq 0 ]] || return 1
+    printf 'Sent SIGTERM to PID(s): %s\n' "$(printf '%s' "$pids" | tr '\n' ' ')"
+}
+
 # config-tools serve-dir: Serve the current directory over HTTP
 function serve-dir()
 {
