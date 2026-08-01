@@ -42,6 +42,53 @@ function port-owner()
     printf '%s\n' "$output"
 }
 
+# config-tools wait-port: Wait until a TCP host and port become reachable
+function wait-port()
+{
+    local host="${1:-}"
+    local port="${2:-}"
+    local timeout="${3:-30}"
+    local start_time=$SECONDS
+    local probe=""
+
+    if [[ $# -lt 2 || $# -gt 3 || -z $host || ! $port =~ ^[0-9]+$ ]] \
+        || (( port < 1 || port > 65535 )) \
+        || [[ ! $timeout =~ ^[1-9][0-9]*$ ]]; then
+        printf 'Usage: wait-port <host> <port (1-65535)> [timeout-seconds]\n' >&2
+        return 2
+    fi
+
+    if command -v nc >/dev/null 2>&1; then
+        probe=nc
+    elif command -v python3 >/dev/null 2>&1; then
+        probe=python3
+    else
+        printf 'wait-port: install nc or Python 3 to probe TCP ports\n' >&2
+        return 127
+    fi
+
+    while (( SECONDS - start_time < timeout )); do
+        if [[ $probe == nc ]]; then
+            nc -z -w 1 "$host" "$port" >/dev/null 2>&1
+        else
+            python3 -c 'import socket, sys
+with socket.create_connection((sys.argv[1], int(sys.argv[2])), timeout=1):
+    pass' "$host" "$port" >/dev/null 2>&1
+        fi
+
+        if [[ $? -eq 0 ]]; then
+            printf '%s:%s is reachable.\n' "$host" "$port"
+            return 0
+        fi
+
+        sleep 1
+    done
+
+    printf 'wait-port: timed out after %s seconds waiting for %s:%s\n' \
+        "$timeout" "$host" "$port" >&2
+    return 1
+}
+
 # config-tools serve-dir: Serve the current directory over HTTP
 function serve-dir()
 {
