@@ -284,6 +284,35 @@ function ssl-expiry()
     return "$certificate_status"
 }
 
+# config-tools url-encode: URL-encode arguments or standard input
+function url-encode()
+{
+    local input_text="$*"
+
+    if command -v python3 >/dev/null 2>&1; then
+        if [[ $# -gt 0 ]]; then
+            python3 -c 'import sys, urllib.parse
+print(urllib.parse.quote(sys.argv[1], safe="-._~"))' "$input_text"
+        else
+            python3 -c 'import sys, urllib.parse
+print(urllib.parse.quote_from_bytes(sys.stdin.buffer.read(), safe="-._~"))'
+        fi
+        return $?
+    fi
+
+    if command -v jq >/dev/null 2>&1; then
+        if [[ $# -gt 0 ]]; then
+            printf '%s' "$input_text" | jq -sRr @uri
+        else
+            jq -sRr @uri
+        fi
+        return $?
+    fi
+
+    printf 'url-encode: install Python 3 or jq to encode URLs\n' >&2
+    return 127
+}
+
 SSH_DEFAULT_PORT=7375
 
 alias ssh2moi='ssh -p $SSH_DEFAULT_PORT'
