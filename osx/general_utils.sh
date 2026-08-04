@@ -1,22 +1,44 @@
 
 
-# config-tools see-definition: Show the definition of a target alias/function
-function see-definition()
+# Resolve a target while protecting against circular alias chains.
+function _see-definition()
 {
-    # Show the definition of a target alias/function
+    local target_function=$1
+    local resolution_depth=${2:-0}
+    local alias_definition
+    local alias_value
+    local alias_target
 
-    if [ -z "$1" ]
+    if [ "${resolution_depth}" -ge 20 ]
     then
-        printf "Enter target function: "
-        read -r target_function
-    else
-        target_function=$1
+        printf 'Alias resolution limit reached at %s (possible circular alias).\n' "${target_function}" >&2
+        return 1
     fi
 
-    if alias "${target_function}" >/dev/null 2>&1
+    if alias_definition=$(alias "${target_function}" 2>/dev/null)
     then
-        echo "${target_function} is an alias"
-        alias "${target_function}"
+        printf '%s is an alias\n' "${target_function}"
+        printf '%s\n' "${alias_definition}"
+
+        # Bash prefixes alias output with "alias "; Zsh does not. In both
+        # shells, everything after the first equals sign is the alias value.
+        alias_value=${alias_definition#*=}
+        case "${alias_value}" in
+            \'*\') alias_value=${alias_value#\'}; alias_value=${alias_value%\'} ;;
+            \"*\") alias_value=${alias_value#\"}; alias_value=${alias_value%\"} ;;
+        esac
+        alias_value="${alias_value#"${alias_value%%[![:space:]]*}"}"
+        alias_target=${alias_value%%[[:space:];|&]*}
+        alias_target=${alias_target#\\}
+
+        if [ -z "${alias_target}" ]
+        then
+            printf 'Alias has no command to inspect.\n'
+            return 0
+        fi
+
+        printf '\nAlias command: %s\n' "${alias_target}"
+        _see-definition "${alias_target}" "$((resolution_depth + 1))"
         return
     fi
 
@@ -26,5 +48,21 @@ function see-definition()
     else
         type "${target_function}"
     fi
+}
+
+# config-tools see-definition: Show the definition of a target alias/function
+function see-definition()
+{
+    local target_function
+
+    if [ -z "${1:-}" ]
+    then
+        printf "Enter target function: "
+        read -r target_function
+    else
+        target_function=$1
+    fi
+
+    _see-definition "${target_function}" 0
 }
 alias sd="see-definition"
