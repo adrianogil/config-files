@@ -80,6 +80,7 @@ Useful examples from the annotated command set:
 | `case-convert` | Convert text between snake, kebab, camel, and Pascal case |
 | `duration-human` | Convert seconds to a readable duration and back |
 | `open-files` | Show processes using a path or files opened by a selected process |
+| `shell-origin` | Locate the files and lines defining shell aliases, functions, and variables |
 | `file-chunk` | Split a file into numbered pieces of a chosen size |
 | `file-chunk-merge` | Validate and merge a directory of numbered chunks |
 | `file-to-prompt` | Copy one file as a prompt-ready Markdown code block |
@@ -92,6 +93,19 @@ Useful examples from the annotated command set:
 | `which-shell` | Print the current shell process |
 
 There are also OS-specific tools for clipboard integration, browser sessions, editor shortcuts, and file opening.
+
+Use `shell-origin` to find where a loaded shell name comes from:
+
+```sh
+shell-origin sd
+shell-origin case-convert
+shell-origin CROSS_CONFIG_FILES_DIR
+shell-origin "$CONFIG_FILES_DIR/python/"
+shell-origin --all sd
+```
+
+By default, platform-specific results are limited to the current platform.
+`--all` also shows definitions from other platform directories.
 
 ## Common Aliases
 

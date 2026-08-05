@@ -155,6 +155,67 @@ function case-convert()
     python3 "$CONFIG_FILES_DIR/python/clitools/case_convert.py" "$@"
 }
 
+# config-tools shell-origin: Locate where a shell name is defined in config-files
+function shell-origin()
+{
+    local show_all=""
+    local target=""
+    local variable_target=""
+    local platform=""
+    local runtime_type="not found in current shell"
+
+    if [ "${1:-}" = --all ]; then
+        show_all=--all
+        shift
+    fi
+
+    if [ "$#" -ne 1 ]; then
+        printf 'Usage: shell-origin [--all] <alias|function|variable|path-entry>\n' >&2
+        return 2
+    fi
+    target=$1
+    variable_target=${target#\$}
+
+    if ! command -v python3 >/dev/null 2>&1; then
+        printf 'shell-origin: Python 3 is required\n' >&2
+        return 127
+    fi
+    if [[ -z ${CONFIG_FILES_DIR:-} ]]; then
+        printf 'shell-origin: CONFIG_FILES_DIR is not set\n' >&2
+        return 1
+    fi
+
+    if alias "${target}" >/dev/null 2>&1; then
+        runtime_type=alias
+    elif typeset -f "${target}" >/dev/null 2>&1; then
+        runtime_type=function
+    elif typeset -p "${variable_target}" >/dev/null 2>&1; then
+        runtime_type=variable
+    elif [[ $target == */* ]]; then
+        runtime_type='PATH entry or path'
+    fi
+
+    case "$(uname -s)" in
+        Darwin) platform=osx ;;
+        Linux)
+            if [[ ${PREFIX:-} == *com.termux* ]]; then
+                platform=termux
+            else
+                platform=linux
+            fi
+            ;;
+        *) platform=unknown ;;
+    esac
+
+    if [ -n "${show_all}" ]; then
+        python3 "$CONFIG_FILES_DIR/python/clitools/shell_origin.py" \
+            --all "${target}" "$CONFIG_FILES_DIR" "${platform}" "${runtime_type}"
+    else
+        python3 "$CONFIG_FILES_DIR/python/clitools/shell_origin.py" \
+            "${target}" "$CONFIG_FILES_DIR" "${platform}" "${runtime_type}"
+    fi
+}
+
 function jabba-check-instslled-versions()
 {
     jabba ls    
