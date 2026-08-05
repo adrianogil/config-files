@@ -75,6 +75,7 @@ Useful examples from the annotated command set:
 | `cdk` | Fuzzy-select and enter a child directory |
 | `cdp` | Fuzzy-select and enter a parent directory |
 | `file-info` | Show metadata, hashes, attributes, and timestamps for a file |
+| `clipboard-pick` | Select a saved clipboard item and restore it to the clipboard |
 | `file-to-prompt` | Copy one file as a prompt-ready Markdown code block |
 | `dir-to-prompt` | Copy a directory of files as prompt-ready Markdown code blocks |
 | `file-navigate-fzf` | Browse files/directories interactively and copy the selected file path |
@@ -139,7 +140,7 @@ The clean Bash and Zsh commands avoid loading unrelated dotfiles, which keeps th
 ## Notes
 
 - `fzf` is expected for fuzzy-selection commands.
-- Clipboard commands are platform-specific: macOS uses `pbcopy`/`pbpaste`, Linux uses `xclip`, and Termux uses Android-oriented helpers.
+- Clipboard commands are platform-specific: macOS uses `pbcopy`/`pbpaste`, Linux uses `xclip`, and Termux uses Android-oriented helpers. `copy-text-to-clipboard` also saves each copied value as `/tmp/<index>.clipboarditem`; use `clipboard-pick` to restore one through `fzf`.
 - Some helpers assume optional tools such as `tmux`, `screen`, `code`, `brew`, `docker`, `youtube-dl`, or `ffmpeg`.
 
 ## See Also

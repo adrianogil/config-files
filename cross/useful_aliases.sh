@@ -8,8 +8,127 @@ function default-fuzzy-finder()
 }
 alias fz='fzf'
 
+# Remove the old platform aliases when reloading an existing shell session.
+unalias copy-text-to-clipboard 2>/dev/null
+unalias copy-clipboard-function 2>/dev/null
+
+function _clipboard-history-next-file()
+{
+    local history_dir="${CLIPBOARD_HISTORY_DIR:-/tmp}"
+    local history_item
+    local item_name
+    local item_index
+    local latest_index=0
+    local next_index
+
+    if [ -n "${ZSH_VERSION:-}" ]
+    then
+        setopt local_options null_glob
+    fi
+
+    for history_item in "${history_dir}"/*.clipboarditem
+    do
+        [ -f "${history_item}" ] || continue
+        item_name=${history_item##*/}
+        item_index=${item_name%.clipboarditem}
+
+        case "${item_index}" in
+            ''|*[!0-9]*) continue ;;
+        esac
+
+        if [ "${item_index}" -gt "${latest_index}" ]
+        then
+            latest_index=${item_index}
+        fi
+    done
+
+    next_index=$((latest_index + 1))
+    while true
+    do
+        history_item="${history_dir}/${next_index}.clipboarditem"
+        if (set -C; : > "${history_item}") 2>/dev/null
+        then
+            printf '%s\n' "${history_item}"
+            return 0
+        fi
+        next_index=$((next_index + 1))
+    done
+}
+
+function _clipboard-history-files()
+{
+    local history_dir="${CLIPBOARD_HISTORY_DIR:-/tmp}"
+    local history_item
+    local item_name
+    local item_index
+
+    if [ -n "${ZSH_VERSION:-}" ]
+    then
+        setopt local_options null_glob
+    fi
+
+    for history_item in "${history_dir}"/*.clipboarditem
+    do
+        [ -f "${history_item}" ] || continue
+        item_name=${history_item##*/}
+        item_index=${item_name%.clipboarditem}
+
+        case "${item_index}" in
+            ''|*[!0-9]*) continue ;;
+        esac
+
+        printf '%s\t%s\n' "${item_index}" "${history_item}"
+    done | sort -nr | cut -f2-
+}
+
+function copy-text-to-clipboard()
+{
+    local history_item
+
+    if ! type _clipboard-system-set >/dev/null 2>&1
+    then
+        printf 'copy-text-to-clipboard: no system clipboard command is configured\n' >&2
+        return 127
+    fi
+
+    history_item=$(_clipboard-history-next-file) || return 1
+    tee "${history_item}" | _clipboard-system-set
+}
+
+# Compatibility with commands and personal scripts using the previous name.
+function copy-clipboard-function()
+{
+    copy-text-to-clipboard "$@"
+}
+
+# config-tools clipboard-pick: Select a clipboard history item and restore it
+function clipboard-pick()
+{
+    local history_files
+    local selected_item
+
+    history_files=$(_clipboard-history-files)
+    if [ -z "${history_files}" ]
+    then
+        printf 'clipboard-pick: no clipboard history items found\n' >&2
+        return 1
+    fi
+
+    selected_item=$(
+        printf '%s\n' "${history_files}" |
+            default-fuzzy-finder \
+                --prompt='clipboard> ' \
+                --preview='cat -- {}' \
+                --preview-window='right:60%:wrap'
+    ) || return 1
+
+    [ -n "${selected_item}" ] || return 1
+    _clipboard-system-set < "${selected_item}" || return 1
+    printf 'Copied %s to the clipboard.\n' "${selected_item}"
+}
+
 # config-tools pick-copy: Pick a file using fzf and copy its path to clipboard
-alias pick-copy='default-fuzzy-finder | copy-clipboard-function'
+alias pick-copy='default-fuzzy-finder | copy-text-to-clipboard'
 
 # config-tools cat-fz: Cat a file using fzf and read it using less
 alias cat-fz='default-fuzzy-finder | xargs cat | less'

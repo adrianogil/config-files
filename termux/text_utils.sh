@@ -1,3 +1,8 @@
+function _clipboard-system-set()
+{
+    termux-clipboard-set
+}
+
 function droid-open-text()
 {
     echo "Open text file "$1"using DroidEdit Free"

@@ -3,7 +3,10 @@
 alias c="code"
 alias cw="code -n"
 
-alias copy-text-to-clipboard="pbcopy"
+function _clipboard-system-set()
+{
+    pbcopy
+}
 alias paste-text-from-clipboard="pbpaste"
 
 function tg()

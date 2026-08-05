@@ -55,7 +55,7 @@ function ffz-sh
 
 function ffz-cp
 {
-    f "$1" "$2" "$3" | default-fuzzy-finder | copy-clipboard-function
+    f "$1" "$2" "$3" | default-fuzzy-finder | copy-text-to-clipboard
 }
 
 function fcount-subdirs()
