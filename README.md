@@ -94,6 +94,7 @@ Useful examples from the annotated command set:
 | `docker-ps` | Select and describe a running Docker container |
 | `docker-stop` | Select and stop one or more running Docker containers |
 | `docker-start` | Select and start one or more stopped Docker containers |
+| `docker-logs` | Select a Docker container and follow its recent logs |
 | `docker-run-fzf` | Pick and run a Docker image through `fzf` |
 | `myvars` | Inspect environment variables |
 | `which-shell` | Print the current shell process |

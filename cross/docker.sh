@@ -180,3 +180,28 @@ function docker-start()
     [ "${#containers[@]}" -gt 0 ] || return 1
     docker start "${containers[@]}"
 }
+
+# config-tools docker-logs: Select a Docker container and follow its logs
+function docker-logs()
+{
+    local container="${1:-}"
+    local tail_lines="${DOCKER_LOG_TAIL:-100}"
+
+    if [ "$#" -gt 1 ]
+    then
+        printf 'Usage: docker-logs [container]\n' >&2
+        return 2
+    fi
+    if [[ ! $tail_lines =~ ^[1-9][0-9]*$ && $tail_lines != all ]]
+    then
+        printf 'docker-logs: DOCKER_LOG_TAIL must be a positive integer or all\n' >&2
+        return 2
+    fi
+
+    if [ -z "$container" ]
+    then
+        container=$(_docker-select-containers all 'docker logs> ' no) || return 1
+    fi
+
+    docker logs --follow --tail "$tail_lines" "$container"
+}
