@@ -158,3 +158,25 @@ function docker-stop()
     [ "${#containers[@]}" -gt 0 ] || return 1
     docker stop "${containers[@]}"
 }
+
+# config-tools docker-start: Select and start stopped Docker containers
+function docker-start()
+{
+    local selection=""
+    local container=""
+    local containers=()
+
+    if [ "$#" -gt 0 ]
+    then
+        containers=("$@")
+    else
+        selection=$(_docker-select-containers stopped 'docker start> ' yes) || return 1
+        while IFS= read -r container
+        do
+            [ -n "$container" ] && containers+=("$container")
+        done <<< "$selection"
+    fi
+
+    [ "${#containers[@]}" -gt 0 ] || return 1
+    docker start "${containers[@]}"
+}
