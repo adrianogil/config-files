@@ -139,6 +139,22 @@ function code-stats()
     python3 "$CONFIG_FILES_DIR/python/clitools/code_stats.py" "$target_directory"
 }
 
+# config-tools case-convert: Convert text between common identifier styles
+function case-convert()
+{
+    if ! command -v python3 >/dev/null 2>&1; then
+        printf 'case-convert: Python 3 is required\n' >&2
+        return 127
+    fi
+
+    if [[ -z ${CONFIG_FILES_DIR:-} ]]; then
+        printf 'case-convert: CONFIG_FILES_DIR is not set\n' >&2
+        return 1
+    fi
+
+    python3 "$CONFIG_FILES_DIR/python/clitools/case_convert.py" "$@"
+}
+
 function jabba-check-instslled-versions()
 {
     jabba ls    

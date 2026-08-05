@@ -77,6 +77,7 @@ Useful examples from the annotated command set:
 | `file-info` | Show metadata, hashes, attributes, and timestamps for a file |
 | `clipboard-pick` | Select a saved clipboard item and restore it to the clipboard |
 | `ips` | Show the first, all, or primary local IPv4 addresses |
+| `case-convert` | Convert text between snake, kebab, camel, and Pascal case |
 | `file-to-prompt` | Copy one file as a prompt-ready Markdown code block |
 | `dir-to-prompt` | Copy a directory of files as prompt-ready Markdown code blocks |
 | `file-navigate-fzf` | Browse files/directories interactively and copy the selected file path |
