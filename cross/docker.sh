@@ -227,3 +227,44 @@ function docker-stats()
     [ "${#containers[@]}" -gt 0 ] || return 1
     docker stats "${containers[@]}"
 }
+
+# config-tools docker-port: Select and show a Docker container's port mappings
+function docker-port()
+{
+    local container="${1:-}"
+    local exposed_ports=""
+    local published_ports=""
+
+    if [ "$#" -gt 1 ]
+    then
+        printf 'Usage: docker-port [container]\n' >&2
+        return 2
+    fi
+
+    if [ -z "$container" ]
+    then
+        container=$(_docker-select-containers all 'docker port> ' no) || return 1
+    fi
+
+    exposed_ports=$(
+        docker inspect \
+            --format '{{range $port, $_ := .Config.ExposedPorts}}{{$port}}{{"\n"}}{{end}}' \
+            "$container"
+    ) || return 1
+    published_ports=$(docker port "$container" 2>/dev/null) || published_ports=""
+
+    printf 'Container: %s\n' "$container"
+    printf 'Exposed ports:\n'
+    if [ -n "$exposed_ports" ]; then
+        printf '%s\n' "$exposed_ports" | sed 's/^/  /'
+    else
+        printf '  (none)\n'
+    fi
+
+    printf 'Published mappings:\n'
+    if [ -n "$published_ports" ]; then
+        printf '%s\n' "$published_ports" | sed 's/^/  /'
+    else
+        printf '  (none)\n'
+    fi
+}
