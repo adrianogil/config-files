@@ -17,9 +17,6 @@ function _see-definition()
 
     if alias_definition=$(alias "${target_function}" 2>/dev/null)
     then
-        printf '%s is an alias\n' "${target_function}"
-        printf '%s\n' "${alias_definition}"
-
         # Bash prefixes alias output with "alias "; Zsh does not. In both
         # shells, everything after the first equals sign is the alias value.
         alias_value=${alias_definition#*=}
@@ -33,11 +30,11 @@ function _see-definition()
 
         if [ -z "${alias_target}" ]
         then
-            printf 'Alias has no command to inspect.\n'
-            return 0
+            printf 'see-definition: alias %s has no command to inspect\n' \
+                "${target_function}" >&2
+            return 1
         fi
 
-        printf '\nAlias command: %s\n' "${alias_target}"
         _see-definition "${alias_target}" "$((resolution_depth + 1))"
         return
     fi
