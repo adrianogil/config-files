@@ -72,6 +72,7 @@ Useful examples from the annotated command set:
 | --- | --- |
 | `bkp` | Back up a file or directory |
 | `bkp-restore` | Restore a backup |
+| `bkp-last` | List the most recently backed-up items |
 | `cdk` | Fuzzy-select and enter a child directory |
 | `cdp` | Fuzzy-select and enter a parent directory |
 | `file-info` | Show metadata, hashes, attributes, and timestamps for a file |
@@ -106,6 +107,17 @@ shell-origin --all sd
 
 By default, platform-specific results are limited to the current platform.
 `--all` also shows definitions from other platform directories.
+
+Backup commands accept an explicit target or open `default-fuzzy-finder` when
+the target is omitted:
+
+```sh
+bkp [target]
+bkp-restore [target]
+bkp-last [count]
+```
+
+`bkp-last` shows the ten latest backup operations by default.
 
 ## Common Aliases
 
