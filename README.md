@@ -79,6 +79,7 @@ Useful examples from the annotated command set:
 | `ips` | Show the first, all, or primary local IPv4 addresses |
 | `case-convert` | Convert text between snake, kebab, camel, and Pascal case |
 | `duration-human` | Convert seconds to a readable duration and back |
+| `open-files` | Show processes using a path or files opened by a selected process |
 | `file-to-prompt` | Copy one file as a prompt-ready Markdown code block |
 | `dir-to-prompt` | Copy a directory of files as prompt-ready Markdown code blocks |
 | `file-navigate-fzf` | Browse files/directories interactively and copy the selected file path |
