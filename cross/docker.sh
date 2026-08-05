@@ -268,3 +268,42 @@ function docker-port()
         printf '  (none)\n'
     fi
 }
+
+# config-tools docker-rm: Select, confirm, and remove stopped Docker containers
+function docker-rm()
+{
+    local selection=""
+    local container=""
+    local answer=""
+    local containers=()
+
+    if [ "$#" -gt 0 ]
+    then
+        containers=("$@")
+    else
+        selection=$(_docker-select-containers stopped 'docker rm> ' yes) || return 1
+        while IFS= read -r container
+        do
+            [ -n "$container" ] && containers+=("$container")
+        done <<< "$selection"
+    fi
+
+    [ "${#containers[@]}" -gt 0 ] || return 1
+    printf 'Containers selected for removal:\n' >&2
+    for container in "${containers[@]}"
+    do
+        printf '  %s\n' "$container" >&2
+    done
+    printf 'Remove these containers? [y/N] ' >&2
+    IFS= read -r answer
+
+    case "$answer" in
+        y|Y|yes|YES|Yes) ;;
+        *)
+            printf 'Cancelled.\n' >&2
+            return 1
+            ;;
+    esac
+
+    docker rm "${containers[@]}"
+}

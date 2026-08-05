@@ -97,6 +97,7 @@ Useful examples from the annotated command set:
 | `docker-logs` | Select a Docker container and follow its recent logs |
 | `docker-stats` | Select and monitor one or more running Docker containers |
 | `docker-port` | Select a Docker container and show exposed and published ports |
+| `docker-rm` | Select, confirm, and remove one or more stopped Docker containers |
 | `docker-run-fzf` | Pick and run a Docker image through `fzf` |
 | `myvars` | Inspect environment variables |
 | `which-shell` | Print the current shell process |
