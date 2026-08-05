@@ -6,6 +6,41 @@ function symlink-create()
     ln -sf ${target} "${symlink_target}"
 }
 
+function _file-chunk-command()
+{
+    local operation=$1
+    local command_name=file-chunk
+
+    if [ "${operation}" = merge ]; then
+        command_name=file-chunk-merge
+    fi
+
+    if ! command -v python3 >/dev/null 2>&1; then
+        printf '%s: Python 3 is required\n' "${command_name}" >&2
+        return 127
+    fi
+
+    if [[ -z ${CONFIG_FILES_DIR:-} ]]; then
+        printf '%s: CONFIG_FILES_DIR is not set\n' "${command_name}" >&2
+        return 1
+    fi
+
+    shift
+    python3 "$CONFIG_FILES_DIR/python/clitools/file_chunk.py" "$operation" "$@"
+}
+
+# config-tools file-chunk: Split a file into sequentially numbered pieces
+function file-chunk()
+{
+    _file-chunk-command split "$@"
+}
+
+# config-tools file-chunk-merge: Merge a directory of numbered file chunks
+function file-chunk-merge()
+{
+    _file-chunk-command merge "$@"
+}
+
 # config-tools files-organize: Organize files in a directory
 function files-organize()
 {

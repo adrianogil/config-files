@@ -80,6 +80,8 @@ Useful examples from the annotated command set:
 | `case-convert` | Convert text between snake, kebab, camel, and Pascal case |
 | `duration-human` | Convert seconds to a readable duration and back |
 | `open-files` | Show processes using a path or files opened by a selected process |
+| `file-chunk` | Split a file into numbered pieces of a chosen size |
+| `file-chunk-merge` | Validate and merge a directory of numbered chunks |
 | `file-to-prompt` | Copy one file as a prompt-ready Markdown code block |
 | `dir-to-prompt` | Copy a directory of files as prompt-ready Markdown code blocks |
 | `file-navigate-fzf` | Browse files/directories interactively and copy the selected file path |
