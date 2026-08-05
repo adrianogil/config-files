@@ -136,3 +136,25 @@ function docker-ps()
     docker ps --no-trunc --filter "id=$container" \
         --format 'table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}\t{{.Command}}'
 }
+
+# config-tools docker-stop: Select and stop running Docker containers
+function docker-stop()
+{
+    local selection=""
+    local container=""
+    local containers=()
+
+    if [ "$#" -gt 0 ]
+    then
+        containers=("$@")
+    else
+        selection=$(_docker-select-containers running 'docker stop> ' yes) || return 1
+        while IFS= read -r container
+        do
+            [ -n "$container" ] && containers+=("$container")
+        done <<< "$selection"
+    fi
+
+    [ "${#containers[@]}" -gt 0 ] || return 1
+    docker stop "${containers[@]}"
+}

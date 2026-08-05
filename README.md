@@ -92,6 +92,7 @@ Useful examples from the annotated command set:
 | `files-organize` | Run the Python file organizer helper |
 | `df-inspect-using-bash` | Open a shell in an explicit or interactively selected Docker image |
 | `docker-ps` | Select and describe a running Docker container |
+| `docker-stop` | Select and stop one or more running Docker containers |
 | `docker-run-fzf` | Pick and run a Docker image through `fzf` |
 | `myvars` | Inspect environment variables |
 | `which-shell` | Print the current shell process |
