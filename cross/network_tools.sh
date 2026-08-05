@@ -1,7 +1,79 @@
 alias ips-net='ifconfig | grep net'
+
+function _ips-primary-interface()
+{
+    case "$(uname -s)" in
+        Darwin)
+            netstat -rn -f inet 2>/dev/null |
+                awk '$1 == "default" { print $NF; exit }'
+            ;;
+        Linux)
+            if command -v ip >/dev/null 2>&1
+            then
+                ip -4 route show default 2>/dev/null |
+                    awk '{ for (field = 1; field <= NF; field++) if ($field == "dev") { print $(field + 1); exit } }'
+            elif command -v route >/dev/null 2>&1
+            then
+                route -n 2>/dev/null |
+                    awk '$1 == "0.0.0.0" { print $NF; exit }'
+            fi
+            ;;
+        *)
+            netstat -rn 2>/dev/null |
+                awk '$1 == "default" || $1 == "0.0.0.0" { print $NF; exit }'
+            ;;
+    esac
+}
+
+# config-tools ips: Show the first, all, or primary local IPv4 addresses
 function ips()
 {
-    ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $2 }' | cut -f2 -d: | head -n1
+    local primary_interface
+    local primary_ip
+
+    case "${1:-}" in
+        '')
+            ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $2 }' | cut -f2 -d: | head -n1
+            ;;
+        --all)
+            if [ "$#" -ne 1 ]
+            then
+                printf 'Usage: ips [--all|--primary]\n' >&2
+                return 2
+            fi
+            ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $2 }' | cut -f2 -d:
+            ;;
+        --primary)
+            if [ "$#" -ne 1 ]
+            then
+                printf 'Usage: ips [--all|--primary]\n' >&2
+                return 2
+            fi
+
+            primary_interface=$(_ips-primary-interface)
+            if [ -z "${primary_interface}" ]
+            then
+                printf 'ips: could not determine the primary network interface\n' >&2
+                return 1
+            fi
+
+            primary_ip=$(ifconfig "${primary_interface}" 2>/dev/null | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $2 }' | cut -f2 -d: | head -n1)
+            if [ -z "${primary_ip}" ]
+            then
+                printf 'ips: no IPv4 address found for primary interface %s\n' "${primary_interface}" >&2
+                return 1
+            fi
+
+            printf '%s\n' "${primary_ip}"
+            ;;
+        -h|--help)
+            printf 'Usage: ips [--all|--primary]\n'
+            ;;
+        *)
+            printf 'Usage: ips [--all|--primary]\n' >&2
+            return 2
+            ;;
+    esac
 }
 
 function ips-external()
