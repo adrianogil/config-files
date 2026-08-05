@@ -35,6 +35,7 @@ function _see-definition()
             return 1
         fi
 
+        printf '%s is alias (%s)\n' "${target_function}" "${alias_value}"
         _see-definition "${alias_target}" "$((resolution_depth + 1))"
         return
     fi
