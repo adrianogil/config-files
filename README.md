@@ -82,6 +82,7 @@ Useful examples from the annotated command set:
 | `duration-human` | Convert seconds to a readable duration and back |
 | `open-files` | Show processes using a path or files opened by a selected process |
 | `shell-origin` | Locate the files and lines defining shell aliases, functions, and variables |
+| `asdf-set-fzf` | Select an installed ASDF tool and version for `.tool-versions` |
 | `file-chunk` | Split a file into numbered pieces of a chosen size |
 | `file-chunk-merge` | Validate and merge a directory of numbered chunks |
 | `file-to-prompt` | Copy one file as a prompt-ready Markdown code block |
@@ -119,6 +120,16 @@ bkp-last [count]
 
 `bkp-last` shows the ten latest backup operations by default.
 
+Use `asdf-set-fzf` (or `aff`) to choose from installed ASDF tools and versions:
+
+```sh
+aff                         # Select the tool and version
+aff nodejs                  # Select the installed Node.js version
+aff nodejs 22.14.0          # Set an installed version directly
+aff --home nodejs 22.14.0   # Update ~/.tool-versions
+aff --parent                # Update the closest parent .tool-versions
+```
+
 ## Common Aliases
 
 Some aliases are intentionally short because this repo is optimized for interactive use:
@@ -137,6 +148,7 @@ Some aliases are intentionally short because this repo is optimized for interact
 | `tl` | `tlist` |
 | `x` | `codex` |
 | `cdx` | `codex app` |
+| `aff` | `asdf-set-fzf` |
 
 ## Development Checks
 

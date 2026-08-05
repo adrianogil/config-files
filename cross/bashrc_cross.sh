@@ -40,6 +40,8 @@ source ${CROSS_CONFIG_FILES_DIR}/process_utils.sh
 source ${CROSS_CONFIG_FILES_DIR}/math_tools.sh
 # Dev Tools
 source ${CROSS_CONFIG_FILES_DIR}/dev_tools.sh
+# ASDF version selection
+source ${CROSS_CONFIG_FILES_DIR}/asdf.sh
 # Codex config
 source ${CROSS_CONFIG_FILES_DIR}/codex_configs.sh
 # LLM CLI config
