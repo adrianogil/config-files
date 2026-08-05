@@ -82,6 +82,7 @@ Useful examples from the annotated command set:
 | `duration-human` | Convert seconds to a readable duration and back |
 | `open-files` | Show processes using a path or files opened by a selected process |
 | `shell-origin` | Locate the files and lines defining shell aliases, functions, and variables |
+| `package-owner` | Identify which package manager and package installed a file or command |
 | `asdf-set-fzf` | Select an installed ASDF tool and version for `.tool-versions` |
 | `file-chunk` | Split a file into numbered pieces of a chosen size |
 | `file-chunk-merge` | Validate and merge a directory of numbered chunks |
@@ -116,6 +117,18 @@ shell-origin --all sd
 
 By default, platform-specific results are limited to the current platform.
 `--all` also shows definitions from other platform directories.
+
+Use `package-owner` with either an executable name or a path:
+
+```sh
+package-owner jq
+package-owner /usr/bin/curl
+```
+
+It resolves symbolic links and checks native package databases (`dpkg`, RPM,
+Pacman, APK, and MacPorts) as well as recognizable Homebrew, ASDF, Mise, pyenv,
+rbenv, NVM, SDKMAN, npm, pip/pipx, uv, Cargo, RubyGems, Conda, and Nix
+installations. If more than one manager claims the target, every match is shown.
 
 Backup commands accept an explicit target or open `default-fuzzy-finder` when
 the target is omitted:
