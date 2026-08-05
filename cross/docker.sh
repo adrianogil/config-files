@@ -26,6 +26,66 @@ function _docker-select-image()
     printf '%s\n' "${selection}"
 }
 
+function _docker-container-rows()
+{
+    local scope=$1
+    local format='{{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}'
+
+    case "$scope" in
+        running) docker ps --format "$format" ;;
+        all) docker ps --all --format "$format" ;;
+        stopped)
+            docker ps --all \
+                --filter status=created \
+                --filter status=exited \
+                --filter status=dead \
+                --format "$format"
+            ;;
+        *)
+            printf '_docker-container-rows: unknown scope: %s\n' "$scope" >&2
+            return 2
+            ;;
+    esac
+}
+
+function _docker-select-containers()
+{
+    local scope=$1
+    local prompt=$2
+    local allow_multiple=$3
+    local containers
+    local selection
+
+    containers=$(_docker-container-rows "$scope") || return 1
+    if [ -z "$containers" ]
+    then
+        printf 'No %s Docker containers found.\n' "$scope" >&2
+        return 1
+    fi
+
+    if [ "$allow_multiple" = yes ]
+    then
+        selection=$(
+            printf '%s\n' "$containers" |
+                default-fuzzy-finder \
+                    --multi --prompt="$prompt" \
+                    --header='ID  NAME  IMAGE  STATUS' \
+                    --height=60% --reverse
+        ) || return 1
+    else
+        selection=$(
+            printf '%s\n' "$containers" |
+                default-fuzzy-finder \
+                    --prompt="$prompt" \
+                    --header='ID  NAME  IMAGE  STATUS' \
+                    --height=60% --reverse
+        ) || return 1
+    fi
+
+    [ -n "$selection" ] || return 1
+    printf '%s\n' "$selection" | awk -F '\t' '{ print $1 }'
+}
+
 # config-tools df-inspect-using-bash: Open a shell in a Docker image
 function df-inspect-using-bash()
 {
@@ -53,4 +113,26 @@ function docker-run-fzf()
     docker_image=$(_docker-select-image) || return 1
     printf 'Running: docker run -it --rm %s\n' "${docker_image}" >&2
     docker run -it --rm "${docker_image}"
+}
+
+# config-tools docker-ps: Select and describe a running Docker container
+function docker-ps()
+{
+    local container="${1:-}"
+
+    if [ "$#" -gt 1 ]
+    then
+        printf 'Usage: docker-ps [container]\n' >&2
+        return 2
+    fi
+
+    if [ -n "$container" ]
+    then
+        container=$(docker inspect --format '{{.Id}}' "$container") || return 1
+    else
+        container=$(_docker-select-containers running 'docker ps> ' no) || return 1
+    fi
+
+    docker ps --no-trunc --filter "id=$container" \
+        --format 'table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}\t{{.Command}}'
 }

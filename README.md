@@ -91,6 +91,7 @@ Useful examples from the annotated command set:
 | `code-file-navigate-fzf` | Browse files/directories interactively and open a selection in VS Code |
 | `files-organize` | Run the Python file organizer helper |
 | `df-inspect-using-bash` | Open a shell in an explicit or interactively selected Docker image |
+| `docker-ps` | Select and describe a running Docker container |
 | `docker-run-fzf` | Pick and run a Docker image through `fzf` |
 | `myvars` | Inspect environment variables |
 | `which-shell` | Print the current shell process |
