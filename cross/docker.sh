@@ -205,3 +205,25 @@ function docker-logs()
 
     docker logs --follow --tail "$tail_lines" "$container"
 }
+
+# config-tools docker-stats: Select and monitor running Docker containers
+function docker-stats()
+{
+    local selection=""
+    local container=""
+    local containers=()
+
+    if [ "$#" -gt 0 ]
+    then
+        containers=("$@")
+    else
+        selection=$(_docker-select-containers running 'docker stats> ' yes) || return 1
+        while IFS= read -r container
+        do
+            [ -n "$container" ] && containers+=("$container")
+        done <<< "$selection"
+    fi
+
+    [ "${#containers[@]}" -gt 0 ] || return 1
+    docker stats "${containers[@]}"
+}
