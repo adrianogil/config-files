@@ -3,6 +3,12 @@ function _clipboard-system-set()
     termux-clipboard-set
 }
 
+function _clipboard-system-image-get()
+{
+    printf '_clipboard-system-image-get: Termux does not expose clipboard images\n' >&2
+    return 127
+}
+
 function droid-open-text()
 {
     echo "Open text file "$1"using DroidEdit Free"

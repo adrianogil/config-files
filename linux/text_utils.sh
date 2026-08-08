@@ -7,6 +7,26 @@ function _clipboard-system-set()
 {
     xclip -selection clipboard
 }
+
+function _clipboard-system-image-get()
+{
+    local output_file=$1
+
+    if [[ -n ${WAYLAND_DISPLAY:-} ]] && command -v wl-paste >/dev/null 2>&1
+    then
+        wl-paste --type image/png > "${output_file}"
+        return $?
+    fi
+
+    if ! command -v xclip >/dev/null 2>&1
+    then
+        printf '_clipboard-system-image-get: xclip or wl-clipboard is required\n' >&2
+        return 127
+    fi
+
+    xclip -selection clipboard -t image/png -o > "${output_file}"
+}
+
 alias paste-text-from-clipboard="xclip -selection clipboard -o"
 
 function tg()

@@ -77,6 +77,7 @@ Useful examples from the annotated command set:
 | `cdp` | Fuzzy-select and enter a parent directory |
 | `file-info` | Show metadata, hashes, attributes, and timestamps for a file |
 | `clipboard-pick` | Select a saved clipboard item and restore it to the clipboard |
+| `clipboard-image` | Save a PNG image from the clipboard to a new file |
 | `ips` | Show the first, all, or primary local IPv4 addresses |
 | `case-convert` | Convert text between snake, kebab, camel, and Pascal case |
 | `duration-human` | Convert seconds to a readable duration and back |
@@ -129,6 +130,16 @@ It resolves symbolic links and checks native package databases (`dpkg`, RPM,
 Pacman, APK, and MacPorts) as well as recognizable Homebrew, ASDF, Mise, pyenv,
 rbenv, NVM, SDKMAN, npm, pip/pipx, uv, Cargo, RubyGems, Conda, and Nix
 installations. If more than one manager claims the target, every match is shown.
+
+Save a screenshot or another clipboard image as a PNG with:
+
+```sh
+clipboard-image screenshot.png
+```
+
+The command refuses to overwrite existing files. On macOS it uses `pngpaste`
+when available, otherwise the installed Swift toolchain; Linux uses Wayland's
+`wl-paste` or X11's `xclip`.
 
 Backup commands accept an explicit target or open `default-fuzzy-finder` when
 the target is omitted:

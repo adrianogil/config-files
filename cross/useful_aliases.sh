@@ -101,6 +101,59 @@ function copy-clipboard-function()
     copy-text-to-clipboard "$@"
 }
 
+# config-tools clipboard-image: Save a PNG image from the clipboard to a new file
+function clipboard-image()
+{
+    local output_file
+    local output_directory
+    local temporary_file
+
+    if [[ $# -ne 1 ]]
+    then
+        printf 'Usage: clipboard-image <output.png>\n' >&2
+        return 2
+    fi
+
+    output_file=$1
+    case "${output_file}" in
+        *.png|*.PNG) ;;
+        *)
+            printf 'clipboard-image: output file must use a .png extension\n' >&2
+            return 2
+            ;;
+    esac
+
+    if [[ -e "${output_file}" ]]
+    then
+        printf 'clipboard-image: refusing to overwrite existing file: %s\n' "${output_file}" >&2
+        return 1
+    fi
+
+    output_directory=$(dirname -- "${output_file}")
+    if [[ ! -d "${output_directory}" ]]
+    then
+        printf 'clipboard-image: output directory does not exist: %s\n' "${output_directory}" >&2
+        return 1
+    fi
+
+    if ! type _clipboard-system-image-get >/dev/null 2>&1
+    then
+        printf 'clipboard-image: image clipboard support is not configured for this platform\n' >&2
+        return 127
+    fi
+
+    temporary_file=$(mktemp "${output_file}.tmp.XXXXXX") || return 1
+    if ! _clipboard-system-image-get "${temporary_file}" || [[ ! -s "${temporary_file}" ]]
+    then
+        rm -f -- "${temporary_file}"
+        printf 'clipboard-image: the clipboard does not contain a PNG image\n' >&2
+        return 1
+    fi
+
+    mv "${temporary_file}" "${output_file}"
+    printf 'Saved clipboard image to %s\n' "${output_file}"
+}
+
 # config-tools clipboard-pick: Select a clipboard history item and restore it
 function clipboard-pick()
 {
