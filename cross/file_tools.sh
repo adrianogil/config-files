@@ -96,6 +96,52 @@ function rename()
     mv -- "$source_path" "$target_path"
 }
 
+# config-tools rename-with-date: Add today's YYYYMMDD date before a file extension
+function rename-with-date()
+{
+    local source_path="${1:-}"
+    local directory=""
+    local filename=""
+    local stem=""
+    local extension=""
+    local target_path=""
+
+    if [[ $# -ne 1 ]]; then
+        printf 'Usage: rename-with-date <file>\n' >&2
+        return 2
+    fi
+
+    if [[ ! -f $source_path ]]; then
+        printf 'rename-with-date: %s: No such file\n' "$source_path" >&2
+        return 1
+    fi
+
+    directory=$(dirname -- "$source_path")
+    filename=$(basename -- "$source_path")
+
+    case "$filename" in
+        ?*.*)
+            stem=${filename%.*}
+            extension=.${filename##*.}
+            ;;
+        *)
+            stem=$filename
+            extension=""
+            ;;
+    esac
+
+    target_path="$directory/${stem}_$(date +%Y%m%d)$extension"
+
+    if [[ -e $target_path ]]; then
+        printf 'rename-with-date: refusing to overwrite existing path: %s\n' \
+            "$target_path" >&2
+        return 1
+    fi
+
+    mv -- "$source_path" "$target_path" || return 1
+    printf '%s\n' "$target_path"
+}
+
 # config-tools files-zip: Zip files with a search parameter
 function files-zip() {
     local search_param=$1

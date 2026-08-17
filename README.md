@@ -76,6 +76,7 @@ Useful examples from the annotated command set:
 | `cdk` | Fuzzy-select and enter a child directory |
 | `cdp` | Fuzzy-select and enter a parent directory |
 | `file-info` | Show metadata, hashes, attributes, and timestamps for a file |
+| `rename-with-date` | Rename a file by adding today's `YYYYMMDD` before its extension |
 | `clipboard-pick` | Select a saved clipboard item and restore it to the clipboard |
 | `clipboard-image` | Save a PNG image from the clipboard to a new file |
 | `ips` | Show the first, all, or primary local IPv4 addresses |
@@ -140,6 +141,16 @@ clipboard-image screenshot.png
 The command refuses to overwrite existing files. On macOS it uses `pngpaste`
 when available, otherwise the installed Swift toolchain; Linux uses Wayland's
 `wl-paste` or X11's `xclip`.
+
+Add today's date to a filename while preserving its extension with:
+
+```sh
+rename-with-date file.extension
+# file.extension -> file_YYYYMMDD.extension
+```
+
+The command preserves the file's directory, supports names containing spaces,
+and refuses to overwrite an existing dated file.
 
 Backup commands accept an explicit target or open `default-fuzzy-finder` when
 the target is omitted:
