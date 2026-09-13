@@ -78,6 +78,7 @@ Useful examples from the annotated command set:
 | `file-age` | Show how long ago a file was created and modified |
 | `file-info` | Show metadata, hashes, attributes, and timestamps for a file |
 | `rename-with-date` | Rename a file by adding today's `YYYYMMDD` before its extension |
+| `trash` | Move files and directories to the platform trash instead of deleting them |
 | `clipboard-pick` | Select a saved clipboard item and restore it to the clipboard |
 | `clipboard-image` | Save a PNG image from the clipboard to a new file |
 | `ips` | Show the first, all, or primary local IPv4 addresses |
@@ -161,6 +162,17 @@ file-age report.pdf
 
 Creation age is shown as `unavailable` on filesystems that do not expose a
 birth timestamp.
+
+Move one or more files or directories to the platform trash with:
+
+```sh
+trash draft.txt old-export/ "unused image.png"
+```
+
+On Linux, the command uses `gio trash` or `trash-put` when available and falls
+back to a freedesktop-compatible trash directory with recovery metadata. On
+macOS, it moves items into the user's Trash. Existing trash entries are never
+overwritten, and the filesystem root and home directory are protected.
 
 Backup commands accept an explicit target or open `default-fuzzy-finder` when
 the target is omitted:

@@ -142,6 +142,177 @@ function rename-with-date()
     printf '%s\n' "$target_path"
 }
 
+function _trash_unique_name()
+{
+    local files_directory=$1
+    local info_directory=$2
+    local original_name=$3
+    local candidate=$original_name
+    local counter=0
+
+    while [[ -e $files_directory/$candidate \
+        || -L $files_directory/$candidate \
+        || -e $info_directory/$candidate.trashinfo ]]; do
+        counter=$((counter + 1))
+        candidate="$original_name.$counter"
+    done
+
+    printf '%s\n' "$candidate"
+}
+
+function _trash_freedesktop()
+{
+    local data_directory="${XDG_DATA_HOME:-${HOME:-}/.local/share}"
+    local trash_directory="$data_directory/Trash"
+    local files_directory="$trash_directory/files"
+    local info_directory="$trash_directory/info"
+    local source_path=""
+    local source_directory=""
+    local source_name=""
+    local absolute_directory=""
+    local absolute_path=""
+    local encoded_path=""
+    local trashed_name=""
+    local target_path=""
+    local info_path=""
+    local temporary_info=""
+
+    if [[ -z ${HOME:-} && -z ${XDG_DATA_HOME:-} ]]; then
+        printf 'trash: HOME or XDG_DATA_HOME must be set\n' >&2
+        return 1
+    fi
+
+    if ! command -v python3 >/dev/null 2>&1; then
+        printf 'trash: install gio, trash-put, or Python 3 to use trash on this platform\n' >&2
+        return 127
+    fi
+
+    mkdir -p -- "$files_directory" "$info_directory" || return 1
+    chmod 700 "$trash_directory" "$files_directory" "$info_directory" \
+        2>/dev/null || true
+
+    for source_path in "$@"; do
+        source_directory=$(dirname -- "$source_path")
+        source_name=$(basename -- "$source_path")
+        absolute_directory=$(cd -P -- "$source_directory" && pwd) || return 1
+        absolute_path="$absolute_directory/$source_name"
+        encoded_path=$(python3 -c \
+            'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe="/-._~"))' \
+            "$absolute_path") || return 1
+
+        trashed_name=$(
+            _trash_unique_name "$files_directory" "$info_directory" "$source_name"
+        ) || return 1
+        target_path="$files_directory/$trashed_name"
+        info_path="$info_directory/$trashed_name.trashinfo"
+        temporary_info="$info_directory/.trashinfo.$$"
+
+        if ! {
+            printf '[Trash Info]\n'
+            printf 'Path=%s\n' "$encoded_path"
+            printf 'DeletionDate=%s\n' "$(date '+%Y-%m-%dT%H:%M:%S')"
+        } > "$temporary_info"; then
+            rm -f -- "$temporary_info"
+            return 1
+        fi
+
+        if ! mv -- "$source_path" "$target_path"; then
+            rm -f -- "$temporary_info"
+            return 1
+        fi
+
+        if ! mv -- "$temporary_info" "$info_path"; then
+            printf 'trash: could not write recovery metadata for %s\n' \
+                "$source_path" >&2
+            mv -- "$target_path" "$source_path" 2>/dev/null || true
+            return 1
+        fi
+
+        printf 'Trashed: %s\n' "$source_path"
+    done
+}
+
+# config-tools trash: Move files and directories to the platform trash
+function trash()
+{
+    local source_path=""
+    local source_directory=""
+    local source_name=""
+    local absolute_directory=""
+    local absolute_path=""
+    local home_path=""
+    local trash_directory=""
+    local trashed_name=""
+
+    if [[ ${1:-} == -- ]]; then
+        shift
+    fi
+
+    if [[ $# -eq 0 ]]; then
+        printf 'Usage: trash <paths...>\n' >&2
+        return 2
+    fi
+
+    if [[ -n ${HOME:-} ]]; then
+        home_path=$(cd -P -- "$HOME" 2>/dev/null && pwd) || home_path=$HOME
+    fi
+
+    for source_path in "$@"; do
+        if [[ ! -e $source_path && ! -L $source_path ]]; then
+            printf 'trash: %s: No such file or directory\n' "$source_path" >&2
+            return 1
+        fi
+
+        source_directory=$(dirname -- "$source_path")
+        source_name=$(basename -- "$source_path")
+        absolute_directory=$(cd -P -- "$source_directory" && pwd) || return 1
+        absolute_path="$absolute_directory/$source_name"
+
+        if [[ $absolute_path == / \
+            || ( -n $home_path && $absolute_path == "$home_path" ) ]]; then
+            printf 'trash: refusing to trash protected path: %s\n' "$source_path" >&2
+            return 1
+        fi
+    done
+
+    case "$(uname -s)" in
+        Darwin)
+            if [[ -z ${HOME:-} ]]; then
+                printf 'trash: HOME must be set on macOS\n' >&2
+                return 1
+            fi
+
+            trash_directory="$HOME/.Trash"
+            mkdir -p -- "$trash_directory" || return 1
+
+            for source_path in "$@"; do
+                source_name=$(basename -- "$source_path")
+                trashed_name=$(
+                    _trash_unique_name "$trash_directory" "$trash_directory" \
+                        "$source_name"
+                ) || return 1
+                mv -- "$source_path" "$trash_directory/$trashed_name" || return 1
+                printf 'Trashed: %s\n' "$source_path"
+            done
+            ;;
+        *)
+            if command -v gio >/dev/null 2>&1; then
+                gio trash -- "$@" || return 1
+                for source_path in "$@"; do
+                    printf 'Trashed: %s\n' "$source_path"
+                done
+            elif command -v trash-put >/dev/null 2>&1; then
+                trash-put -- "$@" || return 1
+                for source_path in "$@"; do
+                    printf 'Trashed: %s\n' "$source_path"
+                done
+            else
+                _trash_freedesktop "$@"
+            fi
+            ;;
+    esac
+}
+
 # config-tools files-zip: Zip files with a search parameter
 function files-zip() {
     local search_param=$1
