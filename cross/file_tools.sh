@@ -796,6 +796,115 @@ function dir-to-prompt() {
 }
 alias dto="dir-to-prompt"
 
+function _file_age_human()
+{
+    local seconds=$1
+    local direction="ago"
+    local days=0
+    local hours=0
+    local minutes=0
+    local remainder=0
+    local value=""
+
+    if (( seconds < 0 )); then
+        seconds=$(( -seconds ))
+        direction="from now"
+    fi
+
+    if (( seconds < 5 )); then
+        if [[ $direction == "ago" ]]; then
+            printf 'just now\n'
+        else
+            printf 'in a few seconds\n'
+        fi
+        return 0
+    fi
+
+    days=$(( seconds / 86400 ))
+    remainder=$(( seconds % 86400 ))
+    hours=$(( remainder / 3600 ))
+    remainder=$(( remainder % 3600 ))
+    minutes=$(( remainder / 60 ))
+    seconds=$(( remainder % 60 ))
+
+    if (( days > 0 )); then
+        value="$days day"
+        (( days != 1 )) && value="${value}s"
+        if (( hours > 0 )); then
+            value="$value, $hours hour"
+            (( hours != 1 )) && value="${value}s"
+        fi
+    elif (( hours > 0 )); then
+        value="$hours hour"
+        (( hours != 1 )) && value="${value}s"
+        if (( minutes > 0 )); then
+            value="$value, $minutes minute"
+            (( minutes != 1 )) && value="${value}s"
+        fi
+    elif (( minutes > 0 )); then
+        value="$minutes minute"
+        (( minutes != 1 )) && value="${value}s"
+        if (( seconds > 0 )); then
+            value="$value, $seconds second"
+            (( seconds != 1 )) && value="${value}s"
+        fi
+    else
+        value="$seconds second"
+        (( seconds != 1 )) && value="${value}s"
+    fi
+
+    if [[ $direction == "ago" ]]; then
+        printf '%s ago\n' "$value"
+    else
+        printf 'in %s\n' "$value"
+    fi
+}
+
+# config-tools file-age: Show how long ago a file was created and modified
+function file-age()
+{
+    local target="${1:-}"
+    local now_epoch=""
+    local modified_epoch=""
+    local created_epoch=""
+    local modified_age=""
+    local created_age="unavailable"
+
+    if [[ $# -ne 1 ]]; then
+        printf 'Usage: file-age <file>\n' >&2
+        return 2
+    fi
+
+    if [[ ! -f $target ]]; then
+        printf 'file-age: %s: No such file\n' "$target" >&2
+        return 1
+    fi
+
+    if ! command -v stat >/dev/null 2>&1; then
+        printf 'file-age: stat is required\n' >&2
+        return 127
+    fi
+
+    now_epoch=$(date +%s) || return 1
+
+    if stat --version >/dev/null 2>&1; then
+        modified_epoch=$(stat -c %Y -- "$target" 2>/dev/null) || return 1
+        created_epoch=$(stat -c %W -- "$target" 2>/dev/null) || created_epoch=""
+    else
+        modified_epoch=$(stat -f %m -- "$target" 2>/dev/null) || return 1
+        created_epoch=$(stat -f %B -- "$target" 2>/dev/null) || created_epoch=""
+    fi
+
+    modified_age=$(_file_age_human "$(( now_epoch - modified_epoch ))")
+    if [[ $created_epoch =~ ^[1-9][0-9]*$ ]]; then
+        created_age=$(_file_age_human "$(( now_epoch - created_epoch ))")
+    fi
+
+    printf 'File:     %s\n' "$target"
+    printf 'Created:  %s\n' "$created_age"
+    printf 'Modified: %s\n' "$modified_age"
+}
+
 # config-tools file-info: Show detailed information about a file
 function file-info() {
     local target="${1:-}"

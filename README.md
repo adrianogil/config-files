@@ -75,6 +75,7 @@ Useful examples from the annotated command set:
 | `bkp-last` | List the most recently backed-up items |
 | `cdk` | Fuzzy-select and enter a child directory |
 | `cdp` | Fuzzy-select and enter a parent directory |
+| `file-age` | Show how long ago a file was created and modified |
 | `file-info` | Show metadata, hashes, attributes, and timestamps for a file |
 | `rename-with-date` | Rename a file by adding today's `YYYYMMDD` before its extension |
 | `clipboard-pick` | Select a saved clipboard item and restore it to the clipboard |
@@ -151,6 +152,15 @@ rename-with-date file.extension
 
 The command preserves the file's directory, supports names containing spaces,
 and refuses to overwrite an existing dated file.
+
+Show the readable creation and modification ages of a file with:
+
+```sh
+file-age report.pdf
+```
+
+Creation age is shown as `unavailable` on filesystems that do not expose a
+birth timestamp.
 
 Backup commands accept an explicit target or open `default-fuzzy-finder` when
 the target is omitted:
