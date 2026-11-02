@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 ACTIVE_SHARED_DIRECTORIES = {"cross", "python", "slide_tool"}
-PLATFORM_DIRECTORIES = {"linux", "osx", "termux"}
+PLATFORM_DIRECTORIES = {"linux", "osx", "termux", "windows"}
 
 
 @dataclass(frozen=True)

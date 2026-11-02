@@ -26,6 +26,10 @@ alias k9="sudo kill -9 "
 
 function ps-from-port()
 {
+	if type _windows-call >/dev/null 2>&1; then
+	    port-owner "$@"
+	    return $?
+	fi
 	target_port=$1
 	lsof -i :${target_port}
 }
@@ -52,6 +56,10 @@ function _open-files-run-lsof()
 # config-tools open-files: Show processes using a path or files opened by a process
 function open-files()
 {
+    if type _windows-call >/dev/null 2>&1; then
+        printf 'open-files: Windows file-handle inspection is unavailable; use Resource Monitor or Sysinternals Handle.\n' >&2
+        return 127
+    fi
     local target_path
     local target_pid
     local process_list

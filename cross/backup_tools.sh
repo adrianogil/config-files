@@ -30,9 +30,9 @@ function _bkp-record-history()
     local stored_path=$3
     local target_type=$4
 
-    if command -v python3 >/dev/null 2>&1 && [[ -n ${CONFIG_FILES_DIR:-} ]]
+    if config-python --available && [[ -n ${CONFIG_FILES_DIR:-} ]]
     then
-        python3 "$CONFIG_FILES_DIR/python/clitools/backup_history.py" record \
+        config-python "$CONFIG_FILES_DIR/python/clitools/backup_history.py" record \
             "$TMP_BKP_DIR" "$target" "$snapshot_path" "$stored_path" \
             "$target_type" ||
             printf 'bkp: warning: could not update backup history\n' >&2
@@ -185,7 +185,7 @@ function bkp-last()
         printf 'Usage: bkp-last [count]\n' >&2
         return 2
     fi
-    if ! command -v python3 >/dev/null 2>&1
+    if ! config-python --available
     then
         printf 'bkp-last: Python 3 is required\n' >&2
         return 127
@@ -196,6 +196,6 @@ function bkp-last()
         return 1
     fi
 
-    python3 "$CONFIG_FILES_DIR/python/clitools/backup_history.py" list \
+    config-python "$CONFIG_FILES_DIR/python/clitools/backup_history.py" list \
         "$TMP_BKP_DIR" "$count"
 }

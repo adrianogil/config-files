@@ -1,6 +1,6 @@
 # config-files
 
-Personal shell configuration and small command-line utilities for Linux, macOS, and Termux.
+Personal shell configuration and small command-line utilities for Linux, macOS, Termux, and Windows Git Bash.
 
 The repo is organized as a set of sourceable shell modules plus a few Python helpers. The main entry point is `bashrc.sh`, which loads the platform-specific files first and then the shared cross-platform tools.
 
@@ -9,6 +9,7 @@ The repo is organized as a set of sourceable shell modules plus a few Python hel
 - macOS: loads `osx/bashrc_osx.sh`
 - Linux: loads `linux/bashrc_linux.sh`
 - Termux: loads `termux/bashrc_termux.sh`
+- Windows Git Bash (`MINGW*` / `MSYS*`): loads `windows/bashrc_windows.sh`
 - Shared tools: loads `cross/bashrc_cross.sh`, `slide_tool/slide_tools.sh`, and `python/python_tools.sh`
 
 Most commands are shell functions and aliases intended for interactive terminal use.
@@ -21,6 +22,63 @@ Set `CONFIG_FILES_DIR` to this repository and source `bashrc.sh` from your shell
 export CONFIG_FILES_DIR=<path-to-config-files>
 source "$CONFIG_FILES_DIR/bashrc.sh"
 ```
+
+### Windows Git Bash
+
+Add this to `~/.bashrc`, adjusting the repository location:
+
+```bash
+export CONFIG_FILES_DIR="/c/Users/adria/Workspace/scripts/config-files"
+source "$CONFIG_FILES_DIR/bashrc.sh"
+```
+
+If your Git Bash login shell does not already load `.bashrc`, add
+`[[ -f ~/.bashrc ]] && source ~/.bashrc` to `~/.bash_profile`.
+Paths containing spaces and Unicode are supported; use Git Bash paths for
+`CONFIG_FILES_DIR`. This integration targets Git Bash, not native PowerShell,
+CMD, Cygwin, or WSL startup files.
+
+Git for Windows and Windows PowerShell 5.1 (`powershell.exe` on PATH) provide
+the core shell and Windows integration. Install `fzf` for fuzzy selection and
+Python 3 for Python-backed helpers. Python is resolved through a working
+`python3`, `python`, or `py -3`; reload after installing it. Other commands
+such as Docker, VS Code, ffmpeg, tmux and screen require their respective tools.
+ASDF and Unix process/signal helpers still depend on their supported runtimes;
+Git Bash does not supply every Unix utility.
+
+Windows integration includes:
+
+- Text clipboard copy/paste, saved clipboard history, and PNG clipboard images.
+- `open <file|directory|URL>` using the Windows default application.
+- `trash <paths...>` using the Windows Recycle Bin, with drive roots, Git Bash
+  root, and the home directory protected. Windows can reject recycling on
+  unsupported filesystems or network shares; errors are returned to the caller.
+- `ips [--all|--primary]`, `port-owner <port>`, and `kill-port <port> [--force]`
+  using Windows network and process APIs. `kill-port` asks for confirmation
+  unless `--force` is supplied; Windows process termination has no Unix
+  SIGTERM equivalent. Access to another user's processes may require elevation.
+- Native Python paths and `PYTHONPATH` separators, plus Docker container shell
+  paths protected from Git Bash's automatic path conversion.
+
+`open-files` reports that Windows handle inspection is unavailable; use Resource
+Monitor or Sysinternals Handle instead. PowerShell runs without loading user
+profiles. Script execution policy is bypassed for each bundled bridge invocation
+only; no persistent execution policy is changed. Organization-enforced policies
+can still prevent execution.
+
+Run `bash scripts/check-windows.sh` for Windows dispatch and path checks.
+For real clipboard, Recycle Bin, and network checks, run this separately from
+Git Bash in an interactive Windows desktop session:
+
+```bash
+powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File \
+  "$(cygpath -w "$CONFIG_FILES_DIR/scripts/check-windows-integration.ps1")"
+```
+
+The integration check temporarily replaces and restores clipboard content,
+recycles disposable files and a directory, and terminates its own test listener.
+It does not open applications. File/URL opening is covered by argument tests;
+check the final default-application launch manually with `open .`.
 
 Example:
 
@@ -241,7 +299,7 @@ It runs these checks:
 scripts/check-shell-syntax.sh
 CONFIG_FILES_DIR="$PWD" bash --noprofile --norc -c 'source bashrc.sh'
 CONFIG_FILES_DIR="$PWD" zsh -f -c 'source bashrc.sh'
-python3 syntax checks for files under python/
+Python 3 syntax checks for files under python/
 ```
 
 The clean Bash and Zsh commands avoid loading unrelated dotfiles, which keeps the result focused on this repo. The Python check compiles source in memory, so it does not create `__pycache__` directories.
@@ -249,7 +307,7 @@ The clean Bash and Zsh commands avoid loading unrelated dotfiles, which keeps th
 ## Notes
 
 - `fzf` is expected for fuzzy-selection commands.
-- Clipboard commands are platform-specific: macOS uses `pbcopy`/`pbpaste`, Linux uses `xclip`, and Termux uses Android-oriented helpers. `copy-text-to-clipboard` also saves each copied value as `/tmp/<index>.clipboarditem`; use `clipboard-pick` to restore one through `fzf`.
+- Clipboard commands are platform-specific: macOS uses `pbcopy`/`pbpaste`, Linux uses `xclip`, Termux uses Android-oriented helpers, and Windows uses PowerShell. `copy-text-to-clipboard` also saves each copied value as `/tmp/<index>.clipboarditem`; use `clipboard-pick` to restore one through `fzf`.
 - Some helpers assume optional tools such as `tmux`, `screen`, `code`, `brew`, `docker`, `youtube-dl`, or `ffmpeg`.
 
 ## See Also

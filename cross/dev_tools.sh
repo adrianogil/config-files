@@ -6,7 +6,7 @@ function swagger-generate-html()
     target_swagger_yaml_file=$1
     target_html_file=$2
 
-    cat ${target_swagger_yaml_file} |  python3 ${CONFIG_FILES_DIR}/python/swagger/swagger.py > ${target_html_file}
+    config-python "${CONFIG_FILES_DIR}/python/swagger/swagger.py" < "$target_swagger_yaml_file" > "$target_html_file"
 }
 
 # Search and execute bash scripts
@@ -41,19 +41,19 @@ function json-fmt()
         return $?
     fi
 
-    if ! command -v python3 >/dev/null 2>&1; then
+    if ! config-python --available; then
         printf 'json-fmt: install jq or Python 3 to format JSON\n' >&2
         return 127
     fi
 
     if [[ -n $input_file && $input_file != - ]]; then
-        python3 -c 'import json, sys
+        config-python -c 'import json, sys
 with open(sys.argv[1], encoding="utf-8") as source:
     data = json.load(source)
 json.dump(data, sys.stdout, ensure_ascii=False, indent=2)
 print()' "$input_file"
     else
-        python3 -c 'import json, sys
+        config-python -c 'import json, sys
 data = json.load(sys.stdin)
 json.dump(data, sys.stdout, ensure_ascii=False, indent=2)
 print()'
@@ -70,7 +70,7 @@ function command-benchmark()
         return 2
     fi
 
-    if ! command -v python3 >/dev/null 2>&1; then
+    if ! config-python --available; then
         printf 'command-benchmark: Python 3 is required\n' >&2
         return 127
     fi
@@ -80,7 +80,7 @@ function command-benchmark()
         return 1
     fi
 
-    python3 "$CONFIG_FILES_DIR/python/clitools/command_benchmark.py" "$@"
+    config-python "$CONFIG_FILES_DIR/python/clitools/command_benchmark.py" "$@"
 }
 
 # config-tools dotenv-check: Validate dotenv syntax and duplicate definitions
@@ -98,7 +98,7 @@ function dotenv-check()
         return 1
     fi
 
-    if ! command -v python3 >/dev/null 2>&1; then
+    if ! config-python --available; then
         printf 'dotenv-check: Python 3 is required\n' >&2
         return 127
     fi
@@ -108,7 +108,7 @@ function dotenv-check()
         return 1
     fi
 
-    python3 "$CONFIG_FILES_DIR/python/clitools/dotenv_check.py" "$dotenv_file"
+    config-python "$CONFIG_FILES_DIR/python/clitools/dotenv_check.py" "$dotenv_file"
 }
 
 # config-tools code-stats: Summarize source files and lines by language
@@ -126,7 +126,7 @@ function code-stats()
         return 1
     fi
 
-    if ! command -v python3 >/dev/null 2>&1; then
+    if ! config-python --available; then
         printf 'code-stats: Python 3 is required\n' >&2
         return 127
     fi
@@ -136,13 +136,13 @@ function code-stats()
         return 1
     fi
 
-    python3 "$CONFIG_FILES_DIR/python/clitools/code_stats.py" "$target_directory"
+    config-python "$CONFIG_FILES_DIR/python/clitools/code_stats.py" "$target_directory"
 }
 
 # config-tools case-convert: Convert text between common identifier styles
 function case-convert()
 {
-    if ! command -v python3 >/dev/null 2>&1; then
+    if ! config-python --available; then
         printf 'case-convert: Python 3 is required\n' >&2
         return 127
     fi
@@ -152,7 +152,7 @@ function case-convert()
         return 1
     fi
 
-    python3 "$CONFIG_FILES_DIR/python/clitools/case_convert.py" "$@"
+    config-python "$CONFIG_FILES_DIR/python/clitools/case_convert.py" "$@"
 }
 
 # config-tools shell-origin: Locate where a shell name is defined in config-files
@@ -176,7 +176,7 @@ function shell-origin()
     target=$1
     variable_target=${target#\$}
 
-    if ! command -v python3 >/dev/null 2>&1; then
+    if ! config-python --available; then
         printf 'shell-origin: Python 3 is required\n' >&2
         return 127
     fi
@@ -197,6 +197,7 @@ function shell-origin()
 
     case "$(uname -s)" in
         Darwin) platform=osx ;;
+        MINGW*|MSYS*) platform=windows ;;
         Linux)
             if [[ ${PREFIX:-} == *com.termux* ]]; then
                 platform=termux
@@ -208,10 +209,10 @@ function shell-origin()
     esac
 
     if [ -n "${show_all}" ]; then
-        python3 "$CONFIG_FILES_DIR/python/clitools/shell_origin.py" \
+        config-python "$CONFIG_FILES_DIR/python/clitools/shell_origin.py" \
             --all "${target}" "$CONFIG_FILES_DIR" "${platform}" "${runtime_type}"
     else
-        python3 "$CONFIG_FILES_DIR/python/clitools/shell_origin.py" \
+        config-python "$CONFIG_FILES_DIR/python/clitools/shell_origin.py" \
             "${target}" "$CONFIG_FILES_DIR" "${platform}" "${runtime_type}"
     fi
 }

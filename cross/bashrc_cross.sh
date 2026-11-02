@@ -3,7 +3,7 @@ CROSS_CONFIG_FILES_DIR=$CONFIG_FILES_DIR/cross/
 
 
 # General useful aliases
-source ${CROSS_CONFIG_FILES_DIR}/useful_aliases.sh
+source "${CROSS_CONFIG_FILES_DIR}/useful_aliases.sh"
 # Fancy colors
 case $SHELL in
 */zsh)
@@ -11,55 +11,55 @@ case $SHELL in
    ;;
 */bash)
    # assume Bash
-   source ${CROSS_CONFIG_FILES_DIR}/fancy_colors.sh
+   source "${CROSS_CONFIG_FILES_DIR}/fancy_colors.sh"
    ;;
 *)
    # assume something else
 esac
 # Backup Tools
-source ${CROSS_CONFIG_FILES_DIR}/backup_tools.sh
+source "${CROSS_CONFIG_FILES_DIR}/backup_tools.sh"
 # Path Tools
-source ${CROSS_CONFIG_FILES_DIR}/path_tools.sh
+source "${CROSS_CONFIG_FILES_DIR}/path_tools.sh"
 # Find Tools
-source ${CROSS_CONFIG_FILES_DIR}/find_tools.sh
+source "${CROSS_CONFIG_FILES_DIR}/find_tools.sh"
 # File conversions
-source ${CROSS_CONFIG_FILES_DIR}/file_conversions.sh
+source "${CROSS_CONFIG_FILES_DIR}/file_conversions.sh"
 # Screen Management
-source ${CROSS_CONFIG_FILES_DIR}/screen_management.sh
+source "${CROSS_CONFIG_FILES_DIR}/screen_management.sh"
 # Korean
-source ${CROSS_CONFIG_FILES_DIR}/korean.sh
+source "${CROSS_CONFIG_FILES_DIR}/korean.sh"
 # Hdev
-source ${CROSS_CONFIG_FILES_DIR}/hdev.sh
+source "${CROSS_CONFIG_FILES_DIR}/hdev.sh"
 # Github-related functions
-source ${CROSS_CONFIG_FILES_DIR}/github.sh
+source "${CROSS_CONFIG_FILES_DIR}/github.sh"
 # Docker-related functions
-source ${CROSS_CONFIG_FILES_DIR}/docker.sh
+source "${CROSS_CONFIG_FILES_DIR}/docker.sh"
 # process-related functions
-source ${CROSS_CONFIG_FILES_DIR}/process_utils.sh
+source "${CROSS_CONFIG_FILES_DIR}/process_utils.sh"
 # Math functions
-source ${CROSS_CONFIG_FILES_DIR}/math_tools.sh
+source "${CROSS_CONFIG_FILES_DIR}/math_tools.sh"
 # Dev Tools
-source ${CROSS_CONFIG_FILES_DIR}/dev_tools.sh
+source "${CROSS_CONFIG_FILES_DIR}/dev_tools.sh"
 # Package ownership tools
-source ${CROSS_CONFIG_FILES_DIR}/package_tools.sh
+source "${CROSS_CONFIG_FILES_DIR}/package_tools.sh"
 # ASDF version selection
-source ${CROSS_CONFIG_FILES_DIR}/asdf.sh
+source "${CROSS_CONFIG_FILES_DIR}/asdf.sh"
 # Codex config
-source ${CROSS_CONFIG_FILES_DIR}/codex_configs.sh
+source "${CROSS_CONFIG_FILES_DIR}/codex_configs.sh"
 # LLM CLI config
-source ${CROSS_CONFIG_FILES_DIR}/llm.sh
+source "${CROSS_CONFIG_FILES_DIR}/llm.sh"
 # Basic CMDs
-source ${CROSS_CONFIG_FILES_DIR}/basic_cmds.sh
+source "${CROSS_CONFIG_FILES_DIR}/basic_cmds.sh"
 # Network-related functions
-source ${CROSS_CONFIG_FILES_DIR}/network_tools.sh
+source "${CROSS_CONFIG_FILES_DIR}/network_tools.sh"
 # Directory-related functions
-source ${CROSS_CONFIG_FILES_DIR}/dir_tools.sh
+source "${CROSS_CONFIG_FILES_DIR}/dir_tools.sh"
 # Mp3-related functions
-source ${CROSS_CONFIG_FILES_DIR}/mp3_tools.sh
+source "${CROSS_CONFIG_FILES_DIR}/mp3_tools.sh"
 # File-related functions
-source ${CROSS_CONFIG_FILES_DIR}/file_tools.sh
+source "${CROSS_CONFIG_FILES_DIR}/file_tools.sh"
 # Video-related functions
-source ${CROSS_CONFIG_FILES_DIR}/video_tools.sh
+source "${CROSS_CONFIG_FILES_DIR}/video_tools.sh"
 
 function zap()
 {

@@ -36,8 +36,8 @@ function uuid-new()
 
     if command -v uuidgen >/dev/null 2>&1; then
         generator=uuidgen
-    elif command -v python3 >/dev/null 2>&1; then
-        generator=python3
+    elif config-python --available; then
+        generator=config-python
     elif [[ -r /proc/sys/kernel/random/uuid ]]; then
         generator=proc
     else
@@ -48,7 +48,7 @@ function uuid-new()
     for ((index = 0; index < count; index++)); do
         case "$generator" in
             uuidgen) uuidgen | tr '[:upper:]' '[:lower:]' ;;
-            python3) python3 -c 'import uuid; print(uuid.uuid4())' ;;
+            config-python) config-python -c 'import uuid; print(uuid.uuid4())' ;;
             proc) cat /proc/sys/kernel/random/uuid ;;
         esac
     done
@@ -62,7 +62,7 @@ function chmod-explain()
         return 2
     fi
 
-    if ! command -v python3 >/dev/null 2>&1; then
+    if ! config-python --available; then
         printf 'chmod-explain: Python 3 is required\n' >&2
         return 127
     fi
@@ -72,7 +72,7 @@ function chmod-explain()
         return 1
     fi
 
-    python3 "$CONFIG_FILES_DIR/python/clitools/chmod_explain.py" "$1"
+    config-python "$CONFIG_FILES_DIR/python/clitools/chmod_explain.py" "$1"
 }
 
 function _timezone_choices()
@@ -126,7 +126,7 @@ function timezone-convert()
         target_zone=$(_timezone_select 'to timezone> ') || return 1
     fi
 
-    if ! command -v python3 >/dev/null 2>&1; then
+    if ! config-python --available; then
         printf 'timezone-convert: Python 3 is required\n' >&2
         return 127
     fi
@@ -136,6 +136,6 @@ function timezone-convert()
         return 1
     fi
 
-    python3 "$CONFIG_FILES_DIR/python/clitools/timezone_convert.py" \
+    config-python "$CONFIG_FILES_DIR/python/clitools/timezone_convert.py" \
         "$datetime_value" "$source_zone" "$target_zone"
 }

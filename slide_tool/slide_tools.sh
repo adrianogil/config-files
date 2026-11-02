@@ -8,12 +8,12 @@ function markdown-to-slides()
 
     while test $# -gt 0
     do
-        cat $1 >> $TMP_CONTENT_FILE
+        cat "$1" >> "$TMP_CONTENT_FILE"
 
         shift
     done
 
-    p2 ${CONFIG_FILES_DIR}/slide_tool/generate_slide.py
+    config-python "${CONFIG_FILES_DIR}/slide_tool/generate_slide.py"
 
     rm $TMP_CONTENT_FILE
 }

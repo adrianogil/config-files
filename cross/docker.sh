@@ -102,7 +102,10 @@ function df-inspect-using-bash()
         target_image=$(_docker-select-image) || return 1
     fi
 
-    docker run -it --entrypoint /bin/sh "${target_image}"
+    case "$(uname -s)" in
+        MINGW*|MSYS*) MSYS_NO_PATHCONV=1 docker run -it --entrypoint /bin/sh "${target_image}" ;;
+        *) docker run -it --entrypoint /bin/sh "${target_image}" ;;
+    esac
 }
 
 # config-tools docker-run-fzf: Run a Docker image selected via fzf

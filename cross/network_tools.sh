@@ -1,4 +1,8 @@
-alias ips-net='ifconfig | grep net'
+if type _windows-call >/dev/null 2>&1; then
+    alias ips-net='ips --all'
+else
+    alias ips-net='ifconfig | grep net'
+fi
 
 function _ips-primary-interface()
 {
@@ -28,6 +32,10 @@ function _ips-primary-interface()
 # config-tools ips: Show the first, all, or primary local IPv4 addresses
 function ips()
 {
+    if type _windows-ips >/dev/null 2>&1; then
+        _windows-ips "$@"
+        return $?
+    fi
     local primary_interface
     local primary_ip
 
@@ -92,6 +100,12 @@ function port-owner()
         return 2
     fi
 
+    if type _windows-call >/dev/null 2>&1; then
+        [[ $# -eq 1 ]] || { printf 'Usage: port-owner <port>\n' >&2; return 2; }
+        _windows-call port-owner "$port"
+        return $?
+    fi
+
     if command -v lsof >/dev/null 2>&1; then
         output=$(
             {
@@ -132,8 +146,8 @@ function wait-port()
 
     if command -v nc >/dev/null 2>&1; then
         probe=nc
-    elif command -v python3 >/dev/null 2>&1; then
-        probe=python3
+    elif config-python --available; then
+        probe=config-python
     else
         printf 'wait-port: install nc or Python 3 to probe TCP ports\n' >&2
         return 127
@@ -143,7 +157,7 @@ function wait-port()
         if [[ $probe == nc ]]; then
             nc -z -w 1 "$host" "$port" >/dev/null 2>&1
         else
-            python3 -c 'import socket, sys
+            config-python -c 'import socket, sys
 with socket.create_connection((sys.argv[1], int(sys.argv[2])), timeout=1):
     pass' "$host" "$port" >/dev/null 2>&1
         fi
@@ -176,6 +190,11 @@ function kill-port()
         || [[ -n $force && $force != --force ]]; then
         printf 'Usage: kill-port <port (1-65535)> [--force]\n' >&2
         return 2
+    fi
+
+    if type _windows-kill-port >/dev/null 2>&1; then
+        _windows-kill-port "$@"
+        return $?
     fi
 
     if command -v lsof >/dev/null 2>&1; then
@@ -238,8 +257,8 @@ function serve-dir()
         return 2
     fi
 
-    if command -v python3 >/dev/null 2>&1; then
-        python_command=python3
+    if config-python --available; then
+        python_command=config-python
     elif command -v python >/dev/null 2>&1 && python -c 'import http.server' >/dev/null 2>&1; then
         python_command=python
     else
@@ -361,12 +380,12 @@ function url-encode()
 {
     local input_text="$*"
 
-    if command -v python3 >/dev/null 2>&1; then
+    if config-python --available; then
         if [[ $# -gt 0 ]]; then
-            python3 -c 'import sys, urllib.parse
+            config-python -c 'import sys, urllib.parse
 print(urllib.parse.quote(sys.argv[1], safe="-._~"))' "$input_text"
         else
-            python3 -c 'import sys, urllib.parse
+            config-python -c 'import sys, urllib.parse
 print(urllib.parse.quote_from_bytes(sys.stdin.buffer.read(), safe="-._~"))'
         fi
         return $?

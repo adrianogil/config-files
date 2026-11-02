@@ -25,7 +25,9 @@ check_zsh_source() {
 }
 
 check_python_syntax() {
-    python3 - "$repo_root/python" <<'PY'
+    export CONFIG_FILES_DIR="$repo_root"
+    source "$repo_root/python/python_tools.sh"
+    config-python - "$repo_root/python" <<'PY'
 import pathlib
 import sys
 
@@ -48,6 +50,7 @@ PY
 run_step "Shell syntax" "$repo_root/scripts/check-shell-syntax.sh"
 run_step "Clean bash source" check_bash_source
 run_step "Clean zsh source" check_zsh_source
+run_step "Windows shell integration" bash "$repo_root/scripts/check-windows.sh"
 run_step "Python syntax" check_python_syntax
 
 printf '\nSmoke tests passed.\n'

@@ -6,7 +6,7 @@ function package-owner()
         return 2
     fi
 
-    if ! command -v python3 >/dev/null 2>&1; then
+    if ! config-python --available; then
         printf 'package-owner: Python 3 is required\n' >&2
         return 127
     fi
@@ -16,5 +16,5 @@ function package-owner()
         return 1
     fi
 
-    python3 "$CONFIG_FILES_DIR/python/clitools/package_owner.py" "$1"
+    config-python "$CONFIG_FILES_DIR/python/clitools/package_owner.py" "$1"
 }

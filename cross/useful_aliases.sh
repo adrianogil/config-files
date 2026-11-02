@@ -4,13 +4,17 @@ alias rl='reload_mes_configs'
 
 function default-fuzzy-finder()
 {
+    if ! command -v fzf >/dev/null 2>&1; then
+        printf 'Fuzzy selection requires fzf; install it and add it to PATH.\n' >&2
+        return 127
+    fi
     fzf "$@"
 }
 alias fz='fzf'
 
 # Remove the old platform aliases when reloading an existing shell session.
-unalias copy-text-to-clipboard 2>/dev/null
-unalias copy-clipboard-function 2>/dev/null
+unalias copy-text-to-clipboard 2>/dev/null || true
+unalias copy-clipboard-function 2>/dev/null || true
 
 function _clipboard-history-next-file()
 {

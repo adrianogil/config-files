@@ -98,7 +98,7 @@ function dir-depth()
         return 1
     fi
 
-    if ! command -v python3 >/dev/null 2>&1; then
+    if ! config-python --available; then
         printf 'dir-depth: Python 3 is required\n' >&2
         return 127
     fi
@@ -108,5 +108,5 @@ function dir-depth()
         return 1
     fi
 
-    python3 "$CONFIG_FILES_DIR/python/clitools/dir_depth.py" "$target_directory"
+    config-python "$CONFIG_FILES_DIR/python/clitools/dir_depth.py" "$target_directory"
 }

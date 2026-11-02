@@ -15,7 +15,7 @@ function _file-chunk-command()
         command_name=file-chunk-merge
     fi
 
-    if ! command -v python3 >/dev/null 2>&1; then
+    if ! config-python --available; then
         printf '%s: Python 3 is required\n' "${command_name}" >&2
         return 127
     fi
@@ -26,7 +26,7 @@ function _file-chunk-command()
     fi
 
     shift
-    python3 "$CONFIG_FILES_DIR/python/clitools/file_chunk.py" "$operation" "$@"
+    config-python "$CONFIG_FILES_DIR/python/clitools/file_chunk.py" "$operation" "$@"
 }
 
 # config-tools file-chunk: Split a file into sequentially numbered pieces
@@ -44,7 +44,7 @@ function file-chunk-merge()
 # config-tools files-organize: Organize files in a directory
 function files-organize()
 {
-    python3 ${CONFIG_FILES_DIR}/python/clitools/files_organizer.py
+    config-python "${CONFIG_FILES_DIR}/python/clitools/files_organizer.py"
 }
 
 function smart-cp()
@@ -182,7 +182,7 @@ function _trash_freedesktop()
         return 1
     fi
 
-    if ! command -v python3 >/dev/null 2>&1; then
+    if ! config-python --available; then
         printf 'trash: install gio, trash-put, or Python 3 to use trash on this platform\n' >&2
         return 127
     fi
@@ -196,7 +196,7 @@ function _trash_freedesktop()
         source_name=$(basename -- "$source_path")
         absolute_directory=$(cd -P -- "$source_directory" && pwd) || return 1
         absolute_path="$absolute_directory/$source_name"
-        encoded_path=$(python3 -c \
+        encoded_path=$(config-python -c \
             'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe="/-._~"))' \
             "$absolute_path") || return 1
 
@@ -268,7 +268,7 @@ function trash()
         absolute_directory=$(cd -P -- "$source_directory" && pwd) || return 1
         absolute_path="$absolute_directory/$source_name"
 
-        if [[ $absolute_path == / \
+        if [[ $source_path == / || $absolute_path == / \
             || ( -n $home_path && $absolute_path == "$home_path" ) ]]; then
             printf 'trash: refusing to trash protected path: %s\n' "$source_path" >&2
             return 1
@@ -276,6 +276,9 @@ function trash()
     done
 
     case "$(uname -s)" in
+        MINGW*|MSYS*)
+            _windows-trash "$@"
+            ;;
         Darwin)
             if [[ -z ${HOME:-} ]]; then
                 printf 'trash: HOME must be set on macOS\n' >&2
@@ -815,7 +818,7 @@ function duplicate-files()
         return 1
     fi
 
-    if ! command -v python3 >/dev/null 2>&1; then
+    if ! config-python --available; then
         printf 'duplicate-files: Python 3 is required\n' >&2
         return 127
     fi
@@ -825,7 +828,7 @@ function duplicate-files()
         return 1
     fi
 
-    python3 "$CONFIG_FILES_DIR/python/clitools/duplicate_files.py" "$target_directory"
+    config-python "$CONFIG_FILES_DIR/python/clitools/duplicate_files.py" "$target_directory"
 }
 
 # config-tools permissions-audit: Find unsafe permissions and unexpected executables
@@ -843,7 +846,7 @@ function permissions-audit()
         return 1
     fi
 
-    if ! command -v python3 >/dev/null 2>&1; then
+    if ! config-python --available; then
         printf 'permissions-audit: Python 3 is required\n' >&2
         return 127
     fi
@@ -853,7 +856,7 @@ function permissions-audit()
         return 1
     fi
 
-    python3 "$CONFIG_FILES_DIR/python/clitools/permissions_audit.py" "$target_directory"
+    config-python "$CONFIG_FILES_DIR/python/clitools/permissions_audit.py" "$target_directory"
 }
 
 # config-tools symlink-map: Show symbolic links, resolved targets, and status
@@ -871,7 +874,7 @@ function symlink-map()
         return 1
     fi
 
-    if ! command -v python3 >/dev/null 2>&1; then
+    if ! config-python --available; then
         printf 'symlink-map: Python 3 is required\n' >&2
         return 127
     fi
@@ -881,7 +884,7 @@ function symlink-map()
         return 1
     fi
 
-    python3 "$CONFIG_FILES_DIR/python/clitools/symlink_map.py" "$target_directory"
+    config-python "$CONFIG_FILES_DIR/python/clitools/symlink_map.py" "$target_directory"
 }
 
 # config-tools text-encoding: Detect file encoding, BOM, and binary content
@@ -899,7 +902,7 @@ function text-encoding()
         return 1
     fi
 
-    if ! command -v python3 >/dev/null 2>&1; then
+    if ! config-python --available; then
         printf 'text-encoding: Python 3 is required\n' >&2
         return 127
     fi
@@ -909,7 +912,7 @@ function text-encoding()
         return 1
     fi
 
-    python3 "$CONFIG_FILES_DIR/python/clitools/text_encoding.py" "$target_file"
+    config-python "$CONFIG_FILES_DIR/python/clitools/text_encoding.py" "$target_file"
 }
 
 
